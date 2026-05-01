@@ -5,3 +5,4 @@
 //! using strategos-ops integer math.
 
 pub mod loader;
+pub mod qwen3;

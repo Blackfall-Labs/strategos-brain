@@ -2,7 +2,7 @@
 """
 Export HuggingFace model weights to Strategos binary format.
 
-Reads safetensors/pytorch weights and writes:
+Reads safetensors weights and writes:
   manifest.json — tensor metadata (name, file, shape, numel)
   *.bin — raw f32 little-endian bytes per tensor
 
@@ -11,17 +11,18 @@ Usage:
   python export_weights.py --model HuggingFaceTB/SmolLM3-3B --output models/smollm3
   python export_weights.py --model microsoft/Phi-4-mini-instruct --output models/phi4
 
-Requires: pip install safetensors torch transformers
+Requires: pip install safetensors torch huggingface_hub
 """
 
 import argparse
 import json
 import os
-import struct
 import sys
 
+
 def export_safetensors(model_path: str, output_dir: str):
-    """Export from safetensors format (preferred — no torch needed)."""
+    """Export from safetensors format using torch (handles bfloat16)."""
+    import torch
     from safetensors import safe_open
 
     os.makedirs(output_dir, exist_ok=True)
@@ -44,22 +45,20 @@ def export_safetensors(model_path: str, output_dir: str):
 
     for st_path in st_files:
         print(f"Reading {st_path}...")
-        with safe_open(st_path, framework="numpy") as f:
+        with safe_open(st_path, framework="pt") as f:
             for name in sorted(f.keys()):
                 tensor = f.get_tensor(name)
                 shape = list(tensor.shape)
-                numel = int(tensor.size)
+                numel = int(tensor.numel())
 
-                # Convert to float32 if needed.
-                if tensor.dtype != 'float32':
-                    import numpy as np
-                    tensor = tensor.astype(np.float32)
+                # Convert to float32 contiguous.
+                tensor = tensor.float().contiguous().cpu()
 
                 # Write raw f32 LE bytes.
                 bin_name = f"weight_{tensor_idx:05d}.bin"
                 bin_path = os.path.join(output_dir, bin_name)
                 with open(bin_path, 'wb') as bf:
-                    bf.write(tensor.tobytes())
+                    bf.write(tensor.numpy().tobytes())
 
                 manifest.append({
                     "name": name,
@@ -80,21 +79,17 @@ def export_safetensors(model_path: str, output_dir: str):
     print(f"\nExported {tensor_idx} tensors to {output_dir}/")
     print(f"Manifest: {manifest_path}")
 
-    # Print summary.
+    # Summary.
     total_params = sum(e['numel'] for e in manifest)
     total_bytes = total_params * 4
     print(f"Total parameters: {total_params:,}")
-    print(f"Total size: {total_bytes / 1e9:.2f} GB (f32)")
-    print(f"INT8 size: {total_params / 1e9:.2f} GB")
+    print(f"Total size (f32): {total_bytes / 1e9:.2f} GB")
+    print(f"Total size (i16): {total_params * 2 / 1e9:.2f} GB")
 
 
 def export_from_hub(model_id: str, output_dir: str):
     """Download from HuggingFace Hub and export."""
-    try:
-        from huggingface_hub import snapshot_download
-    except ImportError:
-        print("pip install huggingface_hub")
-        sys.exit(1)
+    from huggingface_hub import snapshot_download
 
     print(f"Downloading {model_id}...")
     local_path = snapshot_download(
@@ -103,13 +98,21 @@ def export_from_hub(model_id: str, output_dir: str):
     )
     print(f"Downloaded to {local_path}")
 
-    # Copy config.json for reference.
+    # Copy config.json.
     config_src = os.path.join(local_path, "config.json")
     if os.path.exists(config_src):
         os.makedirs(output_dir, exist_ok=True)
         import shutil
         shutil.copy2(config_src, os.path.join(output_dir, "config.json"))
-        print(f"Copied config.json")
+        print("Copied config.json")
+
+    # Copy tokenizer files.
+    for f in os.listdir(local_path):
+        if f.startswith("tokenizer"):
+            import shutil
+            os.makedirs(output_dir, exist_ok=True)
+            shutil.copy2(os.path.join(local_path, f), os.path.join(output_dir, f))
+            print(f"Copied {f}")
 
     export_safetensors(local_path, output_dir)
 
