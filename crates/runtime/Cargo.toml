@@ -8,3 +8,7 @@ description = "Strategos MoE runtime — model loading, forward pass, routing."
 strategos-ops = { path = "../ops" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+
+[[bin]]
+name = "qwen3_test"
+path = "src/bin/qwen3_test.rs"

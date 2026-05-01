@@ -34,6 +34,10 @@ struct LayerWeights {
     v_proj: QWeight,      // [HIDDEN, KV_HEADS * HEAD_DIM] = [2048, 1024]
     o_proj: QWeight,      // [Q_HEADS * HEAD_DIM, HIDDEN] = [2048, 2048]
 
+    // QK-Norm: Qwen3 applies RMSNorm to Q and K before attention.
+    q_norm: RmsNormWeights, // [HEAD_DIM]
+    k_norm: RmsNormWeights, // [HEAD_DIM]
+
     // FFN (SwiGLU)
     gate_proj: QWeight,   // [HIDDEN, INTERMEDIATE] = [2048, 6144]
     up_proj: QWeight,     // [HIDDEN, INTERMEDIATE] = [2048, 6144]
@@ -67,10 +71,10 @@ impl KVCache {
 
 /// Qwen3 1.7B model.
 pub struct Qwen3 {
-    embed: Vec<Vec<f32>>,  // [VOCAB, HIDDEN] — float, used for lookup only
+    embed: Vec<Vec<f32>>,    // [VOCAB, HIDDEN] — float, used for lookup only
+    lm_head: QWeight,        // [HIDDEN, VOCAB] — output projection
     layers: Vec<LayerWeights>,
     final_norm: RmsNormWeights,
-    // lm_head tied to embed (same weights transposed)
     rope: RopeTable,
     swish_bank: Vec<SwishLut>,
     cache: KVCache,
@@ -101,11 +105,15 @@ impl Qwen3 {
             let up_proj = load_qweight(weights, &format!("{}.mlp.up_proj.weight", prefix), HIDDEN, INTERMEDIATE)?;
             let down_proj = load_qweight(weights, &format!("{}.mlp.down_proj.weight", prefix), INTERMEDIATE, HIDDEN)?;
 
+            let q_norm = load_rmsnorm_dim(weights, &format!("{}.self_attn.q_norm.weight", prefix), HEAD_DIM)?;
+            let k_norm = load_rmsnorm_dim(weights, &format!("{}.self_attn.k_norm.weight", prefix), HEAD_DIM)?;
+
             let input_norm = load_rmsnorm(weights, &format!("{}.input_layernorm.weight", prefix))?;
             let post_attn_norm = load_rmsnorm(weights, &format!("{}.post_attention_layernorm.weight", prefix))?;
 
             layers.push(LayerWeights {
                 q_proj, k_proj, v_proj, o_proj,
+                q_norm, k_norm,
                 gate_proj, up_proj, down_proj,
                 input_norm, post_attn_norm,
             });
@@ -117,14 +125,21 @@ impl Qwen3 {
 
         let final_norm = load_rmsnorm(weights, "model.norm.weight")?;
 
+        // LM head — may be separate or tied to embeddings.
+        let lm_head = if weights.get("lm_head.weight").is_some() {
+            load_qweight(weights, "lm_head.weight", HIDDEN, VOCAB)?
+        } else {
+            // Tied: reuse embed weights.
+            QWeight::from_f32(embed_flat, HIDDEN, VOCAB)
+        };
+
         let rope = RopeTable::new(HEAD_DIM, MAX_SEQ, ROPE_THETA);
         let swish_bank = build_swish_bank(64);
 
-        eprintln!("[qwen3] Qwen3-1.7B loaded — {} layers, {} params",
-            LAYERS, VOCAB * HIDDEN + LAYERS * (2048*2048*2 + 2048*1024*2 + 2048*6144*3));
+        eprintln!("[qwen3] Qwen3-1.7B loaded — {} layers", LAYERS);
 
         Ok(Self {
-            embed, layers, final_norm, rope, swish_bank,
+            embed, lm_head, layers, final_norm, rope, swish_bank,
             cache: KVCache::new(),
         })
     }
@@ -166,11 +181,13 @@ impl Qwen3 {
                 .map(|h| v_out[h * HEAD_DIM..(h + 1) * HEAD_DIM].to_vec())
                 .collect();
 
-            // Apply RoPE to Q and K.
+            // Apply QK-Norm then RoPE to Q and K.
             for h in 0..Q_HEADS {
+                q_heads[h] = rms_norm(&q_heads[h], &lw.q_norm);
                 self.rope.apply(&mut q_heads[h], pos);
             }
             for h in 0..KV_HEADS {
+                k_heads[h] = rms_norm(&k_heads[h], &lw.k_norm);
                 self.rope.apply(&mut k_heads[h], pos);
             }
 
@@ -251,16 +268,9 @@ impl Qwen3 {
         // Final norm.
         let normed = rms_norm(&hidden, &self.final_norm);
 
-        // LM head (tied to embed — matrix multiply with embed weights transposed).
-        // output[v] = dot(normed, embed[v])
-        let mut logits = vec![0.0f32; VOCAB];
-        for v in 0..VOCAB {
-            let mut dot = 0.0f32;
-            for d in 0..HIDDEN {
-                dot += normed[d] * self.embed[v][d];
-            }
-            logits[v] = dot;
-        }
+        // LM head: [HIDDEN] → [VOCAB] logits.
+        let normed_q = QTensor::from_f32(&normed);
+        let logits = linear_q(&normed_q, &self.lm_head, &vec![0.0; VOCAB]).to_f32();
 
         self.cache.seq_len += 1;
         logits
@@ -313,5 +323,13 @@ fn load_qweight(weights: &ModelWeights, name: &str, in_dim: usize, out_dim: usiz
 
 fn load_rmsnorm(weights: &ModelWeights, name: &str) -> Result<RmsNormWeights, String> {
     let data = weights.require(name)?;
+    Ok(RmsNormWeights::from_f32(data, RMS_EPS))
+}
+
+fn load_rmsnorm_dim(weights: &ModelWeights, name: &str, expected_dim: usize) -> Result<RmsNormWeights, String> {
+    let data = weights.require(name)?;
+    if data.len() != expected_dim {
+        return Err(format!("{}: expected {} elements, got {}", name, expected_dim, data.len()));
+    }
     Ok(RmsNormWeights::from_f32(data, RMS_EPS))
 }
