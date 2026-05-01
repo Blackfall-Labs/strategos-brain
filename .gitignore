@@ -1,0 +1,5 @@
+/target
+*.exe
+*.pdb
+models/**/*.bin
+models/**/*.safetensors
