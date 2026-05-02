@@ -6,6 +6,7 @@
 
 pub mod loader;
 pub mod tokenizer;
+pub mod prompt;
 pub mod router;
 pub mod qwen3;
 pub mod smollm3;
