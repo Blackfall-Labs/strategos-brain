@@ -29,3 +29,7 @@ path = "src/bin/strategos_repl.rs"
 [[bin]]
 name = "export_weights"
 path = "src/bin/export_weights.rs"
+
+[[bin]]
+name = "qwen3_bench"
+path = "src/bin/qwen3_bench.rs"
