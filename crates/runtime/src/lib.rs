@@ -5,6 +5,8 @@
 //! using strategos-ops integer math.
 
 pub mod loader;
+pub mod tokenizer;
+pub mod router;
 pub mod qwen3;
 pub mod smollm3;
 pub mod phi4;

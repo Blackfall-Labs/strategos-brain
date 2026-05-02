@@ -20,3 +20,7 @@ path = "src/bin/smollm3_test.rs"
 [[bin]]
 name = "phi4_test"
 path = "src/bin/phi4_test.rs"
+
+[[bin]]
+name = "strategos"
+path = "src/bin/strategos_repl.rs"
