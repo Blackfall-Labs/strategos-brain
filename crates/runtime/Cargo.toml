@@ -24,3 +24,7 @@ path = "src/bin/phi4_test.rs"
 [[bin]]
 name = "strategos"
 path = "src/bin/strategos_repl.rs"
+
+[[bin]]
+name = "export_weights"
+path = "src/bin/export_weights.rs"

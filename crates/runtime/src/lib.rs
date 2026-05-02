@@ -5,6 +5,7 @@
 //! using strategos-ops integer math.
 
 pub mod loader;
+pub mod safetensors;
 pub mod tokenizer;
 pub mod prompt;
 pub mod router;
