@@ -6,3 +6,5 @@
 
 pub mod loader;
 pub mod qwen3;
+pub mod smollm3;
+pub mod phi4;

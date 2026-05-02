@@ -12,3 +12,11 @@ serde_json = "1"
 [[bin]]
 name = "qwen3_test"
 path = "src/bin/qwen3_test.rs"
+
+[[bin]]
+name = "smollm3_test"
+path = "src/bin/smollm3_test.rs"
+
+[[bin]]
+name = "phi4_test"
+path = "src/bin/phi4_test.rs"

@@ -106,13 +106,16 @@ def export_from_hub(model_id: str, output_dir: str):
         shutil.copy2(config_src, os.path.join(output_dir, "config.json"))
         print("Copied config.json")
 
-    # Copy tokenizer files.
+    # Copy tokenizer files (best effort — may fail on Windows file locks).
     for f in os.listdir(local_path):
         if f.startswith("tokenizer"):
-            import shutil
-            os.makedirs(output_dir, exist_ok=True)
-            shutil.copy2(os.path.join(local_path, f), os.path.join(output_dir, f))
-            print(f"Copied {f}")
+            try:
+                import shutil
+                os.makedirs(output_dir, exist_ok=True)
+                shutil.copy2(os.path.join(local_path, f), os.path.join(output_dir, f))
+                print(f"Copied {f}")
+            except (PermissionError, OSError) as e:
+                print(f"Skipped {f}: {e}")
 
     export_safetensors(local_path, output_dir)
 
