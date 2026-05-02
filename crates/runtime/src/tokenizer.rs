@@ -94,9 +94,9 @@ impl Tokenizer {
 
     /// Encode text to token IDs.
     ///
-    /// Strategy: split on whitespace, look up whole words in vocab.
-    /// If a word isn't found, try progressively shorter prefixes.
-    /// Handles Ġ (space prefix) for GPT-4 style tokenizers.
+    /// 1. Extract special tokens (like <|im_start|>) as atomic units.
+    /// 2. Split remaining text on whitespace, preserving Ġ prefix.
+    /// 3. Greedy longest-match against vocab for each piece.
     pub fn encode(&self, text: &str) -> Vec<u32> {
         if text.is_empty() {
             return Vec::new();
@@ -104,26 +104,65 @@ impl Tokenizer {
 
         let mut result = Vec::new();
 
-        // Split text into words, preserving spaces as Ġ prefix.
-        let mut pieces: Vec<String> = Vec::new();
-        let mut chars = text.chars().peekable();
-        let mut current = String::new();
-        let mut at_start = true;
+        // First pass: split on special tokens (anything matching <|...|>).
+        // These must be looked up as whole units.
+        let mut remaining = text;
+        while !remaining.is_empty() {
+            // Look for special token pattern.
+            if let Some(start) = remaining.find("<|") {
+                // Encode text before the special token.
+                if start > 0 {
+                    self.encode_text_piece(&remaining[..start], &mut result);
+                }
+                // Find the end of the special token.
+                if let Some(end) = remaining[start..].find("|>") {
+                    let special = &remaining[start..start + end + 2];
+                    if let Some(&id) = self.vocab.get(special) {
+                        result.push(id);
+                    }
+                    remaining = &remaining[start + end + 2..];
+                } else {
+                    // No closing |>, treat rest as text.
+                    self.encode_text_piece(remaining, &mut result);
+                    break;
+                }
+            } else {
+                // No more special tokens, encode rest as text.
+                self.encode_text_piece(remaining, &mut result);
+                break;
+            }
+        }
 
-        while let Some(ch) = chars.next() {
+        result
+    }
+
+    /// Encode a text segment (no special tokens) into token IDs.
+    fn encode_text_piece(&self, text: &str, result: &mut Vec<u32>) {
+        if text.is_empty() { return; }
+
+        // Split on whitespace and newlines, preserving Ġ/Ċ prefixes.
+        let mut pieces: Vec<String> = Vec::new();
+        let mut current = String::new();
+
+        for ch in text.chars() {
             if ch == ' ' {
                 if !current.is_empty() {
                     pieces.push(current.clone());
                     current.clear();
                 }
-                // Space becomes Ġ prefix on the next word.
                 current.push('Ġ');
             } else if ch == '\n' {
                 if !current.is_empty() {
                     pieces.push(current.clone());
                     current.clear();
                 }
-                pieces.push("Ċ".to_string());
+                // Try Ċ first, else literal newline.
+                if self.vocab.contains_key("Ċ") {
+                    pieces.push("Ċ".to_string());
+                } else if let Some(&id) = self.vocab.get("\n") {
+                    // Will be picked up by the greedy matcher.
+                    pieces.push("\n".to_string());
+                }
             } else {
                 current.push(ch);
             }
@@ -132,19 +171,17 @@ impl Tokenizer {
             pieces.push(current);
         }
 
-        // For each piece, try to find it in vocab.
+        // Greedy longest-match for each piece.
         for piece in &pieces {
             if let Some(&id) = self.vocab.get(piece) {
                 result.push(id);
             } else {
-                // Greedy left-to-right matching: find longest prefix in vocab.
                 let chars: Vec<char> = piece.chars().collect();
                 let mut pos = 0;
                 while pos < chars.len() {
                     let mut best_len = 0;
                     let mut best_id = None;
 
-                    // Try longest match first.
                     for end in (pos + 1..=chars.len()).rev() {
                         let substr: String = chars[pos..end].iter().collect();
                         if let Some(&id) = self.vocab.get(&substr) {
@@ -158,20 +195,15 @@ impl Tokenizer {
                         result.push(id);
                         pos += best_len;
                     } else {
-                        // Single character fallback.
-                        let ch = chars[pos];
-                        let s = ch.to_string();
+                        let s = chars[pos].to_string();
                         if let Some(&id) = self.vocab.get(&s) {
                             result.push(id);
                         }
-                        // else skip unknown char
                         pos += 1;
                     }
                 }
             }
         }
-
-        result
     }
 
     /// Decode token IDs back to text.
