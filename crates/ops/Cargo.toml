@@ -5,3 +5,4 @@ edition.workspace = true
 description = "Integer inference operators for Strategos MoE. All proven math from ternsig/deepspeech, plus RoPE, RMSNorm, GQA."
 
 [dependencies]
+rayon = "1.10"

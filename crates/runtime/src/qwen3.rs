@@ -12,6 +12,7 @@ use strategos_ops::linear::linear_q;
 use strategos_ops::rmsnorm::{RmsNormWeights, rms_norm};
 use strategos_ops::rope::RopeTable;
 use strategos_ops::lut::{SwishLut, build_swish_bank, find_swish_lut, softmax_int};
+use rayon::prelude::*;
 
 // ---- Architecture constants ----
 
@@ -199,37 +200,42 @@ impl Qwen3 {
 
             // Attention: Q attends to all cached K/V.
             // GQA: each KV head serves (Q_HEADS / KV_HEADS) = 2 Q heads.
+            // Parallel across Q heads.
             let kv_group_size = Q_HEADS / KV_HEADS;
-            let mut attn_output = vec![0.0f32; Q_HEADS * HEAD_DIM];
+            let cache_k = &self.cache.k[l];
+            let cache_v = &self.cache.v[l];
 
-            for qh in 0..Q_HEADS {
-                let kvh = qh / kv_group_size; // which KV head this Q head uses
-                let seq = self.cache.k[l][kvh].len();
+            let attn_heads: Vec<Vec<f32>> = (0..Q_HEADS).into_par_iter().map(|qh| {
+                let kvh = qh / kv_group_size;
+                let seq = cache_k[kvh].len();
+                let scale = 1.0 / (HEAD_DIM as f32).sqrt();
 
-                // Compute attention scores: Q[1,128] × K_cached[seq,128]^T
                 let mut scores = Vec::with_capacity(seq);
                 for s in 0..seq {
                     let dot: f32 = q_heads[qh].iter()
-                        .zip(self.cache.k[l][kvh][s].iter())
+                        .zip(cache_k[kvh][s].iter())
                         .map(|(a, b)| a * b)
                         .sum();
-                    scores.push(dot / (HEAD_DIM as f32).sqrt());
+                    scores.push(dot * scale);
                 }
 
-                // Softmax (float — precision critical).
-                let max_score = scores.iter().cloned().fold(f32::NEG_INFINITY, f32::max);
-                let exp_scores: Vec<f32> = scores.iter().map(|s| (s - max_score).exp()).collect();
-                let sum_exp: f32 = exp_scores.iter().sum();
-                let attn_weights: Vec<f32> = exp_scores.iter().map(|e| e / sum_exp).collect();
+                let max_s = scores.iter().cloned().fold(f32::NEG_INFINITY, f32::max);
+                let exp: Vec<f32> = scores.iter().map(|s| (s - max_s).exp()).collect();
+                let sum: f32 = exp.iter().sum();
+                let weights: Vec<f32> = exp.iter().map(|e| e / sum).collect();
 
-                // Weighted sum of V.
+                let mut head_out = vec![0.0f32; HEAD_DIM];
                 for d in 0..HEAD_DIM {
                     let mut val = 0.0f32;
-                    for s in 0..seq {
-                        val += attn_weights[s] * self.cache.v[l][kvh][s][d];
-                    }
-                    attn_output[qh * HEAD_DIM + d] = val;
+                    for s in 0..seq { val += weights[s] * cache_v[kvh][s][d]; }
+                    head_out[d] = val;
                 }
+                head_out
+            }).collect();
+
+            let mut attn_output = vec![0.0f32; Q_HEADS * HEAD_DIM];
+            for (qh, head) in attn_heads.iter().enumerate() {
+                attn_output[qh * HEAD_DIM..(qh + 1) * HEAD_DIM].copy_from_slice(head);
             }
 
             // Output projection.
@@ -249,12 +255,12 @@ impl Qwen3 {
             let gate = linear_q(&ffn_input, &lw.gate_proj, &vec![0.0; INTERMEDIATE]).to_f32();
             let up = linear_q(&ffn_input, &lw.up_proj, &vec![0.0; INTERMEDIATE]).to_f32();
 
-            // SiLU (same as Swish): x * sigmoid(x)
-            let mut gated = vec![0.0f32; INTERMEDIATE];
-            for i in 0..INTERMEDIATE {
-                let silu = gate[i] * (1.0 / (1.0 + (-gate[i]).exp()));
-                gated[i] = silu * up[i];
-            }
+            // SiLU (same as Swish): x * sigmoid(x). Parallel over INTERMEDIATE.
+            let gated: Vec<f32> = gate.par_iter().zip(up.par_iter())
+                .map(|(&g, &u)| {
+                    let silu = g * (1.0 / (1.0 + (-g).exp()));
+                    silu * u
+                }).collect();
 
             let gated_q = QTensor::from_f32(&gated);
             let ffn_out = linear_q(&gated_q, &lw.down_proj, &vec![0.0; HIDDEN]).to_f32();

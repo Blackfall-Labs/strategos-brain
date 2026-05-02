@@ -8,9 +8,10 @@
 
 use crate::loader::ModelWeights;
 use strategos_ops::qtensor::{QTensor, QWeight};
-use strategos_ops::linear::linear_q;
+use strategos_ops::linear::{linear_q, matmul_embed_parallel};
 use strategos_ops::rmsnorm::{RmsNormWeights, rms_norm};
 use strategos_ops::rope::RopeTable;
+use rayon::prelude::*;
 
 const HIDDEN: usize = 2048;
 const LAYERS: usize = 36;
@@ -135,18 +136,21 @@ impl SmolLM3 {
                 self.cache.v[l][h].push(v_heads[h].clone());
             }
 
-            // GQA attention.
-            let mut attn_output = vec![0.0f32; Q_HEADS * HEAD_DIM];
-            let seq = self.cache.k[l][0].len();
+            // GQA attention. Parallel across Q heads.
+            let cache_k = &self.cache.k[l];
+            let cache_v = &self.cache.v[l];
 
-            for qh in 0..Q_HEADS {
+            let attn_heads: Vec<Vec<f32>> = (0..Q_HEADS).into_par_iter().map(|qh| {
                 let kvh = qh / kv_group;
+                let seq = cache_k[kvh].len();
+                let scale = 1.0 / (HEAD_DIM as f32).sqrt();
+
                 let mut scores = Vec::with_capacity(seq);
                 for s in 0..seq {
                     let dot: f32 = q_heads[qh].iter()
-                        .zip(self.cache.k[l][kvh][s].iter())
+                        .zip(cache_k[kvh][s].iter())
                         .map(|(a, b)| a * b).sum();
-                    scores.push(dot / (HEAD_DIM as f32).sqrt());
+                    scores.push(dot * scale);
                 }
 
                 let max_s = scores.iter().cloned().fold(f32::NEG_INFINITY, f32::max);
@@ -154,11 +158,18 @@ impl SmolLM3 {
                 let sum: f32 = exp.iter().sum();
                 let weights: Vec<f32> = exp.iter().map(|e| e / sum).collect();
 
+                let mut head_out = vec![0.0f32; HEAD_DIM];
                 for d in 0..HEAD_DIM {
                     let mut val = 0.0f32;
-                    for s in 0..seq { val += weights[s] * self.cache.v[l][kvh][s][d]; }
-                    attn_output[qh * HEAD_DIM + d] = val;
+                    for s in 0..seq { val += weights[s] * cache_v[kvh][s][d]; }
+                    head_out[d] = val;
                 }
+                head_out
+            }).collect();
+
+            let mut attn_output = vec![0.0f32; Q_HEADS * HEAD_DIM];
+            for (qh, head) in attn_heads.iter().enumerate() {
+                attn_output[qh * HEAD_DIM..(qh + 1) * HEAD_DIM].copy_from_slice(head);
             }
 
             let attn_q = QTensor::from_f32(&attn_output);
@@ -171,11 +182,11 @@ impl SmolLM3 {
             let gate = linear_q(&ffn_in, &lw.gate_proj, &vec![0.0; INTERMEDIATE]).to_f32();
             let up = linear_q(&ffn_in, &lw.up_proj, &vec![0.0; INTERMEDIATE]).to_f32();
 
-            let mut gated = vec![0.0f32; INTERMEDIATE];
-            for i in 0..INTERMEDIATE {
-                let silu = gate[i] * (1.0 / (1.0 + (-gate[i]).exp()));
-                gated[i] = silu * up[i];
-            }
+            let gated: Vec<f32> = gate.par_iter().zip(up.par_iter())
+                .map(|(&g, &u)| {
+                    let silu = g * (1.0 / (1.0 + (-g).exp()));
+                    silu * u
+                }).collect();
 
             let gated_q = QTensor::from_f32(&gated);
             let ffn_out = linear_q(&gated_q, &lw.down_proj, &vec![0.0; HIDDEN]).to_f32();
@@ -184,13 +195,8 @@ impl SmolLM3 {
 
         let normed = rms_norm(&hidden, &self.final_norm);
 
-        // Tied embeddings: lm_head = embed^T.
-        let mut logits = vec![0.0f32; VOCAB];
-        for v in 0..VOCAB {
-            let mut dot = 0.0f32;
-            for d in 0..HIDDEN { dot += normed[d] * self.embed[v][d]; }
-            logits[v] = dot;
-        }
+        // Tied embeddings: lm_head = embed^T. Parallel across vocab.
+        let logits = matmul_embed_parallel(&normed, &self.embed);
 
         self.cache.seq_len += 1;
         logits
