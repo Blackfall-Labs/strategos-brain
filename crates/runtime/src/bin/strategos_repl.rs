@@ -16,14 +16,15 @@ const SYSTEM_PROMPT: &str = r#"You are Strategos, a decision-making intelligence
 
 You have access to tools. When you need information, call a tool using EXACTLY this format — write nothing after the closing tag:
 
-<tool_call>{"name": "tool_name", "args": {"key": "value"}}</tool_call>
+<tool_call>{"name": "search_knowledge", "args": {"query": "your search terms"}}</tool_call>
 
 Available tools:
-- search_knowledge(query: string) — search the local knowledge base for context
-- read_file(path: string) — read a local file by its path
+- search_knowledge — args: {"query": "string"} — search the local knowledge base
+- read_file — args: {"path": "string"} — read a local file by its path
 
 Rules:
 - Call only one tool at a time.
+- Use the exact argument names shown above (query, path).
 - Write nothing after </tool_call> — stop there and wait for the result.
 - After receiving a tool result, give your final answer directly.
 - If you don't need a tool, answer directly without calling one."#;
@@ -134,7 +135,11 @@ fn parse_tool_call(text: &str) -> Option<(String, Value)> {
 fn execute_tool(name: &str, args: &Value, rag: &Option<RetrievalSystem>) -> String {
     match name {
         "search_knowledge" => {
-            let query = args["query"].as_str().unwrap_or("");
+            // Accept "query" or fall back to the first string value in args.
+            let query = args["query"].as_str()
+                .or_else(|| args.as_object()
+                    .and_then(|o| o.values().find_map(|v| v.as_str())))
+                .unwrap_or("");
             match rag {
                 Some(r) => match r.retrieve(query, RAG_TOP_K) {
                     Ok(results) if !results.is_empty() => results.iter()
