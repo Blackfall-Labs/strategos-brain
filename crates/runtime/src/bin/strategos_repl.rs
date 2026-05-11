@@ -81,7 +81,12 @@ enum CallResult {
 
 // ── Core streaming call ───────────────────────────────────────────────────────
 
-fn call(client: &Client, messages: &[Value], spinning: Arc<AtomicBool>) -> CallResult {
+fn call(
+    client: &Client,
+    messages: &[Value],
+    spinning: Arc<AtomicBool>,
+    spin_handle: std::thread::JoinHandle<()>,
+) -> CallResult {
     let body = json!({
         "model": MODEL,
         "messages": messages,
@@ -91,7 +96,11 @@ fn call(client: &Client, messages: &[Value], spinning: Arc<AtomicBool>) -> CallR
 
     let response = match client.post(API_URL).json(&body).send() {
         Ok(r) => r,
-        Err(e) => return CallResult::Error(e.to_string()),
+        Err(e) => {
+            spinning.store(false, Ordering::Relaxed);
+            spin_handle.join().ok();
+            return CallResult::Error(e.to_string());
+        }
     };
 
     let reader = std::io::BufReader::new(response);
@@ -101,6 +110,7 @@ fn call(client: &Client, messages: &[Value], spinning: Arc<AtomicBool>) -> CallR
     enum Mode { Deciding, Streaming, ToolCall }
     let mut mode = Mode::Deciding;
     let mut decide_buf = String::new();
+    let mut spin_handle = Some(spin_handle);
 
     for line in reader.lines() {
         let line = match line { Ok(l) => l, Err(_) => break };
@@ -121,11 +131,9 @@ fn call(client: &Client, messages: &[Value], spinning: Arc<AtomicBool>) -> CallR
                 if decide_buf.contains("<tool_call>") {
                     mode = Mode::ToolCall;
                 } else if decide_buf.len() >= DECIDE_WINDOW {
-                    // No tool call in window — this is a real response.
+                    // Stop and JOIN the spinner before touching stdout.
                     spinning.store(false, Ordering::Relaxed);
-                    // Clear the spinner line before printing.
-                    eprint!("\r                      \r");
-                    io::stderr().flush().ok();
+                    if let Some(h) = spin_handle.take() { h.join().ok(); }
                     print!("strategos> {}", decide_buf);
                     stdout.flush().ok();
                     decide_buf.clear();
@@ -140,13 +148,12 @@ fn call(client: &Client, messages: &[Value], spinning: Arc<AtomicBool>) -> CallR
         }
     }
 
+    // Stop spinner for all remaining cases (tool call, short response, error).
     spinning.store(false, Ordering::Relaxed);
+    if let Some(h) = spin_handle.take() { h.join().ok(); }
 
-    // Handle responses shorter than DECIDE_WINDOW that never triggered Streaming.
     match mode {
         Mode::Deciding if !decide_buf.contains("<tool_call>") => {
-            eprint!("\r                      \r");
-            io::stderr().flush().ok();
             print!("strategos> {}", decide_buf);
             stdout.flush().ok();
             println!("\n");
@@ -156,23 +163,18 @@ fn call(client: &Client, messages: &[Value], spinning: Arc<AtomicBool>) -> CallR
             println!("\n");
             CallResult::Response(accumulated)
         }
-        _ => {
-            // ToolCall or a Deciding buffer that contains <tool_call>.
-            match parse_tool_call(&accumulated) {
-                Some((name, args)) => {
-                    let cut = accumulated.find("</tool_call>")
-                        .map(|i| i + "</tool_call>".len())
-                        .unwrap_or(accumulated.len());
-                    CallResult::ToolCall { name, args, head: accumulated[..cut].to_string() }
-                }
-                None => {
-                    // Couldn't parse — treat as a response.
-                    eprint!("\r                      \r");
-                    println!("strategos> {}\n", accumulated.trim());
-                    CallResult::Response(accumulated)
-                }
+        _ => match parse_tool_call(&accumulated) {
+            Some((name, args)) => {
+                let cut = accumulated.find("</tool_call>")
+                    .map(|i| i + "</tool_call>".len())
+                    .unwrap_or(accumulated.len());
+                CallResult::ToolCall { name, args, head: accumulated[..cut].to_string() }
             }
-        }
+            None => {
+                println!("strategos> {}\n", accumulated.trim());
+                CallResult::Response(accumulated)
+            }
+        },
     }
 }
 
@@ -224,16 +226,15 @@ fn main() {
             let spinning = Arc::new(AtomicBool::new(true));
             let spin_handle = spawn_spinner(spinning.clone());
 
-            match call(&client, &messages, spinning) {
+            // call() takes ownership of spin_handle and joins it before any printing.
+            match call(&client, &messages, spinning, spin_handle) {
                 CallResult::Response(content) => {
-                    spin_handle.join().ok();
                     eprintln!("  [{:.0}ms]", start.elapsed().as_secs_f64() * 1000.0);
                     messages.push(json!({"role": "assistant", "content": content}));
                     answered = true;
                     break;
                 }
                 CallResult::ToolCall { name, args, head } => {
-                    spin_handle.join().ok();
                     eprintln!("  [tool] {} {}", name, args);
                     messages.push(json!({"role": "assistant", "content": head}));
                     let result = execute_tool(&name, &args, &rag);
@@ -243,7 +244,6 @@ fn main() {
                     }));
                 }
                 CallResult::Error(e) => {
-                    spin_handle.join().ok();
                     eprintln!("  [error] {}", e);
                     break;
                 }
