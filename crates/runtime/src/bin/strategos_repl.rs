@@ -7,7 +7,7 @@ use serde_json::{json, Value};
 use frame_catalog::{RetrievalSystem, RetrievalConfig};
 
 const API_URL: &str = "http://localhost:12434/v1/chat/completions";
-const MODEL: &str = "docker.io/ai/phi4:latest"; // swap to phi4:14B-Q4_0 when ready
+const MODEL: &str = "docker.io/ai/phi4:14B-Q4_0";
 const KNOWLEDGE_DIR: &str = "knowledge";
 const RAG_TOP_K: usize = 5;
 const MAX_TOOL_ROUNDS: usize = 8;
