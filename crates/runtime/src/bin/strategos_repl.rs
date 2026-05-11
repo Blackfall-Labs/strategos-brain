@@ -1,4 +1,4 @@
-use std::io::{self, Write, BufRead};
+use std::io::{self, BufRead, Write};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::time::Duration;
@@ -12,6 +12,9 @@ const KNOWLEDGE_DIR: &str = "knowledge";
 const MEMORY_FILE: &str = "memory/facts.json";
 const RAG_TOP_K: usize = 5;
 const MAX_TOOL_ROUNDS: usize = 8;
+// Buffer this many chars before deciding stream vs tool-call.
+// <tool_call> is 11 chars so 64 is a comfortable detection window.
+const DECIDE_WINDOW: usize = 64;
 
 const SYSTEM_PROMPT_BASE: &str = r#"You are Strategos, a decision-making intelligence for a local system. You reason carefully before responding and provide clear, actionable answers.
 
@@ -29,6 +32,7 @@ Rules:
 - Use the exact argument names shown above (query, path, fact).
 - Write nothing after </tool_call> — stop there and wait for the result.
 - After receiving a tool result, give your final answer directly.
+- If search_knowledge returns no results and you don't know the answer from memory, say so — do not speculate.
 - If you don't need a tool, answer directly without calling one.
 - Use remember proactively when the user shares something worth retaining."#;
 
@@ -50,21 +54,129 @@ fn load_memories() -> Vec<String> {
 
 fn save_memory(fact: &str) -> String {
     let path = std::path::Path::new(MEMORY_FILE);
-    if let Some(parent) = path.parent() {
-        if let Err(e) = std::fs::create_dir_all(parent) {
+    if let Some(p) = path.parent() {
+        if let Err(e) = std::fs::create_dir_all(p) {
             return format!("Error creating memory dir: {}", e);
         }
     }
     let mut memories = load_memories();
     memories.push(fact.to_string());
-    match serde_json::to_string_pretty(&memories) {
-        Ok(json) => match std::fs::write(path, json) {
-            Ok(_) => format!("Remembered: {}", fact),
-            Err(e) => format!("Error saving memory: {}", e),
-        },
-        Err(e) => format!("Error serializing memory: {}", e),
+    match serde_json::to_string_pretty(&memories).and_then(|j| {
+        std::fs::write(path, j).map_err(|e| serde_json::Error::io(e))
+    }) {
+        Ok(_) => format!("Remembered: {}", fact),
+        Err(e) => format!("Error saving memory: {}", e),
     }
 }
+
+// ── Result of one streaming API call ─────────────────────────────────────────
+
+enum CallResult {
+    /// Final answer — already streamed to stdout.
+    Response(String),
+    /// Tool call — content truncated at </tool_call>.
+    ToolCall { name: String, args: Value, head: String },
+    Error(String),
+}
+
+// ── Core streaming call ───────────────────────────────────────────────────────
+
+fn call(client: &Client, messages: &[Value], spinning: Arc<AtomicBool>) -> CallResult {
+    let body = json!({
+        "model": MODEL,
+        "messages": messages,
+        "max_tokens": 1024,
+        "stream": true,
+    });
+
+    let response = match client.post(API_URL).json(&body).send() {
+        Ok(r) => r,
+        Err(e) => return CallResult::Error(e.to_string()),
+    };
+
+    let reader = std::io::BufReader::new(response);
+    let mut accumulated = String::new();
+    let mut stdout = io::stdout();
+
+    enum Mode { Deciding, Streaming, ToolCall }
+    let mut mode = Mode::Deciding;
+    let mut decide_buf = String::new();
+
+    for line in reader.lines() {
+        let line = match line { Ok(l) => l, Err(_) => break };
+        if !line.starts_with("data: ") { continue; }
+        let data = line["data: ".len()..].trim();
+        if data == "[DONE]" { break; }
+
+        let chunk: Value = match serde_json::from_str(data) {
+            Ok(v) => v,
+            Err(_) => continue,
+        };
+        let delta = chunk["choices"][0]["delta"]["content"].as_str().unwrap_or("");
+        accumulated.push_str(delta);
+
+        match mode {
+            Mode::Deciding => {
+                decide_buf.push_str(delta);
+                if decide_buf.contains("<tool_call>") {
+                    mode = Mode::ToolCall;
+                } else if decide_buf.len() >= DECIDE_WINDOW {
+                    // No tool call in window — this is a real response.
+                    spinning.store(false, Ordering::Relaxed);
+                    // Clear the spinner line before printing.
+                    eprint!("\r                      \r");
+                    io::stderr().flush().ok();
+                    print!("strategos> {}", decide_buf);
+                    stdout.flush().ok();
+                    decide_buf.clear();
+                    mode = Mode::Streaming;
+                }
+            }
+            Mode::Streaming => {
+                print!("{}", delta);
+                stdout.flush().ok();
+            }
+            Mode::ToolCall => { /* accumulate silently */ }
+        }
+    }
+
+    spinning.store(false, Ordering::Relaxed);
+
+    // Handle responses shorter than DECIDE_WINDOW that never triggered Streaming.
+    match mode {
+        Mode::Deciding if !decide_buf.contains("<tool_call>") => {
+            eprint!("\r                      \r");
+            io::stderr().flush().ok();
+            print!("strategos> {}", decide_buf);
+            stdout.flush().ok();
+            println!("\n");
+            CallResult::Response(accumulated)
+        }
+        Mode::Streaming => {
+            println!("\n");
+            CallResult::Response(accumulated)
+        }
+        _ => {
+            // ToolCall or a Deciding buffer that contains <tool_call>.
+            match parse_tool_call(&accumulated) {
+                Some((name, args)) => {
+                    let cut = accumulated.find("</tool_call>")
+                        .map(|i| i + "</tool_call>".len())
+                        .unwrap_or(accumulated.len());
+                    CallResult::ToolCall { name, args, head: accumulated[..cut].to_string() }
+                }
+                None => {
+                    // Couldn't parse — treat as a response.
+                    eprint!("\r                      \r");
+                    println!("strategos> {}\n", accumulated.trim());
+                    CallResult::Response(accumulated)
+                }
+            }
+        }
+    }
+}
+
+// ── Main ──────────────────────────────────────────────────────────────────────
 
 fn main() {
     eprintln!("=== Strategos Brain ===");
@@ -112,49 +224,28 @@ fn main() {
             let spinning = Arc::new(AtomicBool::new(true));
             let spin_handle = spawn_spinner(spinning.clone());
 
-            let body = json!({
-                "model": MODEL,
-                "messages": messages,
-                "max_tokens": 1024,
-            });
-            let result = client.post(API_URL).json(&body).send()
-                .and_then(|r| r.json::<Value>());
-
-            spinning.store(false, Ordering::Relaxed);
-            spin_handle.join().ok();
-
-            match result {
-                Err(e) => {
-                    eprintln!("  [error] {}", e);
+            match call(&client, &messages, spinning) {
+                CallResult::Response(content) => {
+                    spin_handle.join().ok();
+                    eprintln!("  [{:.0}ms]", start.elapsed().as_secs_f64() * 1000.0);
+                    messages.push(json!({"role": "assistant", "content": content}));
+                    answered = true;
                     break;
                 }
-                Ok(response) => {
-                    let content = response["choices"][0]["message"]["content"]
-                        .as_str()
-                        .unwrap_or("")
-                        .to_string();
-
-                    match parse_tool_call(&content) {
-                        Some((name, args)) => {
-                            let cut = content.find("</tool_call>").unwrap() + "</tool_call>".len();
-                            messages.push(json!({"role": "assistant", "content": &content[..cut]}));
-
-                            eprintln!("  [tool] {} {}", name, args);
-                            let tool_result = execute_tool(&name, &args, &rag);
-
-                            messages.push(json!({
-                                "role": "user",
-                                "content": format!("<tool_result>\n{}\n</tool_result>", tool_result),
-                            }));
-                        }
-                        None => {
-                            eprintln!("  [{:.0}ms]", start.elapsed().as_secs_f64() * 1000.0);
-                            println!("strategos> {}\n", content.trim());
-                            messages.push(json!({"role": "assistant", "content": content}));
-                            answered = true;
-                            break;
-                        }
-                    }
+                CallResult::ToolCall { name, args, head } => {
+                    spin_handle.join().ok();
+                    eprintln!("  [tool] {} {}", name, args);
+                    messages.push(json!({"role": "assistant", "content": head}));
+                    let result = execute_tool(&name, &args, &rag);
+                    messages.push(json!({
+                        "role": "user",
+                        "content": format!("<tool_result>\n{}\n</tool_result>", result),
+                    }));
+                }
+                CallResult::Error(e) => {
+                    spin_handle.join().ok();
+                    eprintln!("  [error] {}", e);
+                    break;
                 }
             }
         }
@@ -164,6 +255,8 @@ fn main() {
         }
     }
 }
+
+// ── Tools ─────────────────────────────────────────────────────────────────────
 
 fn parse_tool_call(text: &str) -> Option<(String, Value)> {
     let start = text.find("<tool_call>")? + "<tool_call>".len();
@@ -178,8 +271,7 @@ fn execute_tool(name: &str, args: &Value, rag: &Option<RetrievalSystem>) -> Stri
     match name {
         "search_knowledge" => {
             let query = args["query"].as_str()
-                .or_else(|| args.as_object()
-                    .and_then(|o| o.values().find_map(|v| v.as_str())))
+                .or_else(|| args.as_object().and_then(|o| o.values().find_map(|v| v.as_str())))
                 .unwrap_or("");
             match rag {
                 Some(r) => match r.retrieve(query, RAG_TOP_K) {
@@ -194,9 +286,7 @@ fn execute_tool(name: &str, args: &Value, rag: &Option<RetrievalSystem>) -> Stri
         }
         "read_file" => {
             let path = args["path"].as_str().unwrap_or("");
-            if path.is_empty() {
-                return "Error: path required".to_string();
-            }
+            if path.is_empty() { return "Error: path required".to_string(); }
             match std::fs::read_to_string(path) {
                 Ok(c) if c.len() > 8192 => format!("{}\n[truncated at 8KB]", &c[..8192]),
                 Ok(c) => c,
@@ -205,17 +295,16 @@ fn execute_tool(name: &str, args: &Value, rag: &Option<RetrievalSystem>) -> Stri
         }
         "remember" => {
             let fact = args["fact"].as_str()
-                .or_else(|| args.as_object()
-                    .and_then(|o| o.values().find_map(|v| v.as_str())))
+                .or_else(|| args.as_object().and_then(|o| o.values().find_map(|v| v.as_str())))
                 .unwrap_or("");
-            if fact.is_empty() {
-                return "Error: fact required".to_string();
-            }
+            if fact.is_empty() { return "Error: fact required".to_string(); }
             save_memory(fact)
         }
         _ => format!("Unknown tool: {}", name),
     }
 }
+
+// ── Spinner ───────────────────────────────────────────────────────────────────
 
 fn spawn_spinner(flag: Arc<AtomicBool>) -> std::thread::JoinHandle<()> {
     std::thread::spawn(move || {
@@ -232,6 +321,8 @@ fn spawn_spinner(flag: Arc<AtomicBool>) -> std::thread::JoinHandle<()> {
     })
 }
 
+// ── RAG init ──────────────────────────────────────────────────────────────────
+
 fn init_rag() -> Option<RetrievalSystem> {
     let rag = RetrievalSystem::new(RetrievalConfig::default()).ok()?;
 
@@ -246,12 +337,8 @@ fn init_rag() -> Option<RetrievalSystem> {
         let path = entry.path();
         let ext = path.extension().and_then(|e| e.to_str()).unwrap_or("");
         if ext != "md" && ext != "txt" { continue; }
-
         if let Ok(content) = std::fs::read_to_string(&path) {
-            let source = path.file_name()
-                .and_then(|n| n.to_str())
-                .unwrap_or("unknown")
-                .to_string();
+            let source = path.file_name().and_then(|n| n.to_str()).unwrap_or("unknown").to_string();
             if let Ok(n) = rag.index_document(&source.replace('.', "_"), &content, &source, None) {
                 indexed += n;
             }
