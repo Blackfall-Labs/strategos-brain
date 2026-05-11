@@ -9,31 +9,75 @@ use frame_catalog::{RetrievalSystem, RetrievalConfig};
 const API_URL: &str = "http://localhost:12434/v1/chat/completions";
 const MODEL: &str = "docker.io/ai/phi4:14B-Q4_0";
 const KNOWLEDGE_DIR: &str = "knowledge";
+const MEMORY_FILE: &str = "memory/facts.json";
 const RAG_TOP_K: usize = 5;
 const MAX_TOOL_ROUNDS: usize = 8;
 
-const SYSTEM_PROMPT: &str = r#"You are Strategos, a decision-making intelligence for a local system. You reason carefully before responding and provide clear, actionable answers.
+const SYSTEM_PROMPT_BASE: &str = r#"You are Strategos, a decision-making intelligence for a local system. You reason carefully before responding and provide clear, actionable answers.
 
-You have access to tools. When you need information, call a tool using EXACTLY this format — write nothing after the closing tag:
+You have access to tools. When you need information or want to save something, call a tool using EXACTLY this format — write nothing after the closing tag:
 
 <tool_call>{"name": "search_knowledge", "args": {"query": "your search terms"}}</tool_call>
 
 Available tools:
 - search_knowledge — args: {"query": "string"} — search the local knowledge base
-- read_file — args: {"path": "string"} — read a local file by its path
+- read_file      — args: {"path": "string"}  — read a local file by its path
+- remember       — args: {"fact": "string"}  — save an important fact to persistent memory for future sessions
 
 Rules:
 - Call only one tool at a time.
-- Use the exact argument names shown above (query, path).
+- Use the exact argument names shown above (query, path, fact).
 - Write nothing after </tool_call> — stop there and wait for the result.
 - After receiving a tool result, give your final answer directly.
-- If you don't need a tool, answer directly without calling one."#;
+- If you don't need a tool, answer directly without calling one.
+- Use remember proactively when the user shares something worth retaining."#;
+
+fn build_system_prompt(memories: &[String]) -> String {
+    if memories.is_empty() {
+        return SYSTEM_PROMPT_BASE.to_string();
+    }
+    let facts = memories.iter()
+        .map(|f| format!("- {}", f))
+        .collect::<Vec<_>>()
+        .join("\n");
+    format!("{}\n\n[What you remember from previous sessions:]\n{}", SYSTEM_PROMPT_BASE, facts)
+}
+
+fn load_memories() -> Vec<String> {
+    let content = std::fs::read_to_string(MEMORY_FILE).unwrap_or_default();
+    serde_json::from_str(&content).unwrap_or_default()
+}
+
+fn save_memory(fact: &str) -> String {
+    let path = std::path::Path::new(MEMORY_FILE);
+    if let Some(parent) = path.parent() {
+        if let Err(e) = std::fs::create_dir_all(parent) {
+            return format!("Error creating memory dir: {}", e);
+        }
+    }
+    let mut memories = load_memories();
+    memories.push(fact.to_string());
+    match serde_json::to_string_pretty(&memories) {
+        Ok(json) => match std::fs::write(path, json) {
+            Ok(_) => format!("Remembered: {}", fact),
+            Err(e) => format!("Error saving memory: {}", e),
+        },
+        Err(e) => format!("Error serializing memory: {}", e),
+    }
+}
 
 fn main() {
     eprintln!("=== Strategos Brain ===");
     eprintln!("Model : {}", MODEL);
 
     let rag = init_rag();
+    let memories = load_memories();
+
+    if memories.is_empty() {
+        eprintln!("Memory: none yet");
+    } else {
+        eprintln!("Memory: {} facts loaded", memories.len());
+    }
 
     eprintln!("Type anything to talk. 'quit' to exit.\n");
 
@@ -42,8 +86,9 @@ fn main() {
         .build()
         .expect("failed to build HTTP client");
 
+    let system_prompt = build_system_prompt(&memories);
     let mut messages: Vec<Value> = vec![
-        json!({"role": "system", "content": SYSTEM_PROMPT}),
+        json!({"role": "system", "content": system_prompt}),
     ];
 
     let stdin = io::stdin();
@@ -91,7 +136,6 @@ fn main() {
 
                     match parse_tool_call(&content) {
                         Some((name, args)) => {
-                            // Discard anything Phi-4 hallucinated after </tool_call>.
                             let cut = content.find("</tool_call>").unwrap() + "</tool_call>".len();
                             messages.push(json!({"role": "assistant", "content": &content[..cut]}));
 
@@ -115,14 +159,12 @@ fn main() {
             }
         }
 
-        // If the loop exhausted without a final answer, clean up the dangling user message.
         if !answered && messages.last().map(|m| m["role"] == "user").unwrap_or(false) {
             messages.pop();
         }
     }
 }
 
-/// Extract (name, args) from a `<tool_call>...</tool_call>` block in the response text.
 fn parse_tool_call(text: &str) -> Option<(String, Value)> {
     let start = text.find("<tool_call>")? + "<tool_call>".len();
     let end = text.find("</tool_call>")?;
@@ -135,7 +177,6 @@ fn parse_tool_call(text: &str) -> Option<(String, Value)> {
 fn execute_tool(name: &str, args: &Value, rag: &Option<RetrievalSystem>) -> String {
     match name {
         "search_knowledge" => {
-            // Accept "query" or fall back to the first string value in args.
             let query = args["query"].as_str()
                 .or_else(|| args.as_object()
                     .and_then(|o| o.values().find_map(|v| v.as_str())))
@@ -161,6 +202,16 @@ fn execute_tool(name: &str, args: &Value, rag: &Option<RetrievalSystem>) -> Stri
                 Ok(c) => c,
                 Err(e) => format!("Error reading {}: {}", path, e),
             }
+        }
+        "remember" => {
+            let fact = args["fact"].as_str()
+                .or_else(|| args.as_object()
+                    .and_then(|o| o.values().find_map(|v| v.as_str())))
+                .unwrap_or("");
+            if fact.is_empty() {
+                return "Error: fact required".to_string();
+            }
+            save_memory(fact)
         }
         _ => format!("Unknown tool: {}", name),
     }
