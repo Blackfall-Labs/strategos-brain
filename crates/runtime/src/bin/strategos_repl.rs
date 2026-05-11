@@ -16,7 +16,7 @@ const MAX_TOOL_ROUNDS: usize = 8;
 // <tool_call> is 11 chars so 64 is a comfortable detection window.
 const DECIDE_WINDOW: usize = 64;
 
-const SYSTEM_PROMPT_BASE: &str = r#"You are Strategos, a decision-making intelligence for a local system. You reason carefully before responding and provide clear, actionable answers.
+const SYSTEM_PROMPT_BASE: &str = r#"You are Strategos, a decision-making intelligence for a local system. You reason carefully before responding and provide clear, actionable answers. Be brief — one to three sentences unless depth is explicitly needed. Never pad, summarize, or ask follow-up questions unless asked.
 
 You have access to tools. When you need information or want to save something, call a tool using EXACTLY this format — write nothing after the closing tag:
 
