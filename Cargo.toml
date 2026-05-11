@@ -3,6 +3,7 @@ resolver = "2"
 members = [
     "crates/runtime",
     "crates/ops",
+    "crates/frame-catalog",
 ]
 
 [workspace.package]
