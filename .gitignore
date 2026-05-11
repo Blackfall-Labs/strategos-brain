@@ -3,4 +3,5 @@
 *.pdb
 models/**/*.bin
 models/**/*.safetensors
+models/**/*.gguf
 memory/

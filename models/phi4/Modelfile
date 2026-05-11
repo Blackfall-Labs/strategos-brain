@@ -1,0 +1,7 @@
+FROM E:\repos\blackfall-labs\strategos-brain\models\phi4\model.gguf
+
+PARAMETER num_gpu 99
+PARAMETER num_ctx 16384
+PARAMETER num_thread 8
+
+SYSTEM You are Phi-4, a helpful and precise AI assistant.
