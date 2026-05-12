@@ -23,7 +23,9 @@ fn reasoner_url() -> String {
 // In Docker each server runs one model so the model name is whatever llama.cpp
 // loaded — by convention we use the standard completions path.
 const DISPATCHER_MODEL: &str = "granite4:1b";   // local Ollama dev name
-const REASONER_MODEL:   &str = "smollm3-strategos"; // local Ollama dev name
+// Phi-4 as temporary reasoner — swap to smollm3-strategos once Q4_K_M GGUF is downloaded.
+// IQ2_XXS (Docker's build) destroys instruction following; Q4_K_M is needed for synthesis.
+const REASONER_MODEL:   &str = "phi4-strategos";
 
 const KNOWLEDGE_DIR: &str = "knowledge";
 const MEMORY_FILE:   &str = "memory/facts.json";
@@ -33,9 +35,15 @@ const DECIDE_WINDOW: usize = 64;
 // ── Prompts ───────────────────────────────────────────────────────────────────
 
 const REASONER_SYSTEM: &str =
-    "You are Strategos, a decision-making intelligence. \
-     Answer in 1–3 sentences using only the provided context. \
-     Never speculate. If the context does not contain the answer, say so.";
+    "You answer user questions. You will be given search results as context and the original question.\n\
+     Rules:\n\
+     - Write 1-3 sentences max.\n\
+     - Use ONLY the provided context. Do not add knowledge from outside the context.\n\
+     - Be direct and conversational. No headers, no lists, no code blocks.\n\
+     - If the context does not contain the answer, say exactly: \"I don't have that information.\"\n\
+     - Never speculate, pad, or ask follow-up questions.";
+
+const MAX_DISPATCH_ROUNDS: usize = 4;
 
 // ── Memory ────────────────────────────────────────────────────────────────────
 
@@ -61,87 +69,116 @@ fn save_memory(fact: &str) -> String {
     }
 }
 
-// ── Stage 1: Dispatcher ───────────────────────────────────────────────────────
-// Calls FunctionGemma with the user query and available tools.
-// Returns Some((tool_name, args)) if a tool should be called, None otherwise.
+const DISPATCHER_TOOLS: &str = r#"[
+  {"type":"function","function":{"name":"search_knowledge","description":"Search local knowledge base","parameters":{"type":"object","properties":{"query":{"type":"string"}},"required":["query"]}}},
+  {"type":"function","function":{"name":"read_file","description":"Read a local file by path","parameters":{"type":"object","properties":{"path":{"type":"string"}},"required":["path"]}}},
+  {"type":"function","function":{"name":"remember","description":"Save a fact to persistent memory","parameters":{"type":"object","properties":{"fact":{"type":"string"}},"required":["fact"]}}}
+]"#;
 
-fn dispatch(
+// ── Stage 1: Dispatcher loop ──────────────────────────────────────────────────
+// Granite4:1b dispatches tool calls sequentially, accumulating all results.
+// Keeps looping until it stops calling tools or MAX_DISPATCH_ROUNDS is hit.
+// Returns collected context strings to hand to the reasoner.
+
+fn dispatch_loop(
     client: &Client,
     question: &str,
     memories: &[String],
-    spinning: Arc<AtomicBool>,
-    spin_handle: std::thread::JoinHandle<()>,
-) -> Option<(String, Value)> {
-    let mut system = "You are a function dispatcher. \
-        Given a user query, call search_knowledge to look up the answer. \
-        Always call search_knowledge unless the user is asking you to save a fact (use remember) \
-        or read a specific file (use read_file). \
-        Never answer directly — always dispatch a tool.".to_string();
+    rag: &Option<RetrievalSystem>,
+) -> Vec<String> {
+    let mut system = "You are a function dispatcher. Given a user query, \
+        call the appropriate tools to gather all information needed to answer it. \
+        Call tools one at a time. When you have gathered enough context, stop calling tools. \
+        Use search_knowledge for any factual question. \
+        Use remember only when the user explicitly wants something saved. \
+        Never answer directly — only call tools.".to_string();
     if !memories.is_empty() {
-        system.push_str("\n\nKnown facts from memory:\n");
+        system.push_str("\n\nKnown facts:\n");
         for m in memories { system.push_str(&format!("- {}\n", m)); }
     }
 
-    let body = json!({
-        "model": DISPATCHER_MODEL,
-        "messages": [
-            {"role": "system", "content": system},
-            {"role": "user",   "content": question},
-        ],
-        "tools": [
-            {"type":"function","function":{"name":"search_knowledge",
-                "description":"Search the local knowledge base for documented facts",
-                "parameters":{"type":"object","properties":{"query":{"type":"string"}},"required":["query"]}}},
-            {"type":"function","function":{"name":"read_file",
-                "description":"Read a local file by path",
-                "parameters":{"type":"object","properties":{"path":{"type":"string"}},"required":["path"]}}},
-            {"type":"function","function":{"name":"remember",
-                "description":"Save a fact to persistent memory for future sessions",
-                "parameters":{"type":"object","properties":{"fact":{"type":"string"}},"required":["fact"]}}},
-        ],
-        "max_tokens": 256,
-        "stream": true,
-    });
+    let tools: Value = serde_json::from_str(DISPATCHER_TOOLS).expect("valid JSON");
 
-    let response = match client.post(&dispatcher_url()).json(&body).send() {
-        Ok(r) => r,
-        Err(e) => {
-            spinning.store(false, Ordering::Relaxed);
-            spin_handle.join().ok();
-            eprintln!("  [dispatcher error] {}", e);
-            return None;
+    let mut messages: Vec<Value> = vec![
+        json!({"role": "system", "content": system}),
+        json!({"role": "user",   "content": question}),
+    ];
+
+    let mut context_parts: Vec<String> = Vec::new();
+
+    for round in 0..MAX_DISPATCH_ROUNDS {
+        let spinning = Arc::new(AtomicBool::new(true));
+        let spin_handle = spawn_spinner(spinning.clone());
+
+        let body = json!({
+            "model": DISPATCHER_MODEL,
+            "messages": messages,
+            "tools": tools,
+            "max_tokens": 256,
+            "stream": true,
+        });
+
+        let response = match client.post(&dispatcher_url()).json(&body).send() {
+            Ok(r) => r,
+            Err(e) => {
+                spinning.store(false, Ordering::Relaxed);
+                spin_handle.join().ok();
+                eprintln!("  [dispatcher error] {}", e);
+                break;
+            }
+        };
+
+        let reader = std::io::BufReader::new(response);
+        let mut tool_name = String::new();
+        let mut tool_id   = String::new();
+        let mut args_buf  = String::new();
+        let mut finish_tool = false;
+
+        for line in reader.lines() {
+            let line = match line { Ok(l) => l, Err(_) => break };
+            if !line.starts_with("data: ") { continue; }
+            let data = line["data: ".len()..].trim();
+            if data == "[DONE]" { break; }
+            let chunk: Value = match serde_json::from_str(data) { Ok(v) => v, Err(_) => continue };
+            let choice = &chunk["choices"][0];
+            if choice["finish_reason"].as_str() == Some("tool_calls") { finish_tool = true; }
+            let tc = &choice["delta"]["tool_calls"][0];
+            if !tc.is_null() {
+                if let Some(id) = tc["id"].as_str() { tool_id = id.to_string(); }
+                if let Some(n)  = tc["function"]["name"].as_str() { tool_name = n.to_string(); }
+                if let Some(a)  = tc["function"]["arguments"].as_str() { args_buf.push_str(a); }
+            }
         }
-    };
 
-    let reader = std::io::BufReader::new(response);
-    let mut tool_name = String::new();
-    let mut args_buf  = String::new();
-    let mut finish_tool = false;
+        spinning.store(false, Ordering::Relaxed);
+        spin_handle.join().ok();
 
-    for line in reader.lines() {
-        let line = match line { Ok(l) => l, Err(_) => break };
-        if !line.starts_with("data: ") { continue; }
-        let data = line["data: ".len()..].trim();
-        if data == "[DONE]" { break; }
-        let chunk: Value = match serde_json::from_str(data) { Ok(v) => v, Err(_) => continue };
-        let choice = &chunk["choices"][0];
-        if choice["finish_reason"].as_str() == Some("tool_calls") { finish_tool = true; }
-        let tc = &choice["delta"]["tool_calls"][0];
-        if !tc.is_null() {
-            if let Some(n) = tc["function"]["name"].as_str() { tool_name = n.to_string(); }
-            if let Some(a) = tc["function"]["arguments"].as_str() { args_buf.push_str(a); }
+        if !finish_tool && tool_name.is_empty() {
+            // Dispatcher decided it has enough — or no tool needed.
+            break;
         }
+
+        let args: Value = serde_json::from_str(&args_buf).unwrap_or(Value::Null);
+        eprintln!("  [dispatch {}] {} {}", round + 1, tool_name, args);
+
+        let result = execute_tool(&tool_name, &args, rag);
+        context_parts.push(format!("[{}]\n{}", tool_name, result));
+
+        // Feed result back into dispatcher conversation.
+        let call_id = if tool_id.is_empty() { format!("call_{}", round) } else { tool_id };
+        messages.push(json!({
+            "role": "assistant",
+            "tool_calls": [{"id": call_id, "type": "function",
+                "function": {"name": tool_name, "arguments": args_buf}}]
+        }));
+        messages.push(json!({
+            "role": "tool",
+            "tool_call_id": call_id,
+            "content": result,
+        }));
     }
 
-    spinning.store(false, Ordering::Relaxed);
-    spin_handle.join().ok();
-
-    if finish_tool || !tool_name.is_empty() {
-        let args = serde_json::from_str(&args_buf).unwrap_or(Value::Null);
-        Some((tool_name, args))
-    } else {
-        None
-    }
+    context_parts
 }
 
 // ── Stage 2: Reasoner ─────────────────────────────────────────────────────────
@@ -163,11 +200,14 @@ fn reason(
     }
 
     let user_content = match context {
-        Some(ctx) => format!("Context:\n{}\n\nQuestion: {}", ctx, question),
-        None => question.to_string(),
+        Some(ctx) => format!(
+            "Context:\n{}\n\nAnswer this in 1-3 sentences using only the context above: {}",
+            ctx, question
+        ),
+        None => format!("Answer in 1-3 sentences: {}", question),
     };
 
-    // SmolLM3: /no_think disables thinking mode.
+    // /no_think disables SmolLM3 thinking mode. Explicit stop prevents Q&A generation.
     let user_content = format!("/no_think {}", user_content);
 
     let body = json!({
@@ -176,7 +216,8 @@ fn reason(
             {"role": "system", "content": system},
             {"role": "user",   "content": user_content},
         ],
-        "max_tokens": 512,
+        "max_tokens": 150,
+        "stop": ["Question:", "Answer:", "you>"],
         "stream": true,
     });
 
@@ -275,19 +316,18 @@ fn main() {
 
         let start = std::time::Instant::now();
 
-        // ── Stage 1: Dispatch ─────────────────────────────────────────────────
-        let spinning = Arc::new(AtomicBool::new(true));
-        let spin_handle = spawn_spinner(spinning.clone());
-
-        let tool_call = dispatch(&client, line, &memories, spinning, spin_handle);
-
-        // ── Execute tool (if dispatched) ──────────────────────────────────────
-        let context: Option<String> = tool_call.map(|(name, args)| {
-            eprintln!("  [tool] {} {}", name, args);
-            execute_tool(&name, &args, &rag)
-        });
+        // ── Stage 1: Dispatch loop ────────────────────────────────────────────
+        // Granite4 calls tools sequentially until it has everything it needs.
+        let context_parts = dispatch_loop(&client, line, &memories, &rag);
 
         // ── Stage 2: Reason ───────────────────────────────────────────────────
+        // Hand ALL accumulated context to SmolLM3 for synthesis.
+        let context = if context_parts.is_empty() {
+            None
+        } else {
+            Some(context_parts.join("\n\n---\n\n"))
+        };
+
         let spinning = Arc::new(AtomicBool::new(true));
         let spin_handle = spawn_spinner(spinning.clone());
 
@@ -315,9 +355,9 @@ fn execute_tool(name: &str, args: &Value, rag: &Option<RetrievalSystem>) -> Stri
             match rag {
                 Some(r) => match r.retrieve(query, RAG_TOP_K) {
                     Ok(results) if !results.is_empty() => results.iter()
-                        .map(|r| format!("[{}]\n{}", r.chunk.source, r.chunk.content))
+                        .map(|r| format!("Source: {}\n{}", r.chunk.source, r.chunk.content))
                         .collect::<Vec<_>>()
-                        .join("\n\n"),
+                        .join("\n\n---\n\n"),
                     _ => "No relevant documents found.".to_string(),
                 },
                 None => "Knowledge base not available.".to_string(),

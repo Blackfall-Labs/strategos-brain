@@ -76,20 +76,51 @@ impl RetrievalSystem {
 
     fn split_into_chunks(&self, text: &str) -> Vec<String> {
         let max_size = self.config.max_chunk_size;
-        let overlap = self.config.chunk_overlap;
 
-        if text.len() <= max_size {
-            return vec![text.to_string()];
+        // Split on paragraph boundaries first (double newline).
+        // This keeps logically related lines together (e.g. table rows with headers).
+        let paragraphs: Vec<&str> = text
+            .split("\n\n")
+            .map(|p| p.trim())
+            .filter(|p| !p.is_empty())
+            .collect();
+
+        let mut chunks: Vec<String> = Vec::new();
+        let mut current = String::new();
+
+        for para in paragraphs {
+            // If para alone exceeds max, split it by lines instead.
+            if para.len() > max_size {
+                if !current.is_empty() {
+                    chunks.push(current.trim().to_string());
+                    current = String::new();
+                }
+                for line in para.lines() {
+                    let line = line.trim();
+                    if line.is_empty() { continue; }
+                    if current.len() + line.len() + 1 > max_size && !current.is_empty() {
+                        chunks.push(current.trim().to_string());
+                        current = String::new();
+                    }
+                    if !current.is_empty() { current.push('\n'); }
+                    current.push_str(line);
+                }
+            } else if current.len() + para.len() + 2 > max_size && !current.is_empty() {
+                chunks.push(current.trim().to_string());
+                current = para.to_string();
+            } else {
+                if !current.is_empty() { current.push_str("\n\n"); }
+                current.push_str(para);
+            }
+        }
+        if !current.trim().is_empty() {
+            chunks.push(current.trim().to_string());
         }
 
-        let mut chunks = Vec::new();
-        let mut start = 0;
-        while start < text.len() {
-            let end = (start + max_size).min(text.len());
-            chunks.push(text[start..end].to_string());
-            if end >= text.len() { break; }
-            start += max_size - overlap;
+        if chunks.is_empty() {
+            vec![text.to_string()]
+        } else {
+            chunks
         }
-        chunks
     }
 }
