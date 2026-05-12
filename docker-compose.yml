@@ -1,0 +1,90 @@
+services:
+
+  # ── Dispatcher brain: Granite4 1B ──────────────────────────────────────────
+  # Fast, tool-call focused. Receives user query + tool schemas, returns
+  # a single dispatch decision. Never reasons — pure routing.
+  dispatcher:
+    image: ghcr.io/ggerganov/llama.cpp:server-cuda
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    volumes:
+      - models:/models
+    entrypoint: >
+      sh -c "
+        if [ ! -f /models/granite4-1b.gguf ]; then
+          echo 'Downloading Granite4 1B...'
+          wget -q -O /models/granite4-1b.gguf
+            'https://huggingface.co/bartowski/granite-3.3-1b-a400m-instruct-GGUF/resolve/main/granite-3.3-1b-a400m-instruct-Q4_K_M.gguf'
+        fi
+        exec /llama-server -m /models/granite4-1b.gguf
+          --host 0.0.0.0 --port 8080
+          -ngl 99 -c 4096 -n 256
+      "
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      retries: 5
+
+  # ── Reasoner brain: SmolLM3 3B ────────────────────────────────────────────
+  # Receives original question + RAG context. Synthesizes the answer.
+  # Dual-mode reasoning (thinking disabled via /no_think prefix).
+  reasoner:
+    image: ghcr.io/ggerganov/llama.cpp:server-cuda
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    volumes:
+      - models:/models
+    entrypoint: >
+      sh -c "
+        if [ ! -f /models/smollm3-3b.gguf ]; then
+          echo 'Downloading SmolLM3 3B...'
+          wget -q -O /models/smollm3-3b.gguf
+            'https://huggingface.co/bartowski/SmolLM3-3B-GGUF/resolve/main/SmolLM3-3B-Q4_K_M.gguf'
+        fi
+        exec /llama-server -m /models/smollm3-3b.gguf
+          --host 0.0.0.0 --port 8081
+          -ngl 99 -c 8192 -n 512
+      "
+    ports:
+      - "8081:8081"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
+      interval: 10s
+      retries: 5
+
+  # ── Strategos Brain (our Rust binary) ─────────────────────────────────────
+  brain:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DISPATCHER_URL=http://dispatcher:8080/v1/chat/completions
+      - REASONER_URL=http://reasoner:8081/v1/chat/completions
+    volumes:
+      - ./knowledge:/app/knowledge
+      - brain-memory:/app/memory
+    depends_on:
+      dispatcher:
+        condition: service_healthy
+      reasoner:
+        condition: service_healthy
+    stdin_open: true
+    tty: true
+
+  # ── Strategos mainframe ───────────────────────────────────────────────────
+  strategos:
+    build:
+      context: ../strategos
+      dockerfile: Dockerfile
+    ports:
+      - "19836:19836"
+    depends_on:
+      - brain
+
+volumes:
+  models:       # persisted across restarts — models only download once
+  brain-memory: # persistent facts.json

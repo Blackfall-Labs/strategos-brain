@@ -7,17 +7,23 @@ use serde_json::{json, Value};
 use frame_catalog::{RetrievalSystem, RetrievalConfig};
 
 // ── Endpoints ─────────────────────────────────────────────────────────────────
+// Override via env vars in Docker Compose; fall back to local Ollama for dev.
 
-const OLLAMA_API:  &str = "http://localhost:11434/v1/chat/completions";
-const DOCKER_API:  &str = "http://localhost:12434/v1/chat/completions";
+fn dispatcher_url() -> String {
+    std::env::var("DISPATCHER_URL")
+        .unwrap_or_else(|_| "http://localhost:11434/v1/chat/completions".into())
+}
 
-// Stage 1 — Granite4 1B dispatches tool calls (fast, native tool API support).
-const DISPATCHER_MODEL: &str = "granite4:1b";
-const DISPATCHER_API:   &str = OLLAMA_API;
+fn reasoner_url() -> String {
+    std::env::var("REASONER_URL")
+        .unwrap_or_else(|_| "http://localhost:11434/v1/chat/completions".into())
+}
 
-// Stage 2 — SmolLM3 3B reasons over retrieved context.
-const REASONER_MODEL: &str = "smollm3-strategos";
-const REASONER_API:   &str = OLLAMA_API;
+// Models used when hitting the llama.cpp server (single model per container).
+// In Docker each server runs one model so the model name is whatever llama.cpp
+// loaded — by convention we use the standard completions path.
+const DISPATCHER_MODEL: &str = "granite4:1b";   // local Ollama dev name
+const REASONER_MODEL:   &str = "smollm3-strategos"; // local Ollama dev name
 
 const KNOWLEDGE_DIR: &str = "knowledge";
 const MEMORY_FILE:   &str = "memory/facts.json";
@@ -97,7 +103,7 @@ fn dispatch(
         "stream": true,
     });
 
-    let response = match client.post(DISPATCHER_API).json(&body).send() {
+    let response = match client.post(&dispatcher_url()).json(&body).send() {
         Ok(r) => r,
         Err(e) => {
             spinning.store(false, Ordering::Relaxed);
@@ -174,7 +180,7 @@ fn reason(
         "stream": true,
     });
 
-    let response = match client.post(REASONER_API).json(&body).send() {
+    let response = match client.post(&reasoner_url()).json(&body).send() {
         Ok(r) => r,
         Err(e) => {
             spinning.store(false, Ordering::Relaxed);
@@ -238,8 +244,8 @@ fn reason(
 
 fn main() {
     eprintln!("=== Strategos Brain ===");
-    eprintln!("Dispatcher : {} @ {}", DISPATCHER_MODEL, DISPATCHER_API);
-    eprintln!("Reasoner   : {} @ {}", REASONER_MODEL, REASONER_API);
+    eprintln!("Dispatcher : {} @ {}", DISPATCHER_MODEL, dispatcher_url());
+    eprintln!("Reasoner   : {} @ {}", REASONER_MODEL, reasoner_url());
 
     let rag = init_rag();
     let memories = load_memories();
