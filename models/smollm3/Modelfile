@@ -1,0 +1,6 @@
+FROM E:\repos\blackfall-labs\strategos-brain\models\smollm3\SmolLM3-3B-Q4_K_M.gguf
+
+PARAMETER num_gpu 99
+PARAMETER num_ctx 8192
+PARAMETER num_thread 8
+PARAMETER num_predict 512

@@ -6,42 +6,32 @@ use reqwest::blocking::Client;
 use serde_json::{json, Value};
 use frame_catalog::{RetrievalSystem, RetrievalConfig};
 
-const API_URL: &str = "http://localhost:12434/v1/chat/completions";
-const MODEL: &str = "docker.io/ai/smollm3";
+// ── Endpoints ─────────────────────────────────────────────────────────────────
+
+const OLLAMA_API:  &str = "http://localhost:11434/v1/chat/completions";
+const DOCKER_API:  &str = "http://localhost:12434/v1/chat/completions";
+
+// Stage 1 — Granite4 1B dispatches tool calls (fast, native tool API support).
+const DISPATCHER_MODEL: &str = "granite4:1b";
+const DISPATCHER_API:   &str = OLLAMA_API;
+
+// Stage 2 — SmolLM3 3B reasons over retrieved context.
+const REASONER_MODEL: &str = "smollm3-strategos";
+const REASONER_API:   &str = OLLAMA_API;
+
 const KNOWLEDGE_DIR: &str = "knowledge";
-const MEMORY_FILE: &str = "memory/facts.json";
-const RAG_TOP_K: usize = 5;
-const MAX_TOOL_ROUNDS: usize = 8;
-// Buffer this many chars before deciding stream vs tool-call.
-// <tool_call> is 11 chars so 64 is a comfortable detection window.
+const MEMORY_FILE:   &str = "memory/facts.json";
+const RAG_TOP_K:     usize = 5;
 const DECIDE_WINDOW: usize = 64;
 
-const SYSTEM_PROMPT_BASE: &str = r#"You are Strategos, a decision-making intelligence. Answer in 1–3 sentences. Never pad, speculate, or ask follow-up questions.
+// ── Prompts ───────────────────────────────────────────────────────────────────
 
-When you need to use a tool, your response MUST be ONLY the tool call in exactly this format — no text before or after:
-<tool_call>[{"name": "tool_name", "arguments": {"param": "value"}}]</tool_call>
+const REASONER_SYSTEM: &str =
+    "You are Strategos, a decision-making intelligence. \
+     Answer in 1–3 sentences using only the provided context. \
+     Never speculate. If the context does not contain the answer, say so.";
 
-Available tools:
-- search_knowledge — arguments: {"query": "string"} — search local knowledge base
-- read_file        — arguments: {"path": "string"}  — read a local file
-- remember         — arguments: {"fact": "string"}  — save a fact for future sessions
-
-Rules:
-- Use search_knowledge when asked about facts, documentation, or anything you might not know.
-- Output ONLY the <tool_call> block — stop immediately after </tool_call>.
-- After receiving a <tool_result>, give your final answer directly.
-- If search returns nothing and you don't know the answer, say so. Never speculate."#;
-
-fn build_system_prompt(memories: &[String]) -> String {
-    if memories.is_empty() {
-        return SYSTEM_PROMPT_BASE.to_string();
-    }
-    let facts = memories.iter()
-        .map(|f| format!("- {}", f))
-        .collect::<Vec<_>>()
-        .join("\n");
-    format!("{}\n\n[What you remember from previous sessions:]\n{}", SYSTEM_PROMPT_BASE, facts)
-}
+// ── Memory ────────────────────────────────────────────────────────────────────
 
 fn load_memories() -> Vec<String> {
     let content = std::fs::read_to_string(MEMORY_FILE).unwrap_or_default();
@@ -57,152 +47,205 @@ fn save_memory(fact: &str) -> String {
     }
     let mut memories = load_memories();
     memories.push(fact.to_string());
-    match serde_json::to_string_pretty(&memories).and_then(|j| {
-        std::fs::write(path, j).map_err(|e| serde_json::Error::io(e))
-    }) {
+    match serde_json::to_string_pretty(&memories)
+        .and_then(|j| std::fs::write(path, j).map_err(serde_json::Error::io))
+    {
         Ok(_) => format!("Remembered: {}", fact),
         Err(e) => format!("Error saving memory: {}", e),
     }
 }
 
-// ── Result of one streaming API call ─────────────────────────────────────────
+// ── Stage 1: Dispatcher ───────────────────────────────────────────────────────
+// Calls FunctionGemma with the user query and available tools.
+// Returns Some((tool_name, args)) if a tool should be called, None otherwise.
 
-enum CallResult {
-    /// Final answer — already streamed to stdout.
-    Response(String),
-    /// Tool call — content truncated at </tool_call>.
-    ToolCall { name: String, args: Value, head: String },
-    Error(String),
-}
-
-// ── Core streaming call ───────────────────────────────────────────────────────
-
-fn call(
+fn dispatch(
     client: &Client,
-    messages: &[Value],
+    question: &str,
+    memories: &[String],
     spinning: Arc<AtomicBool>,
     spin_handle: std::thread::JoinHandle<()>,
-) -> CallResult {
+) -> Option<(String, Value)> {
+    let mut system = "You are a function dispatcher. \
+        Given a user query, call search_knowledge to look up the answer. \
+        Always call search_knowledge unless the user is asking you to save a fact (use remember) \
+        or read a specific file (use read_file). \
+        Never answer directly — always dispatch a tool.".to_string();
+    if !memories.is_empty() {
+        system.push_str("\n\nKnown facts from memory:\n");
+        for m in memories { system.push_str(&format!("- {}\n", m)); }
+    }
+
     let body = json!({
-        "model": MODEL,
-        "messages": messages,
-        "max_tokens": 1024,
+        "model": DISPATCHER_MODEL,
+        "messages": [
+            {"role": "system", "content": system},
+            {"role": "user",   "content": question},
+        ],
+        "tools": [
+            {"type":"function","function":{"name":"search_knowledge",
+                "description":"Search the local knowledge base for documented facts",
+                "parameters":{"type":"object","properties":{"query":{"type":"string"}},"required":["query"]}}},
+            {"type":"function","function":{"name":"read_file",
+                "description":"Read a local file by path",
+                "parameters":{"type":"object","properties":{"path":{"type":"string"}},"required":["path"]}}},
+            {"type":"function","function":{"name":"remember",
+                "description":"Save a fact to persistent memory for future sessions",
+                "parameters":{"type":"object","properties":{"fact":{"type":"string"}},"required":["fact"]}}},
+        ],
+        "max_tokens": 256,
         "stream": true,
     });
 
-    let response = match client.post(API_URL).json(&body).send() {
+    let response = match client.post(DISPATCHER_API).json(&body).send() {
         Ok(r) => r,
         Err(e) => {
             spinning.store(false, Ordering::Relaxed);
             spin_handle.join().ok();
-            return CallResult::Error(e.to_string());
+            eprintln!("  [dispatcher error] {}", e);
+            return None;
         }
     };
 
     let reader = std::io::BufReader::new(response);
-    let mut accumulated = String::new();
-    let mut stdout = io::stdout();
-
-    enum Mode { Deciding, Streaming, ToolCall }
-    let mut mode = Mode::Deciding;
-    let mut decide_buf = String::new();
-    let mut spin_handle = Some(spin_handle);
-    // SmolLM3 emits <think>...</think> before acting — skip it silently.
-    let mut in_think = false;
+    let mut tool_name = String::new();
+    let mut args_buf  = String::new();
+    let mut finish_tool = false;
 
     for line in reader.lines() {
         let line = match line { Ok(l) => l, Err(_) => break };
         if !line.starts_with("data: ") { continue; }
         let data = line["data: ".len()..].trim();
         if data == "[DONE]" { break; }
+        let chunk: Value = match serde_json::from_str(data) { Ok(v) => v, Err(_) => continue };
+        let choice = &chunk["choices"][0];
+        if choice["finish_reason"].as_str() == Some("tool_calls") { finish_tool = true; }
+        let tc = &choice["delta"]["tool_calls"][0];
+        if !tc.is_null() {
+            if let Some(n) = tc["function"]["name"].as_str() { tool_name = n.to_string(); }
+            if let Some(a) = tc["function"]["arguments"].as_str() { args_buf.push_str(a); }
+        }
+    }
 
-        let chunk: Value = match serde_json::from_str(data) {
-            Ok(v) => v,
-            Err(_) => continue,
-        };
+    spinning.store(false, Ordering::Relaxed);
+    spin_handle.join().ok();
+
+    if finish_tool || !tool_name.is_empty() {
+        let args = serde_json::from_str(&args_buf).unwrap_or(Value::Null);
+        Some((tool_name, args))
+    } else {
+        None
+    }
+}
+
+// ── Stage 2: Reasoner ─────────────────────────────────────────────────────────
+// Calls SmolLM3 with the original question + retrieved context.
+// Streams the response to stdout.
+
+fn reason(
+    client: &Client,
+    question: &str,
+    context: Option<&str>,
+    memories: &[String],
+    spinning: Arc<AtomicBool>,
+    spin_handle: std::thread::JoinHandle<()>,
+) -> String {
+    let mut system = REASONER_SYSTEM.to_string();
+    if !memories.is_empty() {
+        system.push_str("\n\nKnown facts from memory:\n");
+        for m in memories { system.push_str(&format!("- {}\n", m)); }
+    }
+
+    let user_content = match context {
+        Some(ctx) => format!("Context:\n{}\n\nQuestion: {}", ctx, question),
+        None => question.to_string(),
+    };
+
+    // SmolLM3: /no_think disables thinking mode.
+    let user_content = format!("/no_think {}", user_content);
+
+    let body = json!({
+        "model": REASONER_MODEL,
+        "messages": [
+            {"role": "system", "content": system},
+            {"role": "user",   "content": user_content},
+        ],
+        "max_tokens": 512,
+        "stream": true,
+    });
+
+    let response = match client.post(REASONER_API).json(&body).send() {
+        Ok(r) => r,
+        Err(e) => {
+            spinning.store(false, Ordering::Relaxed);
+            spin_handle.join().ok();
+            eprintln!("  [reasoner error] {}", e);
+            return String::new();
+        }
+    };
+
+    let reader = std::io::BufReader::new(response);
+    let mut accumulated = String::new();
+    let mut stdout = io::stdout();
+    let mut decide_buf = String::new();
+    let mut streaming = false;
+    let mut in_think = false;
+    let mut spin_handle = Some(spin_handle);
+
+    for line in reader.lines() {
+        let line = match line { Ok(l) => l, Err(_) => break };
+        if !line.starts_with("data: ") { continue; }
+        let data = line["data: ".len()..].trim();
+        if data == "[DONE]" { break; }
+        let chunk: Value = match serde_json::from_str(data) { Ok(v) => v, Err(_) => continue };
         let delta = chunk["choices"][0]["delta"]["content"].as_str().unwrap_or("");
         accumulated.push_str(delta);
 
         if delta.contains("<think>") { in_think = true; }
         if in_think {
-            if delta.contains("</think>") {
-                in_think = false;
-                decide_buf.clear(); // restart decision window after think block
-            }
+            if delta.contains("</think>") { in_think = false; decide_buf.clear(); }
             continue;
         }
 
-        match mode {
-            Mode::Deciding => {
-                decide_buf.push_str(delta);
-                let is_tool = decide_buf.contains("<tool_call>")
-                    || decide_buf.trim_start().starts_with("{\"name\":")
-                    || decide_buf.trim_start().starts_with("[{\"name\":")
-                    || looks_like_naked_call(&decide_buf);
-                if is_tool {
-                    mode = Mode::ToolCall;
-                } else if decide_buf.len() >= DECIDE_WINDOW {
-                    // Stop and JOIN the spinner before touching stdout.
-                    spinning.store(false, Ordering::Relaxed);
-                    if let Some(h) = spin_handle.take() { h.join().ok(); }
-                    print!("strategos> {}", decide_buf);
-                    stdout.flush().ok();
-                    decide_buf.clear();
-                    mode = Mode::Streaming;
-                }
-            }
-            Mode::Streaming => {
-                print!("{}", delta);
+        if !streaming {
+            decide_buf.push_str(delta);
+            if decide_buf.len() >= DECIDE_WINDOW {
+                spinning.store(false, Ordering::Relaxed);
+                if let Some(h) = spin_handle.take() { h.join().ok(); }
+                print!("strategos> {}", decide_buf);
                 stdout.flush().ok();
+                streaming = true;
             }
-            Mode::ToolCall => { /* accumulate silently */ }
+        } else {
+            print!("{}", delta);
+            stdout.flush().ok();
         }
     }
 
-    // Stop spinner for all remaining cases (tool call, short response, error).
     spinning.store(false, Ordering::Relaxed);
     if let Some(h) = spin_handle.take() { h.join().ok(); }
 
-    match mode {
-        Mode::Deciding if !decide_buf.contains("<tool_call>") => {
-            print!("strategos> {}", decide_buf);
-            stdout.flush().ok();
-            println!("\n");
-            CallResult::Response(accumulated)
-        }
-        Mode::Streaming => {
-            println!("\n");
-            CallResult::Response(accumulated)
-        }
-        _ => match parse_tool_call(&accumulated) {
-            Some((name, args)) => {
-                let cut = accumulated.find("</tool_call>")
-                    .map(|i| i + "</tool_call>".len())
-                    .unwrap_or(accumulated.len());
-                CallResult::ToolCall { name, args, head: accumulated[..cut].to_string() }
-            }
-            None => {
-                println!("strategos> {}\n", accumulated.trim());
-                CallResult::Response(accumulated)
-            }
-        },
+    if !streaming {
+        let visible = strip_think_blocks(&decide_buf);
+        print!("strategos> {}", visible.trim());
+        stdout.flush().ok();
     }
+    println!("\n");
+    accumulated
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
 
 fn main() {
     eprintln!("=== Strategos Brain ===");
-    eprintln!("Model : {}", MODEL);
+    eprintln!("Dispatcher : {} @ {}", DISPATCHER_MODEL, DISPATCHER_API);
+    eprintln!("Reasoner   : {} @ {}", REASONER_MODEL, REASONER_API);
 
     let rag = init_rag();
     let memories = load_memories();
 
-    if memories.is_empty() {
-        eprintln!("Memory: none yet");
-    } else {
-        eprintln!("Memory: {} facts loaded", memories.len());
-    }
+    if memories.is_empty() { eprintln!("Memory: none yet"); }
+    else { eprintln!("Memory: {} facts loaded", memories.len()); }
 
     eprintln!("Type anything to talk. 'quit' to exit.\n");
 
@@ -210,11 +253,6 @@ fn main() {
         .timeout(Duration::from_secs(120))
         .build()
         .expect("failed to build HTTP client");
-
-    let system_prompt = build_system_prompt(&memories);
-    let mut messages: Vec<Value> = vec![
-        json!({"role": "system", "content": system_prompt}),
-    ];
 
     let stdin = io::stdin();
     let mut stdout = io::stdout();
@@ -229,41 +267,27 @@ fn main() {
         if line.is_empty() { continue; }
         if line == "quit" || line == "exit" { break; }
 
-        messages.push(json!({"role": "user", "content": line}));
         let start = std::time::Instant::now();
-        let mut answered = false;
 
-        for _ in 0..MAX_TOOL_ROUNDS {
-            let spinning = Arc::new(AtomicBool::new(true));
-            let spin_handle = spawn_spinner(spinning.clone());
+        // ── Stage 1: Dispatch ─────────────────────────────────────────────────
+        let spinning = Arc::new(AtomicBool::new(true));
+        let spin_handle = spawn_spinner(spinning.clone());
 
-            // call() takes ownership of spin_handle and joins it before any printing.
-            match call(&client, &messages, spinning, spin_handle) {
-                CallResult::Response(content) => {
-                    eprintln!("  [{:.0}ms]", start.elapsed().as_secs_f64() * 1000.0);
-                    messages.push(json!({"role": "assistant", "content": content}));
-                    answered = true;
-                    break;
-                }
-                CallResult::ToolCall { name, args, head } => {
-                    eprintln!("  [tool] {} {}", name, args);
-                    messages.push(json!({"role": "assistant", "content": head}));
-                    let result = execute_tool(&name, &args, &rag);
-                    messages.push(json!({
-                        "role": "user",
-                        "content": format!("<tool_result>\n{}\n</tool_result>", result),
-                    }));
-                }
-                CallResult::Error(e) => {
-                    eprintln!("  [error] {}", e);
-                    break;
-                }
-            }
-        }
+        let tool_call = dispatch(&client, line, &memories, spinning, spin_handle);
 
-        if !answered && messages.last().map(|m| m["role"] == "user").unwrap_or(false) {
-            messages.pop();
-        }
+        // ── Execute tool (if dispatched) ──────────────────────────────────────
+        let context: Option<String> = tool_call.map(|(name, args)| {
+            eprintln!("  [tool] {} {}", name, args);
+            execute_tool(&name, &args, &rag)
+        });
+
+        // ── Stage 2: Reason ───────────────────────────────────────────────────
+        let spinning = Arc::new(AtomicBool::new(true));
+        let spin_handle = spawn_spinner(spinning.clone());
+
+        reason(&client, line, context.as_deref(), &memories, spinning, spin_handle);
+
+        eprintln!("  [{:.0}ms]", start.elapsed().as_secs_f64() * 1000.0);
     }
 }
 
@@ -271,103 +295,9 @@ fn main() {
 
 const TOOL_NAMES: &[&str] = &["search_knowledge", "read_file", "remember"];
 
-/// Returns true if the buffer starts with a known tool name followed by a JSON object.
-/// Detects SmolLM3's naked call format: `search_knowledge {"query": "..."}`.
 fn looks_like_naked_call(s: &str) -> bool {
     let s = s.trim_start();
-    TOOL_NAMES.iter().any(|t| {
-        s.starts_with(t) && s[t.len()..].trim_start().starts_with('{')
-    })
-}
-
-/// Strip `<think>...</think>` blocks so tool call parsers see clean text.
-fn strip_think_blocks(text: &str) -> String {
-    let mut out = String::new();
-    let mut rest = text;
-    while let Some(open) = rest.find("<think>") {
-        out.push_str(&rest[..open]);
-        rest = match rest.find("</think>") {
-            Some(close) => &rest[close + "</think>".len()..],
-            None => return out, // unclosed block — discard remainder
-        };
-    }
-    out.push_str(rest);
-    out
-}
-
-fn parse_tool_call(text: &str) -> Option<(String, Value)> {
-    let text = &strip_think_blocks(text);
-    // Format 1: <tool_call>CONTENT</tool_call>
-    //   1a: [{"name":"...","arguments":{...}}]  — native SmolLM array form
-    //   1b: {"name":"...","args":{...}}          — single-object fallback
-    if let Some(start) = text.find("<tool_call>") {
-        let inner_start = start + "<tool_call>".len();
-        if let Some(end) = text.find("</tool_call>") {
-            let inner = text[inner_start..end].trim();
-            let obj = if inner.starts_with('[') {
-                // Array form — take first element
-                serde_json::from_str::<Value>(inner).ok()
-                    .and_then(|v| v.as_array().and_then(|a| a.first().cloned()))
-            } else {
-                serde_json::from_str::<Value>(inner).ok()
-            };
-            if let Some(obj) = obj {
-                if let Some(name) = obj["name"].as_str() {
-                    let args = obj.get("arguments").or_else(|| obj.get("args"))
-                        .cloned().unwrap_or(Value::Null);
-                    return Some((name.to_string(), args));
-                }
-            }
-        }
-    }
-    // Remaining formats operate on the trimmed text.
-    let trimmed = text.trim();
-    // Format 1b: raw JSON array without XML wrapper — [{"name":"...","arguments":{...}}]
-    if trimmed.starts_with('[') {
-        if let Ok(arr) = serde_json::from_str::<Value>(trimmed) {
-            if let Some(obj) = arr.as_array().and_then(|a| a.first()) {
-                if let Some(name) = obj["name"].as_str() {
-                    let args = obj.get("arguments").or_else(|| obj.get("args"))
-                        .cloned().unwrap_or(Value::Null);
-                    return Some((name.to_string(), args));
-                }
-            }
-        }
-    }
-    // Format 2 & 3: raw JSON — SmolLM3 omits the XML wrapper.
-    //   Format 2: {"name": "...", "args": {...}}
-    //   Format 3: {"name": "...", "query": "..."} (args inlined at top level)
-    if trimmed.starts_with('{') {
-        if let Ok(json) = serde_json::from_str::<Value>(trimmed) {
-            if let Some(name) = json["name"].as_str() {
-                // Prefer explicit "args" or "arguments" key; otherwise inline everything except "name".
-                let args = if let Some(a) = json.get("args").or_else(|| json.get("arguments")) {
-                    a.clone()
-                } else {
-                    let inlined: serde_json::Map<String, Value> = json.as_object()
-                        .map(|o| o.iter()
-                            .filter(|(k, _)| k.as_str() != "name")
-                            .map(|(k, v)| (k.clone(), v.clone()))
-                            .collect())
-                        .unwrap_or_default();
-                    Value::Object(inlined)
-                };
-                return Some((name.to_string(), args));
-            }
-        }
-    }
-    // Format 4: "tool_name {args_json}" — SmolLM3 naked call (no JSON wrapper, no "name" key).
-    for tool in TOOL_NAMES {
-        if trimmed.starts_with(tool) {
-            let rest = trimmed[tool.len()..].trim_start();
-            if rest.starts_with('{') {
-                if let Ok(args) = serde_json::from_str::<Value>(rest) {
-                    return Some((tool.to_string(), args));
-                }
-            }
-        }
-    }
-    None
+    TOOL_NAMES.iter().any(|t| s.starts_with(t) && s[t.len()..].trim_start().starts_with('{'))
 }
 
 fn execute_tool(name: &str, args: &Value, rag: &Option<RetrievalSystem>) -> String {
@@ -428,13 +358,11 @@ fn spawn_spinner(flag: Arc<AtomicBool>) -> std::thread::JoinHandle<()> {
 
 fn init_rag() -> Option<RetrievalSystem> {
     let rag = RetrievalSystem::new(RetrievalConfig::default()).ok()?;
-
     let dir = std::path::Path::new(KNOWLEDGE_DIR);
     if !dir.exists() {
-        eprintln!("RAG   : no knowledge/ directory — running without context");
+        eprintln!("RAG   : no knowledge/ directory");
         return Some(rag);
     }
-
     let mut indexed = 0usize;
     for entry in std::fs::read_dir(dir).ok()?.flatten() {
         let path = entry.path();
@@ -447,7 +375,22 @@ fn init_rag() -> Option<RetrievalSystem> {
             }
         }
     }
-
     eprintln!("RAG   : {} chunks indexed from {}/", indexed, KNOWLEDGE_DIR);
     Some(rag)
+}
+
+// ── Think-block stripper ──────────────────────────────────────────────────────
+
+fn strip_think_blocks(text: &str) -> String {
+    let mut out = String::new();
+    let mut rest = text;
+    while let Some(open) = rest.find("<think>") {
+        out.push_str(&rest[..open]);
+        rest = match rest.find("</think>") {
+            Some(close) => &rest[close + "</think>".len()..],
+            None => return out,
+        };
+    }
+    out.push_str(rest);
+    out
 }
