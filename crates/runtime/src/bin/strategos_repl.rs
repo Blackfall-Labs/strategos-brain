@@ -7,7 +7,7 @@ use serde_json::{json, Value};
 use frame_catalog::{RetrievalSystem, RetrievalConfig};
 
 const API_URL: &str = "http://localhost:12434/v1/chat/completions";
-const MODEL: &str = "docker.io/ai/phi4:14B-Q4_0";
+const MODEL: &str = "docker.io/ai/smollm3";
 const KNOWLEDGE_DIR: &str = "knowledge";
 const MEMORY_FILE: &str = "memory/facts.json";
 const RAG_TOP_K: usize = 5;
@@ -16,25 +16,21 @@ const MAX_TOOL_ROUNDS: usize = 8;
 // <tool_call> is 11 chars so 64 is a comfortable detection window.
 const DECIDE_WINDOW: usize = 64;
 
-const SYSTEM_PROMPT_BASE: &str = r#"You are Strategos, a decision-making intelligence for a local system. You reason carefully before responding and provide clear, actionable answers. Be brief — one to three sentences unless depth is explicitly needed. Never pad, summarize, or ask follow-up questions unless asked.
+const SYSTEM_PROMPT_BASE: &str = r#"You are Strategos, a decision-making intelligence. Answer in 1–3 sentences. Never pad, speculate, or ask follow-up questions.
 
-You have access to tools. When you need information or want to save something, call a tool using EXACTLY this format — write nothing after the closing tag:
-
-<tool_call>{"name": "search_knowledge", "args": {"query": "your search terms"}}</tool_call>
+When you need to use a tool, your response MUST be ONLY the tool call in exactly this format — no text before or after:
+<tool_call>[{"name": "tool_name", "arguments": {"param": "value"}}]</tool_call>
 
 Available tools:
-- search_knowledge — args: {"query": "string"} — search the local knowledge base
-- read_file      — args: {"path": "string"}  — read a local file by its path
-- remember       — args: {"fact": "string"}  — save an important fact to persistent memory for future sessions
+- search_knowledge — arguments: {"query": "string"} — search local knowledge base
+- read_file        — arguments: {"path": "string"}  — read a local file
+- remember         — arguments: {"fact": "string"}  — save a fact for future sessions
 
 Rules:
-- Call only one tool at a time.
-- Use the exact argument names shown above (query, path, fact).
-- Write nothing after </tool_call> — stop there and wait for the result.
-- After receiving a tool result, give your final answer directly.
-- If search_knowledge returns no results and you don't know the answer from memory, say so — do not speculate.
-- If you don't need a tool, answer directly without calling one.
-- Use remember proactively when the user shares something worth retaining."#;
+- Use search_knowledge when asked about facts, documentation, or anything you might not know.
+- Output ONLY the <tool_call> block — stop immediately after </tool_call>.
+- After receiving a <tool_result>, give your final answer directly.
+- If search returns nothing and you don't know the answer, say so. Never speculate."#;
 
 fn build_system_prompt(memories: &[String]) -> String {
     if memories.is_empty() {
@@ -111,6 +107,8 @@ fn call(
     let mut mode = Mode::Deciding;
     let mut decide_buf = String::new();
     let mut spin_handle = Some(spin_handle);
+    // SmolLM3 emits <think>...</think> before acting — skip it silently.
+    let mut in_think = false;
 
     for line in reader.lines() {
         let line = match line { Ok(l) => l, Err(_) => break };
@@ -125,10 +123,23 @@ fn call(
         let delta = chunk["choices"][0]["delta"]["content"].as_str().unwrap_or("");
         accumulated.push_str(delta);
 
+        if delta.contains("<think>") { in_think = true; }
+        if in_think {
+            if delta.contains("</think>") {
+                in_think = false;
+                decide_buf.clear(); // restart decision window after think block
+            }
+            continue;
+        }
+
         match mode {
             Mode::Deciding => {
                 decide_buf.push_str(delta);
-                if decide_buf.contains("<tool_call>") {
+                let is_tool = decide_buf.contains("<tool_call>")
+                    || decide_buf.trim_start().starts_with("{\"name\":")
+                    || decide_buf.trim_start().starts_with("[{\"name\":")
+                    || looks_like_naked_call(&decide_buf);
+                if is_tool {
                     mode = Mode::ToolCall;
                 } else if decide_buf.len() >= DECIDE_WINDOW {
                     // Stop and JOIN the spinner before touching stdout.
@@ -258,13 +269,105 @@ fn main() {
 
 // ── Tools ─────────────────────────────────────────────────────────────────────
 
+const TOOL_NAMES: &[&str] = &["search_knowledge", "read_file", "remember"];
+
+/// Returns true if the buffer starts with a known tool name followed by a JSON object.
+/// Detects SmolLM3's naked call format: `search_knowledge {"query": "..."}`.
+fn looks_like_naked_call(s: &str) -> bool {
+    let s = s.trim_start();
+    TOOL_NAMES.iter().any(|t| {
+        s.starts_with(t) && s[t.len()..].trim_start().starts_with('{')
+    })
+}
+
+/// Strip `<think>...</think>` blocks so tool call parsers see clean text.
+fn strip_think_blocks(text: &str) -> String {
+    let mut out = String::new();
+    let mut rest = text;
+    while let Some(open) = rest.find("<think>") {
+        out.push_str(&rest[..open]);
+        rest = match rest.find("</think>") {
+            Some(close) => &rest[close + "</think>".len()..],
+            None => return out, // unclosed block — discard remainder
+        };
+    }
+    out.push_str(rest);
+    out
+}
+
 fn parse_tool_call(text: &str) -> Option<(String, Value)> {
-    let start = text.find("<tool_call>")? + "<tool_call>".len();
-    let end = text.find("</tool_call>")?;
-    let json: Value = serde_json::from_str(text[start..end].trim()).ok()?;
-    let name = json["name"].as_str()?.to_string();
-    let args = json["args"].clone();
-    Some((name, args))
+    let text = &strip_think_blocks(text);
+    // Format 1: <tool_call>CONTENT</tool_call>
+    //   1a: [{"name":"...","arguments":{...}}]  — native SmolLM array form
+    //   1b: {"name":"...","args":{...}}          — single-object fallback
+    if let Some(start) = text.find("<tool_call>") {
+        let inner_start = start + "<tool_call>".len();
+        if let Some(end) = text.find("</tool_call>") {
+            let inner = text[inner_start..end].trim();
+            let obj = if inner.starts_with('[') {
+                // Array form — take first element
+                serde_json::from_str::<Value>(inner).ok()
+                    .and_then(|v| v.as_array().and_then(|a| a.first().cloned()))
+            } else {
+                serde_json::from_str::<Value>(inner).ok()
+            };
+            if let Some(obj) = obj {
+                if let Some(name) = obj["name"].as_str() {
+                    let args = obj.get("arguments").or_else(|| obj.get("args"))
+                        .cloned().unwrap_or(Value::Null);
+                    return Some((name.to_string(), args));
+                }
+            }
+        }
+    }
+    // Remaining formats operate on the trimmed text.
+    let trimmed = text.trim();
+    // Format 1b: raw JSON array without XML wrapper — [{"name":"...","arguments":{...}}]
+    if trimmed.starts_with('[') {
+        if let Ok(arr) = serde_json::from_str::<Value>(trimmed) {
+            if let Some(obj) = arr.as_array().and_then(|a| a.first()) {
+                if let Some(name) = obj["name"].as_str() {
+                    let args = obj.get("arguments").or_else(|| obj.get("args"))
+                        .cloned().unwrap_or(Value::Null);
+                    return Some((name.to_string(), args));
+                }
+            }
+        }
+    }
+    // Format 2 & 3: raw JSON — SmolLM3 omits the XML wrapper.
+    //   Format 2: {"name": "...", "args": {...}}
+    //   Format 3: {"name": "...", "query": "..."} (args inlined at top level)
+    if trimmed.starts_with('{') {
+        if let Ok(json) = serde_json::from_str::<Value>(trimmed) {
+            if let Some(name) = json["name"].as_str() {
+                // Prefer explicit "args" or "arguments" key; otherwise inline everything except "name".
+                let args = if let Some(a) = json.get("args").or_else(|| json.get("arguments")) {
+                    a.clone()
+                } else {
+                    let inlined: serde_json::Map<String, Value> = json.as_object()
+                        .map(|o| o.iter()
+                            .filter(|(k, _)| k.as_str() != "name")
+                            .map(|(k, v)| (k.clone(), v.clone()))
+                            .collect())
+                        .unwrap_or_default();
+                    Value::Object(inlined)
+                };
+                return Some((name.to_string(), args));
+            }
+        }
+    }
+    // Format 4: "tool_name {args_json}" — SmolLM3 naked call (no JSON wrapper, no "name" key).
+    for tool in TOOL_NAMES {
+        if trimmed.starts_with(tool) {
+            let rest = trimmed[tool.len()..].trim_start();
+            if rest.starts_with('{') {
+                if let Ok(args) = serde_json::from_str::<Value>(rest) {
+                    return Some((tool.to_string(), args));
+                }
+            }
+        }
+    }
+    None
 }
 
 fn execute_tool(name: &str, args: &Value, rag: &Option<RetrievalSystem>) -> String {
