@@ -23,9 +23,7 @@ fn reasoner_url() -> String {
 // In Docker each server runs one model so the model name is whatever llama.cpp
 // loaded — by convention we use the standard completions path.
 const DISPATCHER_MODEL: &str = "granite4:1b";   // local Ollama dev name
-// Phi-4 as temporary reasoner — swap to smollm3-strategos once Q4_K_M GGUF is downloaded.
-// IQ2_XXS (Docker's build) destroys instruction following; Q4_K_M is needed for synthesis.
-const REASONER_MODEL:   &str = "phi4-strategos";
+const REASONER_MODEL:   &str = "smollm3-strategos";
 
 const KNOWLEDGE_DIR: &str = "knowledge";
 const MEMORY_FILE:   &str = "memory/facts.json";
@@ -201,14 +199,11 @@ fn reason(
 
     let user_content = match context {
         Some(ctx) => format!(
-            "Context:\n{}\n\nAnswer this in 1-3 sentences using only the context above: {}",
+            "/no_think Context:\n{}\n\nQuestion: {}\nAnswer:",
             ctx, question
         ),
-        None => format!("Answer in 1-3 sentences: {}", question),
+        None => format!("/no_think {}\nAnswer:", question),
     };
-
-    // /no_think disables SmolLM3 thinking mode. Explicit stop prevents Q&A generation.
-    let user_content = format!("/no_think {}", user_content);
 
     let body = json!({
         "model": REASONER_MODEL,
@@ -216,8 +211,9 @@ fn reason(
             {"role": "system", "content": system},
             {"role": "user",   "content": user_content},
         ],
-        "max_tokens": 150,
-        "stop": ["Question:", "Answer:", "you>"],
+        "max_tokens": 120,
+        "temperature": 0,
+        "stop": ["\nQuestion:", "\nA.", "\nB.", "\n---", "---\n", "Source:"],
         "stream": true,
     });
 
