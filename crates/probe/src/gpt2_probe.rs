@@ -45,6 +45,18 @@ impl KVCache {
     }
 }
 
+/// Transpose a matrix stored [rows, cols] → [cols, rows].
+fn transpose(data: &[f32], rows: usize, cols: usize) -> Vec<f32> {
+    assert_eq!(data.len(), rows * cols);
+    let mut out = vec![0.0f32; rows * cols];
+    for r in 0..rows {
+        for c in 0..cols {
+            out[c * rows + r] = data[r * cols + c];
+        }
+    }
+    out
+}
+
 impl GPT2Probe {
     pub fn load(manifest_dir: &Path) -> Result<Self, String> {
         let weights = ModelWeights::load(manifest_dir)?;
@@ -53,27 +65,32 @@ impl GPT2Probe {
             weights.require(name).map(|s| s.to_vec())
         };
 
-        let wte = get("transformer.wte.weight")?;
-        let wpe = get("transformer.wpe.weight")?;
-        // ln_f weights are for final logit projection — not needed for activation probing.
-        let _ = get("transformer.ln_f.weight")?;
-        let _ = get("transformer.ln_f.bias")?;
+        // Exported without the "transformer." prefix.
+        let wte = get("wte.weight")?;
+        let wpe = get("wpe.weight")?;
 
         let mut layers = Vec::with_capacity(12);
         for i in 0..12 {
-            let p = format!("transformer.h.{i}");
+            let p = format!("h.{i}");
+            // Conv1D weights are stored [in_dim, out_dim] (HuggingFace convention).
+            // linear_q expects [out_dim, in_dim] row-major, so transpose before quantizing.
+            let c_attn_raw = get(&format!("{p}.attn.c_attn.weight"))?; // [768, 2304]
+            let c_proj_raw = get(&format!("{p}.attn.c_proj.weight"))?; // [768, 768]
+            let c_fc_raw   = get(&format!("{p}.mlp.c_fc.weight"))?;    // [768, 3072]
+            let c_mp_raw   = get(&format!("{p}.mlp.c_proj.weight"))?;  // [3072, 768]
+
             layers.push(GPT2ProbeLayer {
                 ln_1_w: get(&format!("{p}.ln_1.weight"))?,
                 ln_1_b: get(&format!("{p}.ln_1.bias"))?,
-                c_attn_w: QWeight::from_f32(&get(&format!("{p}.attn.c_attn.weight"))?, 768, 2304),
+                c_attn_w: QWeight::from_f32(&transpose(&c_attn_raw, 768, 2304), 768, 2304),
                 c_attn_b: get(&format!("{p}.attn.c_attn.bias"))?,
-                c_proj_w: QWeight::from_f32(&get(&format!("{p}.attn.c_proj.weight"))?, 768, 768),
+                c_proj_w: QWeight::from_f32(&transpose(&c_proj_raw, 768, 768), 768, 768),
                 c_proj_b: get(&format!("{p}.attn.c_proj.bias"))?,
                 ln_2_w: get(&format!("{p}.ln_2.weight"))?,
                 ln_2_b: get(&format!("{p}.ln_2.bias"))?,
-                c_fc_w: QWeight::from_f32(&get(&format!("{p}.mlp.c_fc.weight"))?, 768, 3072),
+                c_fc_w:    QWeight::from_f32(&transpose(&c_fc_raw, 768, 3072), 768, 3072),
                 c_fc_b: get(&format!("{p}.mlp.c_fc.bias"))?,
-                mlp_proj_w: QWeight::from_f32(&get(&format!("{p}.mlp.c_proj.weight"))?, 3072, 768),
+                mlp_proj_w: QWeight::from_f32(&transpose(&c_mp_raw, 3072, 768), 3072, 768),
                 mlp_proj_b: get(&format!("{p}.mlp.c_proj.bias"))?,
             });
         }
@@ -92,16 +109,24 @@ impl GPT2Probe {
     }
 
     /// Run a token sequence through the model, capturing activations into `captures`.
-    /// Processes each token autoregressively with a KV cache.
+    /// KV cache is reset every CONTEXT_LEN tokens to keep attention O(1) amortized.
     pub fn run_corpus(&self, tokens: &[u32], captures: &mut CaptureStore) {
+        const CONTEXT_LEN: usize = 256;
+
         let d = self.n_embd;
         let n_head = self.n_head;
         let head_dim = d / n_head;
         let mut cache = KVCache::new(self.n_layer, n_head);
 
         for (pos, &tok) in tokens.iter().enumerate() {
+            // Reset KV cache at context boundaries so attention stays bounded.
+            if pos % CONTEXT_LEN == 0 {
+                cache = KVCache::new(self.n_layer, n_head);
+            }
+            let ctx_pos = pos % CONTEXT_LEN;
+
             let tok_off = (tok as usize).min(self.vocab_size - 1) * d;
-            let pos_off = pos.min(1023) * d;
+            let pos_off = ctx_pos.min(1023) * d;
             let mut hidden = vec![0.0f32; d];
             for i in 0..d {
                 hidden[i] = self.wte[tok_off + i] + self.wpe[pos_off + i];
