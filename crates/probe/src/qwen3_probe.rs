@@ -6,6 +6,7 @@ use strategos_ops::rmsnorm::{RmsNormWeights, rms_norm};
 use strategos_ops::rope::RopeTable;
 use strategos_runtime::loader::ModelWeights;
 use crate::capture::CaptureStore;
+use crate::triggers::TriggerStore;
 
 // Architecture constants from config.json
 const HIDDEN:        usize = 2048;
@@ -117,7 +118,41 @@ impl Qwen3Probe {
         eprintln!("[probe] {} tokens processed", total);
     }
 
+    pub fn run_corpus_extract(&self, tokens: &[u32], captures: &mut CaptureStore, triggers: &mut TriggerStore) {
+        const CONTEXT_LEN: usize = 128;
+
+        let partials: Vec<(CaptureStore, TriggerStore)> = tokens
+            .par_chunks(CONTEXT_LEN)
+            .map(|chunk| {
+                let mut store = captures.make_empty_copy();
+                let mut trig = triggers.make_empty_copy();
+                let mut cache = KVCache::new();
+                for (ctx_pos, &tok) in chunk.iter().enumerate() {
+                    self.forward_token_extract(tok, ctx_pos, &mut cache, &mut store, &mut trig);
+                    store.n_tokens += 1;
+                    trig.observe_token(tok);
+                }
+                (store, trig)
+            })
+            .collect();
+
+        let total: u64 = partials.iter().map(|(s, _)| s.n_tokens).sum();
+        for (partial_s, partial_t) in partials {
+            captures.merge(partial_s);
+            triggers.merge(partial_t);
+        }
+        eprintln!("[extract] {} tokens processed", total);
+    }
+
+    fn forward_token_extract(&self, tok: u32, ctx_pos: usize, cache: &mut KVCache, captures: &mut CaptureStore, triggers: &mut TriggerStore) {
+        self.forward_token_inner(tok, ctx_pos, cache, captures, Some((tok, triggers)));
+    }
+
     fn forward_token(&self, tok: u32, ctx_pos: usize, cache: &mut KVCache, captures: &mut CaptureStore) {
+        self.forward_token_inner(tok, ctx_pos, cache, captures, None);
+    }
+
+    fn forward_token_inner(&self, tok: u32, ctx_pos: usize, cache: &mut KVCache, captures: &mut CaptureStore, mut trigger_hook: Option<(u32, &mut TriggerStore)>) {
         let tok_off = (tok as usize).min(VOCAB - 1) * HIDDEN;
         let mut hidden = self.embed[tok_off..tok_off + HIDDEN].to_vec();
 
@@ -201,6 +236,9 @@ impl Qwen3Probe {
                 ffn_hidden[i] = silu(gate[i]) * up[i];
             }
             captures.observe(li, "ffn_hidden", &ffn_hidden);
+            if let Some((current_tok, ref mut trig)) = trigger_hook {
+                trig.observe(li, &ffn_hidden, current_tok);
+            }
 
             let h_q = QTensor::from_f32(&ffn_hidden);
             let ff = linear_q(&h_q, &layer.down_proj, &vec![0.0f32; HIDDEN]).to_f32();

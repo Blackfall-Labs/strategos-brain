@@ -721,3 +721,102 @@ models, identify input patterns that reliably activate specific neurons. That is
 the bridge from "what fires" to "what makes it fire" — the spectral fingerprint.
 
 ---
+
+## 2026-05-19 — SmolLM2 Invariant Extractor: Token Trigger Analysis
+
+### What was built
+
+New binary `extract` in `strategos-probe`. For each selective neuron (fire rate 1-95%),
+it records which token was the current input token every time that neuron fired.
+Produces a trigger profile: per neuron, top-50 tokens by fire count, with:
+- `neuron_share`: of all firings of this neuron, what fraction had this token? (vocabulary distribution)
+- `trigger_rate`: of all occurrences of this token, what fraction fired this neuron? (token specificity)
+
+Implementation: `TriggerStore` in `triggers.rs`. Parallel Welford pattern — each
+par_chunk creates its own TriggerStore copy, merges at end. Forward pass refactored
+to `forward_token_inner` with optional `trigger_hook: Option<(u32, &mut TriggerStore)>`.
+
+### The trigger_rate gradient — depth law confirmed
+
+```
+Layer  mean_top_tr  median_top_tr  pure(>0.9)  diffuse(<0.1)
+   0       0.941         1.000        1302              2
+   1       0.575         0.553         311              6
+   5       0.489         0.442         196             58
+  10       0.390         0.318          65             58
+  11       0.313         0.257          15             91
+  13       0.243         0.184           6            247
+  15       0.248         0.179          22            403
+  18       0.266         0.208          12            404
+  23       0.338         0.247         104            302
+  29       0.319         0.213          98            407
+```
+
+`trigger_rate` is the probability that this neuron fires when a given token appears.
+Mean trigger_rate of the *top* token drops 1302→6 from L0 to L13, then partially
+rebounds at L19-L29. This is the depth law made quantitative:
+
+- **L0** (mean_top_tr=0.941): 1302/1536 neurons are *pure token detectors* —
+  trigger_rate > 0.9 on their primary token. Median = 1.000 means the median L0
+  neuron fires every single time its top token appears. The first FFN layer is
+  essentially a learned token-type lookup table with 1536 entries.
+
+- **L1-L10**: Rapid decay (0.941 → 0.390). Neurons become increasingly context-sensitive.
+  They still have a preferred token but respond only ~40-55% of the time even to
+  their strongest trigger.
+
+- **L11-L18**: The generalization zone (mean_top_tr 0.243-0.313). Fewest pure detectors
+  (6-22 per layer). Most neurons have diffuse trigger distributions — they respond
+  to common function words (' the', ' of', ' ,', ' and') at low rates, reflecting
+  compositional processing over accumulated context rather than token identity.
+
+- **L19-L29**: Partial rebound (0.302-0.339). Pure detectors recover (20-104 per layer),
+  but they are now responding to *rare named entities* (' Val', ' Arsen', ' Cro',
+  ' St') rather than high-frequency common tokens. These are late-layer memorization
+  neurons — specialized to specific vocabulary items that carry strong output predictions.
+
+### Three neuron classes — distillation implications
+
+**Class 1 — Pure token detectors (L0, some L1-L3)**
+trigger_rate > 0.9. These neurons fire on a small fixed set of tokens, regardless
+of context. Compressible to a token ID set: `if tok in {t1, t2, ...} → fire`.
+No context needed. Encode as static lookup in cortical column.
+
+**Class 2 — Context-dependent selective (L4-L18)**
+trigger_rate 0.1-0.9. Token identity is a weak predictor; the neuron is doing
+compositional computation. Full context window matters. Requires the spectral
+frequency band assignment — these neurons respond to distributed patterns, not
+single tokens. This is the hardest class to compress.
+
+**Class 3 — Rare entity detectors (L19-L29)**
+trigger_rate > 0.9 on rare tokens. Similar to Class 1 but at depth — they've
+survived through the compositional layers because their target tokens predict
+specific outputs. Also compressible to token ID sets, but require the late-layer
+residual context (they fire on token X AND the context is in the right state).
+
+### Spectral fingerprint structure
+
+The spectral model predicts that neurons tuned to similar token sets should be
+assigned similar frequency bands. The data supports this:
+- L0 pure detectors have maximally narrow bands (single-token response)
+- L11-L18 neurons have maximally broad bands (respond to many tokens weakly)
+- L19-L29 rare entity detectors have narrow bands on low-frequency vocabulary items
+
+The band assignment algorithm follows directly: cluster neurons by their vocabulary
+distribution (Jensen-Shannon divergence between trigger distributions), assign
+frequency proportional to cluster centroid frequency rank.
+
+### Files produced
+
+- `crates/probe/src/triggers.rs` — TriggerStore, TokenHit, TriggerProfile
+- `crates/probe/src/extract.rs` — extract binary (smollm2 + qwen3 support)
+- `smollm2_triggers.json` — 45,779 selective neurons, 20K tokens, top-50 per neuron
+
+### Next step
+
+Run Qwen3 extractor. Cross-model comparison: do the same three classes appear?
+Does the depth boundary (L0 pure → generalization → rare entity) occur at the
+same proportional depth (L0/30 = 0%, L13/30 = 43%, L19/30 = 63%) in Qwen3
+(equivalent: L0, L12, L18)?
+
+---

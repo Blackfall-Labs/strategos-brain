@@ -4,6 +4,7 @@ use std::path::Path;
 mod stats;
 mod capture;
 mod corpus;
+mod triggers;
 mod gpt2_probe;
 mod grokking_probe;
 mod smollm2_probe;

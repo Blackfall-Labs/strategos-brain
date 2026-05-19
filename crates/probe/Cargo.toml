@@ -15,3 +15,7 @@ rayon = "1"
 [[bin]]
 name = "probe"
 path = "src/main.rs"
+
+[[bin]]
+name = "extract"
+path = "src/extract.rs"
