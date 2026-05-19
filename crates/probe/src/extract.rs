@@ -6,6 +6,7 @@ mod stats;
 mod capture;
 mod corpus;
 mod triggers;
+mod l0_lookup;
 mod smollm2_probe;
 mod qwen3_probe;
 // gpt2/grokking probes don't have extract support yet

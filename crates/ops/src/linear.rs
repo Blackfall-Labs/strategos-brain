@@ -39,6 +39,46 @@ pub fn linear_q(x: &QTensor, w: &QWeight, bias: &[f32]) -> QTensor {
     QTensor { data, scale: out_scale }
 }
 
+/// Integer matrix-vector multiply that skips specified output rows.
+///
+/// `skip[j] = true` → row j is not computed; output[j] is set to 0 (caller must overwrite).
+/// Only non-skipped rows are dispatched to the thread pool, giving a proportional speedup.
+pub fn linear_q_skip_rows(x: &QTensor, w: &QWeight, bias: &[f32], skip: &[bool]) -> QTensor {
+    assert_eq!(x.len(), w.in_dim);
+    assert_eq!(bias.len(), w.out_dim);
+    assert_eq!(skip.len(), w.out_dim);
+
+    let in_dim    = w.in_dim;
+    let out_dim   = w.out_dim;
+    let acc_scale = x.scale * w.scale;
+
+    // Collect only the rows we need to compute.
+    let active_rows: Vec<usize> = (0..out_dim).filter(|&j| !skip[j]).collect();
+
+    let computed: Vec<(usize, i64)> = active_rows
+        .into_par_iter()
+        .map(|j| {
+            let row = &w.data[j * in_dim..(j + 1) * in_dim];
+            let mut sum = dot_i16(&x.data, row);
+            if acc_scale > 1e-20 {
+                sum += (bias[j] / acc_scale).round() as i64;
+            }
+            (j, sum)
+        })
+        .collect();
+
+    let acc_max = computed.iter().map(|(_, v)| v.unsigned_abs()).max().unwrap_or(1);
+    let shift    = (acc_max / 32767).max(1) as i64;
+    let out_scale = acc_scale * shift as f32;
+
+    let mut data = vec![0i16; out_dim];
+    for (j, v) in computed {
+        data[j] = (v / shift).clamp(-32767, 32767) as i16;
+    }
+
+    QTensor { data, scale: out_scale }
+}
+
 /// Dot product of two i16 slices → i64.
 /// Uses AVX2 when available, falls back to scalar.
 #[inline]

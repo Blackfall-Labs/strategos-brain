@@ -5,6 +5,7 @@ mod stats;
 mod capture;
 mod corpus;
 mod triggers;
+mod l0_lookup;
 mod gpt2_probe;
 mod grokking_probe;
 mod smollm2_probe;
@@ -30,6 +31,9 @@ struct Args {
 
     #[arg(long, default_value = "50000")]
     n_tokens: usize,
+
+    #[arg(long, help = "Path to L0 lookup JSON (enables skip-row FFN distillation at layer 0)")]
+    lookup: Option<String>,
 }
 
 fn main() {
@@ -70,8 +74,15 @@ fn run_grokking(args: &Args) {
 }
 
 fn run_smollm2(args: &Args) {
-    let model = smollm2_probe::SmolLM2Probe::load(Path::new(&args.weights))
+    let mut model = smollm2_probe::SmolLM2Probe::load(Path::new(&args.weights))
         .unwrap_or_else(|e| { eprintln!("[probe] load failed: {e}"); std::process::exit(1); });
+
+    if let Some(lookup_path) = &args.lookup {
+        let lut = l0_lookup::L0Lookup::load(Path::new(lookup_path))
+            .unwrap_or_else(|e| { eprintln!("[probe] lookup load failed: {e}"); std::process::exit(1); });
+        eprintln!("[probe] L0 lookup active: {} neurons, {} trigger tokens", lut.n_entries, lut.n_tokens);
+        model.lookup = Some(lut);
+    }
 
     let tokens = corpus::load_tokens(&args.corpus, &args.tokenizer, args.n_tokens)
         .unwrap_or_else(|e| { eprintln!("[probe] corpus failed: {e}"); std::process::exit(1); });
@@ -79,8 +90,15 @@ fn run_smollm2(args: &Args) {
     let thresholds = load_thresholds(&args.weights, model.n_layer);
     let mut captures = capture::CaptureStore::for_smollm2(model.n_layer, model.n_head, model.ffn_dim, &thresholds);
 
-    eprintln!("[probe] running {} tokens through SmolLM2-135M ({} layers)...", tokens.len(), model.n_layer);
+    let lookup_label = if model.lookup.is_some() { " [L0-lookup]" } else { "" };
+    eprintln!("[probe] running {} tokens through SmolLM2-135M ({} layers){}...",
+        tokens.len(), model.n_layer, lookup_label);
+
+    let t0 = std::time::Instant::now();
     model.run_corpus(&tokens, &mut captures);
+    let elapsed = t0.elapsed();
+    let tok_per_sec = tokens.len() as f64 / elapsed.as_secs_f64();
+    eprintln!("[probe] {:.0} tok/s  ({:.1}s for {} tokens)", tok_per_sec, elapsed.as_secs_f64(), tokens.len());
 
     let profile = captures.finalize("smollm2-135m", &args.corpus);
     let json = serde_json::to_string_pretty(&profile)

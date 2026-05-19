@@ -1,12 +1,13 @@
 use std::path::Path;
 use rayon::prelude::*;
 use strategos_ops::qtensor::{QTensor, QWeight};
-use strategos_ops::linear::linear_q;
+use strategos_ops::linear::{linear_q, linear_q_skip_rows};
 use strategos_ops::rmsnorm::{RmsNormWeights, rms_norm};
 use strategos_ops::rope::RopeTable;
 use strategos_runtime::loader::ModelWeights;
 use crate::capture::CaptureStore;
 use crate::triggers::TriggerStore;
+use crate::l0_lookup::L0Lookup;
 
 // Architecture constants from config.json
 const HIDDEN:    usize = 576;
@@ -30,6 +31,7 @@ pub struct SmolLM2Probe {
     pub n_layer: usize,
     pub n_head:  usize,
     pub ffn_dim: usize,
+    pub lookup: Option<L0Lookup>,
 }
 
 struct SmolLM2Layer {
@@ -86,7 +88,7 @@ impl SmolLM2Probe {
         let rope = RopeTable::new(HEAD_DIM, MAX_SEQ, ROPE_BASE);
         eprintln!("[smollm2-probe] loaded {} layers", N_LAYERS);
 
-        Ok(Self { embed, layers, rope, n_layer: N_LAYERS, n_head: N_Q_HEADS, ffn_dim: FFN_DIM })
+        Ok(Self { embed, layers, rope, n_layer: N_LAYERS, n_head: N_Q_HEADS, ffn_dim: FFN_DIM, lookup: None })
     }
 
     pub fn run_corpus(&self, tokens: &[u32], captures: &mut CaptureStore) {
@@ -221,14 +223,29 @@ impl SmolLM2Probe {
 
             let x2 = QTensor::from_f32(&pre_ffn);
             let ffn_no_bias = vec![0.0f32; FFN_DIM];
-            let gate_f = linear_q(&x2, &layer.gate_proj, &ffn_no_bias).to_f32();
-            let up_f   = linear_q(&x2, &layer.up_proj,   &ffn_no_bias).to_f32();
 
-            // SwiGLU: silu(gate) * up
-            let mut ffn_hidden = vec![0.0f32; FFN_DIM];
-            for i in 0..FFN_DIM {
-                ffn_hidden[i] = silu(gate_f[i]) * up_f[i];
-            }
+            // At L0: use skip-row matmul for lookup-covered neurons, then overwrite.
+            let ffn_hidden = if li == 0 {
+                if let Some(ref lut) = self.lookup {
+                    if let Some(skip) = lut.skip_mask(tok, FFN_DIM) {
+                        let gate_f = linear_q_skip_rows(&x2, &layer.gate_proj, &ffn_no_bias, &skip).to_f32();
+                        let up_f   = linear_q_skip_rows(&x2, &layer.up_proj,   &ffn_no_bias, &skip).to_f32();
+                        let mut h = vec![0.0f32; FFN_DIM];
+                        for i in 0..FFN_DIM {
+                            if !skip[i] { h[i] = silu(gate_f[i]) * up_f[i]; }
+                        }
+                        lut.apply(tok, &mut h);
+                        h
+                    } else {
+                        ffn_standard(&x2, layer, &ffn_no_bias)
+                    }
+                } else {
+                    ffn_standard(&x2, layer, &ffn_no_bias)
+                }
+            } else {
+                ffn_standard(&x2, layer, &ffn_no_bias)
+            };
+
             captures.observe(li, "ffn_hidden", &ffn_hidden);
             if let Some((current_tok, ref mut trig)) = trigger_hook {
                 trig.observe(li, &ffn_hidden, current_tok);
@@ -243,6 +260,17 @@ impl SmolLM2Probe {
             captures.observe(li, "residual", &hidden);
         }
     }
+}
+
+/// SwiGLU FFN without any skip — full gate and up projections.
+fn ffn_standard(x2: &QTensor, layer: &SmolLM2Layer, bias: &[f32]) -> Vec<f32> {
+    let gate_f = linear_q(x2, &layer.gate_proj, bias).to_f32();
+    let up_f   = linear_q(x2, &layer.up_proj,   bias).to_f32();
+    let mut h = vec![0.0f32; FFN_DIM];
+    for i in 0..FFN_DIM {
+        h[i] = silu(gate_f[i]) * up_f[i];
+    }
+    h
 }
 
 /// LLaMA-style (non-interleaved) RoPE: rotate pairs (i, i+half) instead of (2i, 2i+1).
