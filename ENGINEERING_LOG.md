@@ -1069,10 +1069,70 @@ The lookup table is indexed by (neuron_id, token_id). At runtime, instead of two
 - `smollm2_bands.json` (regenerated) — fixed UTF-8 encoding (was cp1252-mangled)
 - `qwen3_bands.json` (regenerated) — fixed UTF-8 encoding
 
+---
+
+## 2026-05-19 — Phase 2: Lookup Table Built + Approximation Error Measured
+
+### Lookup table: `smollm2_l0_lookup.json`
+
+`tools/build_lookup.py` precomputes the embedding-alone activation for all Band 1 L0
+neurons and writes only the entries where abs(activation) > threshold (the 849
+embedding-dominant neurons from the 1302 Band 1 L0 neurons = 65%).
+
+Each entry: `{neuron: N, token_id: T, token_str: "...", activation: V}`.
+
+Storage: 849 floats. Replaces 849 × 2 × 576 = 978,048 weight floats. **1152× compression.**
+
+### Approximation error: `tools/measure_l0_approx.py`
+
+Ran the full L0 forward pass (attention + FFN) on 2000 wikitext2 tokens. For each
+position where the current token is a lookup trigger, compared true L0 FFN activation
+to the precomputed lookup value.
+
+Results over 757 trigger occurrences, 9858 (neuron, position) pairs:
+
+| Metric | Value |
+|---|---|
+| MAE (mean absolute error) | 0.2281 (173% of threshold) |
+| Median error | 0.1038 |
+| Max error | 4.6411 |
+| Sign agreement | 98.0% |
+| Binary recall (true fires → lookup fires) | **100.0%** |
+| Binary precision (lookup fires → true fires) | **99.5%** |
+| Attention amplification factor | 0.82× (lookup overestimates) |
+
+### Interpretation
+
+**Binary fire prediction is valid.** The lookup table predicts with 100% recall and
+99.5% precision whether a Band 1 L0 neuron activates for its trigger token. This is
+the key result: for distillation purposes, we can replace the weight computation
+(576-dim dot products in gate_proj and up_proj) with a token_id lookup.
+
+**Magnitude is overestimated by ~22%.** The embedding-alone path (`silu(gate @ norm(embed)) * up @ norm(embed)`) produces slightly larger activations than the full path (`... @ norm(embed + attn_output)`). When attention adds to the residual stream before normalization, the combined vector normalizes to a smaller scale, slightly dampening the activation magnitude. A 0.82× scale correction per neuron would give accurate quantitative values.
+
+**MAE is dominated by outliers.** Median error is 0.10 (76% of threshold), not the mean's 0.23. The max error 4.6 comes from a small number of positions where attention adds large signal in the same direction as the embedding, and those extreme cases pull the mean up.
+
+### What this proves
+
+The first distillation proof is **PASSED at the binary level**:
+- Which neurons fire: predictable from token ID alone with 99.5%/100% accuracy
+- When they fire: not predictable (depends on context), but the firing rate from
+  Band 1 classification already implies they fire on ~90%+ of trigger token occurrences
+
+The lookup table is valid for the Boolean structure of Band 1 L0 circuits.
+Quantitative substitution (replacing weight rows entirely) requires an additional
+0.82× scale correction, which can be folded into the lookup value.
+
+### Files added
+
+- `tools/build_lookup.py` — precomputes lookup table from manifest weights + bands
+- `tools/measure_l0_approx.py` — measures L0 approximation error on corpus
+- `smollm2_l0_lookup.json` — 849 neurons, 70 trigger tokens, 1152× compression
+
 ### Next step
 
-Phase 2: build the lookup table and patch the SmolLM2 forward pass. Replace Band 1 L0
-neuron weight rows with the precomputed scalar table. Measure perplexity on wikitext2
-validation set. Target: perplexity increase < 0.5% for replaced neurons.
+Phase 3: patch the SmolLM2 forward pass to substitute lookup values for Band 1 L0
+neurons. Measure perplexity on wikitext2 validation set (500 tokens).
+Target: perplexity increase < 1% with raw lookup values, < 0.5% with 0.82× scale correction.
 
 ---

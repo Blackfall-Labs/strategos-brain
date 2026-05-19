@@ -1,0 +1,5103 @@
+{
+  "model": "smollm2",
+  "layer": 0,
+  "threshold": 0.1321,
+  "n_neurons": 849,
+  "n_tokens_covered": 70,
+  "entries": [
+    {
+      "neuron": 8,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": -0.297294
+    },
+    {
+      "neuron": 18,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": 0.138498
+    },
+    {
+      "neuron": 144,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": 0.241768
+    },
+    {
+      "neuron": 206,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": 0.199897
+    },
+    {
+      "neuron": 226,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": -0.255855
+    },
+    {
+      "neuron": 227,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": 0.23174
+    },
+    {
+      "neuron": 264,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": 0.574826
+    },
+    {
+      "neuron": 265,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": 0.142047
+    },
+    {
+      "neuron": 480,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": -0.221407
+    },
+    {
+      "neuron": 481,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": -0.383626
+    },
+    {
+      "neuron": 483,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": -0.427343
+    },
+    {
+      "neuron": 513,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": -0.208109
+    },
+    {
+      "neuron": 566,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": 0.176983
+    },
+    {
+      "neuron": 578,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": -0.323743
+    },
+    {
+      "neuron": 596,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": -1.287473
+    },
+    {
+      "neuron": 708,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": 0.15677
+    },
+    {
+      "neuron": 799,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": 0.137909
+    },
+    {
+      "neuron": 803,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": 0.519418
+    },
+    {
+      "neuron": 894,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": -0.310114
+    },
+    {
+      "neuron": 915,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": -0.249574
+    },
+    {
+      "neuron": 1030,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": 0.661012
+    },
+    {
+      "neuron": 1051,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": -0.258665
+    },
+    {
+      "neuron": 1115,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": 0.160597
+    },
+    {
+      "neuron": 1177,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": 0.408102
+    },
+    {
+      "neuron": 1188,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": 0.171686
+    },
+    {
+      "neuron": 1192,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": 0.142508
+    },
+    {
+      "neuron": 1203,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": -0.141836
+    },
+    {
+      "neuron": 1285,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": -0.303746
+    },
+    {
+      "neuron": 1286,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": -0.588367
+    },
+    {
+      "neuron": 1298,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": 0.155951
+    },
+    {
+      "neuron": 1527,
+      "token_id": 48,
+      "token_str": "@",
+      "activation": -0.205344
+    },
+    {
+      "neuron": 9,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 0.142164
+    },
+    {
+      "neuron": 93,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": -0.464692
+    },
+    {
+      "neuron": 102,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": -0.133044
+    },
+    {
+      "neuron": 110,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": -0.234249
+    },
+    {
+      "neuron": 121,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 0.308145
+    },
+    {
+      "neuron": 141,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 0.389788
+    },
+    {
+      "neuron": 214,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 0.242724
+    },
+    {
+      "neuron": 316,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": -0.265569
+    },
+    {
+      "neuron": 374,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": -0.574025
+    },
+    {
+      "neuron": 403,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 0.158954
+    },
+    {
+      "neuron": 426,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 0.284141
+    },
+    {
+      "neuron": 441,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 2.77351
+    },
+    {
+      "neuron": 470,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 0.265629
+    },
+    {
+      "neuron": 487,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 0.218322
+    },
+    {
+      "neuron": 498,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": -0.242371
+    },
+    {
+      "neuron": 508,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 0.330059
+    },
+    {
+      "neuron": 561,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 0.203315
+    },
+    {
+      "neuron": 601,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": -0.196022
+    },
+    {
+      "neuron": 605,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": -0.255654
+    },
+    {
+      "neuron": 636,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 0.135618
+    },
+    {
+      "neuron": 640,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": -2.517239
+    },
+    {
+      "neuron": 710,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": -0.206275
+    },
+    {
+      "neuron": 717,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 0.978998
+    },
+    {
+      "neuron": 734,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": -2.233002
+    },
+    {
+      "neuron": 763,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 0.136347
+    },
+    {
+      "neuron": 771,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": -0.268751
+    },
+    {
+      "neuron": 785,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 2.443392
+    },
+    {
+      "neuron": 848,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": -0.172467
+    },
+    {
+      "neuron": 866,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 0.192417
+    },
+    {
+      "neuron": 946,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 0.530163
+    },
+    {
+      "neuron": 1021,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": -0.297158
+    },
+    {
+      "neuron": 1022,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": -0.307803
+    },
+    {
+      "neuron": 1098,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": -0.211907
+    },
+    {
+      "neuron": 1204,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": -0.139784
+    },
+    {
+      "neuron": 1250,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 0.173513
+    },
+    {
+      "neuron": 1279,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 0.188391
+    },
+    {
+      "neuron": 1280,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 0.157681
+    },
+    {
+      "neuron": 1294,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": -0.142242
+    },
+    {
+      "neuron": 1344,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": -0.193492
+    },
+    {
+      "neuron": 1362,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": -0.194881
+    },
+    {
+      "neuron": 1378,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 0.251199
+    },
+    {
+      "neuron": 1383,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 0.192997
+    },
+    {
+      "neuron": 1390,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 0.206687
+    },
+    {
+      "neuron": 1393,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": -0.257958
+    },
+    {
+      "neuron": 1399,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": -0.301154
+    },
+    {
+      "neuron": 1428,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 0.181648
+    },
+    {
+      "neuron": 1500,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": -0.264508
+    },
+    {
+      "neuron": 1526,
+      "token_id": 3740,
+      "token_str": "ky",
+      "activation": 0.173063
+    },
+    {
+      "neuron": 89,
+      "token_id": 29,
+      "token_str": "-",
+      "activation": 0.594794
+    },
+    {
+      "neuron": 545,
+      "token_id": 29,
+      "token_str": "-",
+      "activation": 0.137705
+    },
+    {
+      "neuron": 968,
+      "token_id": 29,
+      "token_str": "-",
+      "activation": 0.57605
+    },
+    {
+      "neuron": 1471,
+      "token_id": 29,
+      "token_str": "-",
+      "activation": -0.235465
+    },
+    {
+      "neuron": 1515,
+      "token_id": 29,
+      "token_str": "-",
+      "activation": 0.186912
+    },
+    {
+      "neuron": 27,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.2044
+    },
+    {
+      "neuron": 44,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.466209
+    },
+    {
+      "neuron": 51,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.160783
+    },
+    {
+      "neuron": 59,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.171096
+    },
+    {
+      "neuron": 79,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.36779
+    },
+    {
+      "neuron": 118,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.21928
+    },
+    {
+      "neuron": 143,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.187647
+    },
+    {
+      "neuron": 158,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.178274
+    },
+    {
+      "neuron": 174,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.250781
+    },
+    {
+      "neuron": 183,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -2.464194
+    },
+    {
+      "neuron": 255,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.502632
+    },
+    {
+      "neuron": 268,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.311212
+    },
+    {
+      "neuron": 285,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.566483
+    },
+    {
+      "neuron": 355,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.455477
+    },
+    {
+      "neuron": 370,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.277738
+    },
+    {
+      "neuron": 375,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.221777
+    },
+    {
+      "neuron": 445,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.13581
+    },
+    {
+      "neuron": 450,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.181796
+    },
+    {
+      "neuron": 452,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -1.227716
+    },
+    {
+      "neuron": 454,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.207269
+    },
+    {
+      "neuron": 505,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.364779
+    },
+    {
+      "neuron": 523,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.148602
+    },
+    {
+      "neuron": 592,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.290042
+    },
+    {
+      "neuron": 608,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.213078
+    },
+    {
+      "neuron": 614,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.153441
+    },
+    {
+      "neuron": 617,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.269026
+    },
+    {
+      "neuron": 620,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -2.682691
+    },
+    {
+      "neuron": 630,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.563152
+    },
+    {
+      "neuron": 642,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.444882
+    },
+    {
+      "neuron": 676,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -1.4485
+    },
+    {
+      "neuron": 678,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.322449
+    },
+    {
+      "neuron": 698,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.621653
+    },
+    {
+      "neuron": 714,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.184792
+    },
+    {
+      "neuron": 727,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.171788
+    },
+    {
+      "neuron": 732,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.344406
+    },
+    {
+      "neuron": 743,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.203247
+    },
+    {
+      "neuron": 750,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.725608
+    },
+    {
+      "neuron": 764,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.203786
+    },
+    {
+      "neuron": 796,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.223417
+    },
+    {
+      "neuron": 801,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.277912
+    },
+    {
+      "neuron": 814,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.193846
+    },
+    {
+      "neuron": 845,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.196519
+    },
+    {
+      "neuron": 849,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.146122
+    },
+    {
+      "neuron": 864,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.24911
+    },
+    {
+      "neuron": 869,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 2.19576
+    },
+    {
+      "neuron": 886,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.141661
+    },
+    {
+      "neuron": 890,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.489156
+    },
+    {
+      "neuron": 945,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.339237
+    },
+    {
+      "neuron": 951,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 1.465341
+    },
+    {
+      "neuron": 959,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.171828
+    },
+    {
+      "neuron": 961,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.454339
+    },
+    {
+      "neuron": 990,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.208377
+    },
+    {
+      "neuron": 998,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.351271
+    },
+    {
+      "neuron": 1019,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.163824
+    },
+    {
+      "neuron": 1043,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.515799
+    },
+    {
+      "neuron": 1056,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.349766
+    },
+    {
+      "neuron": 1103,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.248587
+    },
+    {
+      "neuron": 1110,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.252936
+    },
+    {
+      "neuron": 1117,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.165059
+    },
+    {
+      "neuron": 1121,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.583936
+    },
+    {
+      "neuron": 1129,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.366805
+    },
+    {
+      "neuron": 1130,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.224554
+    },
+    {
+      "neuron": 1140,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.138289
+    },
+    {
+      "neuron": 1143,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.310507
+    },
+    {
+      "neuron": 1153,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.133434
+    },
+    {
+      "neuron": 1205,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.164582
+    },
+    {
+      "neuron": 1208,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.28043
+    },
+    {
+      "neuron": 1218,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.194719
+    },
+    {
+      "neuron": 1227,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.310311
+    },
+    {
+      "neuron": 1245,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.396403
+    },
+    {
+      "neuron": 1247,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.204135
+    },
+    {
+      "neuron": 1248,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.165757
+    },
+    {
+      "neuron": 1292,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.369116
+    },
+    {
+      "neuron": 1356,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.167194
+    },
+    {
+      "neuron": 1422,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.668742
+    },
+    {
+      "neuron": 1433,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.248193
+    },
+    {
+      "neuron": 1446,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.206053
+    },
+    {
+      "neuron": 1473,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -2.945747
+    },
+    {
+      "neuron": 1475,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.161903
+    },
+    {
+      "neuron": 1478,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 1.132125
+    },
+    {
+      "neuron": 1492,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.145628
+    },
+    {
+      "neuron": 1493,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": -0.248485
+    },
+    {
+      "neuron": 1508,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.265525
+    },
+    {
+      "neuron": 1509,
+      "token_id": 3596,
+      "token_str": "ĠVal",
+      "activation": 0.191429
+    },
+    {
+      "neuron": 107,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": -0.367896
+    },
+    {
+      "neuron": 184,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": 0.183709
+    },
+    {
+      "neuron": 245,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": -0.140925
+    },
+    {
+      "neuron": 276,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": 0.272748
+    },
+    {
+      "neuron": 324,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": 0.225024
+    },
+    {
+      "neuron": 390,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": -0.213916
+    },
+    {
+      "neuron": 431,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": -0.532509
+    },
+    {
+      "neuron": 474,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": -0.173559
+    },
+    {
+      "neuron": 482,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": 0.666284
+    },
+    {
+      "neuron": 553,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": -0.286887
+    },
+    {
+      "neuron": 581,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": -0.145203
+    },
+    {
+      "neuron": 598,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": -0.218607
+    },
+    {
+      "neuron": 652,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": 0.60583
+    },
+    {
+      "neuron": 658,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": 0.453084
+    },
+    {
+      "neuron": 687,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": -0.224639
+    },
+    {
+      "neuron": 745,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": -0.238021
+    },
+    {
+      "neuron": 758,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": -0.241931
+    },
+    {
+      "neuron": 828,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": 0.134705
+    },
+    {
+      "neuron": 832,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": 0.492925
+    },
+    {
+      "neuron": 840,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": -0.146429
+    },
+    {
+      "neuron": 900,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": 7.581902
+    },
+    {
+      "neuron": 917,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": -0.174227
+    },
+    {
+      "neuron": 981,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": 0.220307
+    },
+    {
+      "neuron": 1048,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": 0.190088
+    },
+    {
+      "neuron": 1057,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": 0.170703
+    },
+    {
+      "neuron": 1058,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": 0.457397
+    },
+    {
+      "neuron": 1179,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": -0.301446
+    },
+    {
+      "neuron": 1191,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": -0.35536
+    },
+    {
+      "neuron": 1229,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": -0.195457
+    },
+    {
+      "neuron": 1275,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": -0.277691
+    },
+    {
+      "neuron": 1282,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": -0.23401
+    },
+    {
+      "neuron": 1314,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": 0.143845
+    },
+    {
+      "neuron": 1372,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": 0.238582
+    },
+    {
+      "neuron": 1398,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": 0.254868
+    },
+    {
+      "neuron": 1430,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": 0.174646
+    },
+    {
+      "neuron": 1459,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": -0.242821
+    },
+    {
+      "neuron": 1510,
+      "token_id": 3394,
+      "token_str": "Ġ@",
+      "activation": -0.1747
+    },
+    {
+      "neuron": 29,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.19243
+    },
+    {
+      "neuron": 32,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.150409
+    },
+    {
+      "neuron": 33,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.20781
+    },
+    {
+      "neuron": 65,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.222987
+    },
+    {
+      "neuron": 70,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.194329
+    },
+    {
+      "neuron": 85,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.141431
+    },
+    {
+      "neuron": 96,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.563663
+    },
+    {
+      "neuron": 127,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.22165
+    },
+    {
+      "neuron": 132,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.224922
+    },
+    {
+      "neuron": 137,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -0.148974
+    },
+    {
+      "neuron": 181,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.149823
+    },
+    {
+      "neuron": 217,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.178921
+    },
+    {
+      "neuron": 246,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -0.405001
+    },
+    {
+      "neuron": 278,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -0.603555
+    },
+    {
+      "neuron": 281,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.137409
+    },
+    {
+      "neuron": 286,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.311119
+    },
+    {
+      "neuron": 301,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -0.391742
+    },
+    {
+      "neuron": 320,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -0.206211
+    },
+    {
+      "neuron": 323,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 4.496845
+    },
+    {
+      "neuron": 332,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -0.486934
+    },
+    {
+      "neuron": 418,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.14032
+    },
+    {
+      "neuron": 419,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -0.210669
+    },
+    {
+      "neuron": 423,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -0.159938
+    },
+    {
+      "neuron": 528,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.343933
+    },
+    {
+      "neuron": 539,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -0.32327
+    },
+    {
+      "neuron": 541,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.138384
+    },
+    {
+      "neuron": 548,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.461177
+    },
+    {
+      "neuron": 551,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -1.457456
+    },
+    {
+      "neuron": 594,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.156911
+    },
+    {
+      "neuron": 655,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.698817
+    },
+    {
+      "neuron": 751,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -0.206246
+    },
+    {
+      "neuron": 760,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.208696
+    },
+    {
+      "neuron": 921,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -0.140534
+    },
+    {
+      "neuron": 930,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.276818
+    },
+    {
+      "neuron": 950,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -0.20104
+    },
+    {
+      "neuron": 978,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.142505
+    },
+    {
+      "neuron": 1119,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -1.563135
+    },
+    {
+      "neuron": 1120,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -0.478337
+    },
+    {
+      "neuron": 1124,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -0.868308
+    },
+    {
+      "neuron": 1132,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -0.584218
+    },
+    {
+      "neuron": 1144,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -0.144169
+    },
+    {
+      "neuron": 1189,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -0.3274
+    },
+    {
+      "neuron": 1251,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -0.280964
+    },
+    {
+      "neuron": 1303,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.321665
+    },
+    {
+      "neuron": 1341,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -0.331333
+    },
+    {
+      "neuron": 1443,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -0.21243
+    },
+    {
+      "neuron": 1444,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -0.766813
+    },
+    {
+      "neuron": 1454,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.183922
+    },
+    {
+      "neuron": 1514,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": 0.170671
+    },
+    {
+      "neuron": 1519,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -0.280917
+    },
+    {
+      "neuron": 1535,
+      "token_id": 5484,
+      "token_str": "ria",
+      "activation": -0.152774
+    },
+    {
+      "neuron": 20,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": -0.894414
+    },
+    {
+      "neuron": 177,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.204534
+    },
+    {
+      "neuron": 209,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": -0.243201
+    },
+    {
+      "neuron": 238,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.13985
+    },
+    {
+      "neuron": 269,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.266044
+    },
+    {
+      "neuron": 271,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.185871
+    },
+    {
+      "neuron": 356,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.196667
+    },
+    {
+      "neuron": 362,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.174611
+    },
+    {
+      "neuron": 381,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.276189
+    },
+    {
+      "neuron": 404,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.153703
+    },
+    {
+      "neuron": 489,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": -0.229974
+    },
+    {
+      "neuron": 491,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": -0.745063
+    },
+    {
+      "neuron": 521,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": -0.621383
+    },
+    {
+      "neuron": 549,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": -0.473558
+    },
+    {
+      "neuron": 568,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.472049
+    },
+    {
+      "neuron": 621,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.34446
+    },
+    {
+      "neuron": 629,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.319294
+    },
+    {
+      "neuron": 633,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": -0.165378
+    },
+    {
+      "neuron": 641,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": -0.14269
+    },
+    {
+      "neuron": 684,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.184278
+    },
+    {
+      "neuron": 735,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": -0.328456
+    },
+    {
+      "neuron": 775,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.468079
+    },
+    {
+      "neuron": 786,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.421412
+    },
+    {
+      "neuron": 800,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.251024
+    },
+    {
+      "neuron": 817,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": -0.26426
+    },
+    {
+      "neuron": 839,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.18026
+    },
+    {
+      "neuron": 883,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.163401
+    },
+    {
+      "neuron": 884,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": -0.957845
+    },
+    {
+      "neuron": 910,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.799243
+    },
+    {
+      "neuron": 1023,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": -0.241057
+    },
+    {
+      "neuron": 1028,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.256918
+    },
+    {
+      "neuron": 1171,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.603547
+    },
+    {
+      "neuron": 1236,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.158494
+    },
+    {
+      "neuron": 1244,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.152527
+    },
+    {
+      "neuron": 1274,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.250746
+    },
+    {
+      "neuron": 1296,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.198223
+    },
+    {
+      "neuron": 1305,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": -0.446029
+    },
+    {
+      "neuron": 1308,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": -0.805636
+    },
+    {
+      "neuron": 1312,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": -0.881639
+    },
+    {
+      "neuron": 1315,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.199816
+    },
+    {
+      "neuron": 1331,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.386403
+    },
+    {
+      "neuron": 1348,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": -0.50182
+    },
+    {
+      "neuron": 1410,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.179874
+    },
+    {
+      "neuron": 1421,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": 0.872151
+    },
+    {
+      "neuron": 1439,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": -0.21881
+    },
+    {
+      "neuron": 1534,
+      "token_id": 8977,
+      "token_str": "ĠRock",
+      "activation": -0.305137
+    },
+    {
+      "neuron": 45,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": 0.246696
+    },
+    {
+      "neuron": 47,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": -1.876034
+    },
+    {
+      "neuron": 57,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": 0.408832
+    },
+    {
+      "neuron": 91,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": -0.793109
+    },
+    {
+      "neuron": 213,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": -1.338443
+    },
+    {
+      "neuron": 229,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": 0.523058
+    },
+    {
+      "neuron": 273,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": -1.189183
+    },
+    {
+      "neuron": 342,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": 0.465593
+    },
+    {
+      "neuron": 345,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": -0.238499
+    },
+    {
+      "neuron": 353,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": -0.342034
+    },
+    {
+      "neuron": 376,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": -0.496375
+    },
+    {
+      "neuron": 387,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": 5.344604
+    },
+    {
+      "neuron": 432,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": -0.421512
+    },
+    {
+      "neuron": 435,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": 1.628886
+    },
+    {
+      "neuron": 460,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": 0.409156
+    },
+    {
+      "neuron": 504,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": -0.134626
+    },
+    {
+      "neuron": 556,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": -1.600248
+    },
+    {
+      "neuron": 656,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": 0.188875
+    },
+    {
+      "neuron": 700,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": 0.207757
+    },
+    {
+      "neuron": 715,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": 0.2866
+    },
+    {
+      "neuron": 781,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": -0.243324
+    },
+    {
+      "neuron": 810,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": -2.392743
+    },
+    {
+      "neuron": 816,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": 0.693428
+    },
+    {
+      "neuron": 1055,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": 0.366984
+    },
+    {
+      "neuron": 1062,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": 1.891624
+    },
+    {
+      "neuron": 1136,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": 0.200487
+    },
+    {
+      "neuron": 1164,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": -0.381204
+    },
+    {
+      "neuron": 1199,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": -0.549319
+    },
+    {
+      "neuron": 1211,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": -0.311116
+    },
+    {
+      "neuron": 1434,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": -0.186451
+    },
+    {
+      "neuron": 1447,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": -0.299571
+    },
+    {
+      "neuron": 1530,
+      "token_id": 3297,
+      "token_str": "Ġ,",
+      "activation": 0.36773
+    },
+    {
+      "neuron": 42,
+      "token_id": 1673,
+      "token_str": "Ġ.",
+      "activation": -0.24588
+    },
+    {
+      "neuron": 240,
+      "token_id": 1673,
+      "token_str": "Ġ.",
+      "activation": -0.257495
+    },
+    {
+      "neuron": 317,
+      "token_id": 1673,
+      "token_str": "Ġ.",
+      "activation": -0.369595
+    },
+    {
+      "neuron": 395,
+      "token_id": 1673,
+      "token_str": "Ġ.",
+      "activation": -0.447836
+    },
+    {
+      "neuron": 562,
+      "token_id": 1673,
+      "token_str": "Ġ.",
+      "activation": 0.275035
+    },
+    {
+      "neuron": 729,
+      "token_id": 1673,
+      "token_str": "Ġ.",
+      "activation": 0.31626
+    },
+    {
+      "neuron": 936,
+      "token_id": 1673,
+      "token_str": "Ġ.",
+      "activation": 0.215316
+    },
+    {
+      "neuron": 954,
+      "token_id": 1673,
+      "token_str": "Ġ.",
+      "activation": 0.550851
+    },
+    {
+      "neuron": 1118,
+      "token_id": 1673,
+      "token_str": "Ġ.",
+      "activation": 0.302685
+    },
+    {
+      "neuron": 1194,
+      "token_id": 1673,
+      "token_str": "Ġ.",
+      "activation": 1.048002
+    },
+    {
+      "neuron": 1202,
+      "token_id": 1673,
+      "token_str": "Ġ.",
+      "activation": -0.264616
+    },
+    {
+      "neuron": 1216,
+      "token_id": 1673,
+      "token_str": "Ġ.",
+      "activation": 0.157497
+    },
+    {
+      "neuron": 1408,
+      "token_id": 1673,
+      "token_str": "Ġ.",
+      "activation": -0.220057
+    },
+    {
+      "neuron": 97,
+      "token_id": 260,
+      "token_str": "Ġthe",
+      "activation": -5.374372
+    },
+    {
+      "neuron": 173,
+      "token_id": 260,
+      "token_str": "Ġthe",
+      "activation": -0.874867
+    },
+    {
+      "neuron": 196,
+      "token_id": 260,
+      "token_str": "Ġthe",
+      "activation": 2.271231
+    },
+    {
+      "neuron": 333,
+      "token_id": 260,
+      "token_str": "Ġthe",
+      "activation": 0.557921
+    },
+    {
+      "neuron": 371,
+      "token_id": 260,
+      "token_str": "Ġthe",
+      "activation": 0.627452
+    },
+    {
+      "neuron": 664,
+      "token_id": 260,
+      "token_str": "Ġthe",
+      "activation": 0.133872
+    },
+    {
+      "neuron": 780,
+      "token_id": 260,
+      "token_str": "Ġthe",
+      "activation": -0.238686
+    },
+    {
+      "neuron": 872,
+      "token_id": 260,
+      "token_str": "Ġthe",
+      "activation": 0.408262
+    },
+    {
+      "neuron": 1007,
+      "token_id": 260,
+      "token_str": "Ġthe",
+      "activation": -0.32961
+    },
+    {
+      "neuron": 1503,
+      "token_id": 260,
+      "token_str": "Ġthe",
+      "activation": -0.301304
+    },
+    {
+      "neuron": 15,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.34216
+    },
+    {
+      "neuron": 67,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.197673
+    },
+    {
+      "neuron": 80,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.27012
+    },
+    {
+      "neuron": 111,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.379988
+    },
+    {
+      "neuron": 115,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.168834
+    },
+    {
+      "neuron": 128,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.315416
+    },
+    {
+      "neuron": 152,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.366616
+    },
+    {
+      "neuron": 165,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.214791
+    },
+    {
+      "neuron": 204,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.751425
+    },
+    {
+      "neuron": 236,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.680005
+    },
+    {
+      "neuron": 251,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.250731
+    },
+    {
+      "neuron": 305,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.24373
+    },
+    {
+      "neuron": 308,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -1.724769
+    },
+    {
+      "neuron": 313,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.764551
+    },
+    {
+      "neuron": 369,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.151718
+    },
+    {
+      "neuron": 378,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.693312
+    },
+    {
+      "neuron": 415,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.242212
+    },
+    {
+      "neuron": 417,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.203674
+    },
+    {
+      "neuron": 462,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.493748
+    },
+    {
+      "neuron": 512,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.156221
+    },
+    {
+      "neuron": 571,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.319412
+    },
+    {
+      "neuron": 576,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.196613
+    },
+    {
+      "neuron": 599,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.255979
+    },
+    {
+      "neuron": 606,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.170713
+    },
+    {
+      "neuron": 653,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.25125
+    },
+    {
+      "neuron": 673,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.193543
+    },
+    {
+      "neuron": 689,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 1.485488
+    },
+    {
+      "neuron": 728,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 1.018311
+    },
+    {
+      "neuron": 731,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.380205
+    },
+    {
+      "neuron": 754,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.919724
+    },
+    {
+      "neuron": 826,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.48746
+    },
+    {
+      "neuron": 854,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.43472
+    },
+    {
+      "neuron": 855,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.140981
+    },
+    {
+      "neuron": 902,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.244776
+    },
+    {
+      "neuron": 909,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.295474
+    },
+    {
+      "neuron": 912,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.556836
+    },
+    {
+      "neuron": 916,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.201112
+    },
+    {
+      "neuron": 918,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.153523
+    },
+    {
+      "neuron": 949,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.432551
+    },
+    {
+      "neuron": 957,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.339033
+    },
+    {
+      "neuron": 963,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.605391
+    },
+    {
+      "neuron": 982,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.205006
+    },
+    {
+      "neuron": 1003,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.335735
+    },
+    {
+      "neuron": 1009,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.892921
+    },
+    {
+      "neuron": 1013,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.816501
+    },
+    {
+      "neuron": 1053,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.354093
+    },
+    {
+      "neuron": 1067,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.38627
+    },
+    {
+      "neuron": 1072,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.343762
+    },
+    {
+      "neuron": 1078,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.655273
+    },
+    {
+      "neuron": 1086,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.620649
+    },
+    {
+      "neuron": 1102,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.187025
+    },
+    {
+      "neuron": 1149,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.134078
+    },
+    {
+      "neuron": 1152,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.388951
+    },
+    {
+      "neuron": 1166,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.339098
+    },
+    {
+      "neuron": 1195,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.647452
+    },
+    {
+      "neuron": 1253,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.677675
+    },
+    {
+      "neuron": 1262,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.149953
+    },
+    {
+      "neuron": 1288,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.149839
+    },
+    {
+      "neuron": 1299,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.398927
+    },
+    {
+      "neuron": 1367,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.426609
+    },
+    {
+      "neuron": 1382,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.266441
+    },
+    {
+      "neuron": 1419,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.329041
+    },
+    {
+      "neuron": 1449,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.287011
+    },
+    {
+      "neuron": 1464,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.365694
+    },
+    {
+      "neuron": 1490,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.276541
+    },
+    {
+      "neuron": 1496,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": -0.346935
+    },
+    {
+      "neuron": 1504,
+      "token_id": 3133,
+      "token_str": "Ġgame",
+      "activation": 0.152728
+    },
+    {
+      "neuron": 266,
+      "token_id": 637,
+      "token_str": "Ġ'",
+      "activation": -0.13264
+    },
+    {
+      "neuron": 699,
+      "token_id": 637,
+      "token_str": "Ġ'",
+      "activation": 0.146703
+    },
+    {
+      "neuron": 719,
+      "token_id": 637,
+      "token_str": "Ġ'",
+      "activation": -0.166298
+    },
+    {
+      "neuron": 992,
+      "token_id": 637,
+      "token_str": "Ġ'",
+      "activation": -0.172164
+    },
+    {
+      "neuron": 1338,
+      "token_id": 637,
+      "token_str": "Ġ'",
+      "activation": -0.183417
+    },
+    {
+      "neuron": 156,
+      "token_id": 446,
+      "token_str": "Ġ=",
+      "activation": 0.646115
+    },
+    {
+      "neuron": 235,
+      "token_id": 446,
+      "token_str": "Ġ=",
+      "activation": -0.397763
+    },
+    {
+      "neuron": 319,
+      "token_id": 446,
+      "token_str": "Ġ=",
+      "activation": 1.600211
+    },
+    {
+      "neuron": 406,
+      "token_id": 446,
+      "token_str": "Ġ=",
+      "activation": -0.976765
+    },
+    {
+      "neuron": 407,
+      "token_id": 446,
+      "token_str": "Ġ=",
+      "activation": -0.162774
+    },
+    {
+      "neuron": 458,
+      "token_id": 446,
+      "token_str": "Ġ=",
+      "activation": 0.225293
+    },
+    {
+      "neuron": 688,
+      "token_id": 446,
+      "token_str": "Ġ=",
+      "activation": 0.485069
+    },
+    {
+      "neuron": 702,
+      "token_id": 446,
+      "token_str": "Ġ=",
+      "activation": 0.162775
+    },
+    {
+      "neuron": 1186,
+      "token_id": 446,
+      "token_str": "Ġ=",
+      "activation": 0.241734
+    },
+    {
+      "neuron": 1297,
+      "token_id": 446,
+      "token_str": "Ġ=",
+      "activation": -0.149626
+    },
+    {
+      "neuron": 1353,
+      "token_id": 446,
+      "token_str": "Ġ=",
+      "activation": -0.186546
+    },
+    {
+      "neuron": 1377,
+      "token_id": 446,
+      "token_str": "Ġ=",
+      "activation": 6.919825
+    },
+    {
+      "neuron": 1397,
+      "token_id": 446,
+      "token_str": "Ġ=",
+      "activation": 0.176631
+    },
+    {
+      "neuron": 81,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": -0.219547
+    },
+    {
+      "neuron": 108,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": 0.233984
+    },
+    {
+      "neuron": 129,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": -0.610775
+    },
+    {
+      "neuron": 149,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": 0.177072
+    },
+    {
+      "neuron": 157,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": 0.431278
+    },
+    {
+      "neuron": 192,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": 0.138267
+    },
+    {
+      "neuron": 287,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": -0.304975
+    },
+    {
+      "neuron": 337,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": -0.242342
+    },
+    {
+      "neuron": 515,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": -0.279866
+    },
+    {
+      "neuron": 588,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": -0.48742
+    },
+    {
+      "neuron": 611,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": 0.321417
+    },
+    {
+      "neuron": 622,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": 0.172646
+    },
+    {
+      "neuron": 733,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": 0.430562
+    },
+    {
+      "neuron": 768,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": -0.196875
+    },
+    {
+      "neuron": 798,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": 0.240493
+    },
+    {
+      "neuron": 862,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": -0.295453
+    },
+    {
+      "neuron": 911,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": 0.423176
+    },
+    {
+      "neuron": 996,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": -0.433294
+    },
+    {
+      "neuron": 1063,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": 0.44032
+    },
+    {
+      "neuron": 1108,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": -0.463457
+    },
+    {
+      "neuron": 1127,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": -0.209234
+    },
+    {
+      "neuron": 1178,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": 0.409731
+    },
+    {
+      "neuron": 1182,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": -0.182341
+    },
+    {
+      "neuron": 1196,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": 0.188427
+    },
+    {
+      "neuron": 1276,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": 7.819792
+    },
+    {
+      "neuron": 1290,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": -0.508537
+    },
+    {
+      "neuron": 1321,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": -0.263972
+    },
+    {
+      "neuron": 1346,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": 0.675462
+    },
+    {
+      "neuron": 1363,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": -0.1571
+    },
+    {
+      "neuron": 1381,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": 0.222695
+    },
+    {
+      "neuron": 1389,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": 0.438151
+    },
+    {
+      "neuron": 1518,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": 0.241074
+    },
+    {
+      "neuron": 1521,
+      "token_id": 8728,
+      "token_str": "ĠLittle",
+      "activation": 0.873342
+    },
+    {
+      "neuron": 10,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": -0.173925
+    },
+    {
+      "neuron": 39,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": 0.173864
+    },
+    {
+      "neuron": 50,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": 0.327755
+    },
+    {
+      "neuron": 98,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": -0.311434
+    },
+    {
+      "neuron": 188,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": 0.195236
+    },
+    {
+      "neuron": 254,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": 0.203717
+    },
+    {
+      "neuron": 274,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": -0.174754
+    },
+    {
+      "neuron": 296,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": -0.513866
+    },
+    {
+      "neuron": 335,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": -0.209113
+    },
+    {
+      "neuron": 349,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": -0.158265
+    },
+    {
+      "neuron": 385,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": 0.213503
+    },
+    {
+      "neuron": 388,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": -0.156602
+    },
+    {
+      "neuron": 393,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": 0.343391
+    },
+    {
+      "neuron": 394,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": 0.315789
+    },
+    {
+      "neuron": 459,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": -0.725967
+    },
+    {
+      "neuron": 499,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": -0.307738
+    },
+    {
+      "neuron": 519,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": 0.28444
+    },
+    {
+      "neuron": 538,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": 0.144735
+    },
+    {
+      "neuron": 575,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": 0.172149
+    },
+    {
+      "neuron": 742,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": 0.410553
+    },
+    {
+      "neuron": 787,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": 0.23691
+    },
+    {
+      "neuron": 802,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": 0.172773
+    },
+    {
+      "neuron": 820,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": 0.196505
+    },
+    {
+      "neuron": 836,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": 0.346533
+    },
+    {
+      "neuron": 856,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": -0.311171
+    },
+    {
+      "neuron": 865,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": -0.424038
+    },
+    {
+      "neuron": 870,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": -0.632947
+    },
+    {
+      "neuron": 904,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": 0.164414
+    },
+    {
+      "neuron": 914,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": -0.356682
+    },
+    {
+      "neuron": 926,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": 0.282986
+    },
+    {
+      "neuron": 931,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": 0.161147
+    },
+    {
+      "neuron": 935,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": -0.351506
+    },
+    {
+      "neuron": 1036,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": -0.443891
+    },
+    {
+      "neuron": 1085,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": 0.200847
+    },
+    {
+      "neuron": 1142,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": 0.160988
+    },
+    {
+      "neuron": 1215,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": 0.359778
+    },
+    {
+      "neuron": 1453,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": 0.184854
+    },
+    {
+      "neuron": 1483,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": 0.371366
+    },
+    {
+      "neuron": 1498,
+      "token_id": 34471,
+      "token_str": "ĠChronicles",
+      "activation": -0.145079
+    },
+    {
+      "neuron": 71,
+      "token_id": 10062,
+      "token_str": "ĠBlue",
+      "activation": 0.147713
+    },
+    {
+      "neuron": 140,
+      "token_id": 10062,
+      "token_str": "ĠBlue",
+      "activation": 0.14342
+    },
+    {
+      "neuron": 189,
+      "token_id": 10062,
+      "token_str": "ĠBlue",
+      "activation": -1.371024
+    },
+    {
+      "neuron": 262,
+      "token_id": 10062,
+      "token_str": "ĠBlue",
+      "activation": -0.317425
+    },
+    {
+      "neuron": 359,
+      "token_id": 10062,
+      "token_str": "ĠBlue",
+      "activation": -0.137388
+    },
+    {
+      "neuron": 392,
+      "token_id": 10062,
+      "token_str": "ĠBlue",
+      "activation": -0.396189
+    },
+    {
+      "neuron": 411,
+      "token_id": 10062,
+      "token_str": "ĠBlue",
+      "activation": 0.177226
+    },
+    {
+      "neuron": 413,
+      "token_id": 10062,
+      "token_str": "ĠBlue",
+      "activation": -0.183023
+    },
+    {
+      "neuron": 420,
+      "token_id": 10062,
+      "token_str": "ĠBlue",
+      "activation": 0.345944
+    },
+    {
+      "neuron": 443,
+      "token_id": 10062,
+      "token_str": "ĠBlue",
+      "activation": 0.43778
+    },
+    {
+      "neuron": 534,
+      "token_id": 10062,
+      "token_str": "ĠBlue",
+      "activation": 0.381326
+    },
+    {
+      "neuron": 666,
+      "token_id": 10062,
+      "token_str": "ĠBlue",
+      "activation": 0.205371
+    },
+    {
+      "neuron": 718,
+      "token_id": 10062,
+      "token_str": "ĠBlue",
+      "activation": -0.403677
+    },
+    {
+      "neuron": 774,
+      "token_id": 10062,
+      "token_str": "ĠBlue",
+      "activation": -0.212807
+    },
+    {
+      "neuron": 795,
+      "token_id": 10062,
+      "token_str": "ĠBlue",
+      "activation": 0.483531
+    },
+    {
+      "neuron": 831,
+      "token_id": 10062,
+      "token_str": "ĠBlue",
+      "activation": 0.34449
+    },
+    {
+      "neuron": 851,
+      "token_id": 10062,
+      "token_str": "ĠBlue",
+      "activation": -0.158508
+    },
+    {
+      "neuron": 901,
+      "token_id": 10062,
+      "token_str": "ĠBlue",
+      "activation": 0.841114
+    },
+    {
+      "neuron": 908,
+      "token_id": 10062,
+      "token_str": "ĠBlue",
+      "activation": 0.697319
+    },
+    {
+      "neuron": 1318,
+      "token_id": 10062,
+      "token_str": "ĠBlue",
+      "activation": 0.448835
+    },
+    {
+      "neuron": 1404,
+      "token_id": 10062,
+      "token_str": "ĠBlue",
+      "activation": -0.164329
+    },
+    {
+      "neuron": 1435,
+      "token_id": 10062,
+      "token_str": "ĠBlue",
+      "activation": 0.545837
+    },
+    {
+      "neuron": 1480,
+      "token_id": 10062,
+      "token_str": "ĠBlue",
+      "activation": 0.491119
+    },
+    {
+      "neuron": 40,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": 0.503921
+    },
+    {
+      "neuron": 61,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": 0.191064
+    },
+    {
+      "neuron": 64,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": -0.416182
+    },
+    {
+      "neuron": 167,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": 0.400512
+    },
+    {
+      "neuron": 237,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": 0.200905
+    },
+    {
+      "neuron": 241,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": -0.170388
+    },
+    {
+      "neuron": 252,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": 0.154493
+    },
+    {
+      "neuron": 293,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": 0.89349
+    },
+    {
+      "neuron": 310,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": -0.697617
+    },
+    {
+      "neuron": 377,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": 0.68255
+    },
+    {
+      "neuron": 399,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": -0.645386
+    },
+    {
+      "neuron": 421,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": 0.233823
+    },
+    {
+      "neuron": 455,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": 0.133555
+    },
+    {
+      "neuron": 476,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": 0.207941
+    },
+    {
+      "neuron": 485,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": -0.351563
+    },
+    {
+      "neuron": 587,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": 0.164172
+    },
+    {
+      "neuron": 589,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": -0.249363
+    },
+    {
+      "neuron": 593,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": -0.316804
+    },
+    {
+      "neuron": 686,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": -0.600587
+    },
+    {
+      "neuron": 761,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": -0.189484
+    },
+    {
+      "neuron": 905,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": 0.348921
+    },
+    {
+      "neuron": 922,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": 0.212757
+    },
+    {
+      "neuron": 991,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": -0.347543
+    },
+    {
+      "neuron": 1018,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": -0.234578
+    },
+    {
+      "neuron": 1032,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": 0.374456
+    },
+    {
+      "neuron": 1034,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": -0.469976
+    },
+    {
+      "neuron": 1039,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": 0.165507
+    },
+    {
+      "neuron": 1064,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": 0.306626
+    },
+    {
+      "neuron": 1122,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": -0.259745
+    },
+    {
+      "neuron": 1126,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": 0.215961
+    },
+    {
+      "neuron": 1173,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": 0.384253
+    },
+    {
+      "neuron": 1183,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": 0.243819
+    },
+    {
+      "neuron": 1197,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": -0.227367
+    },
+    {
+      "neuron": 1212,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": -0.322566
+    },
+    {
+      "neuron": 1277,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": -0.249854
+    },
+    {
+      "neuron": 1351,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": -0.13376
+    },
+    {
+      "neuron": 1371,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": -0.281959
+    },
+    {
+      "neuron": 1386,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": 0.227505
+    },
+    {
+      "neuron": 1405,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": 0.222251
+    },
+    {
+      "neuron": 1457,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": -0.150633
+    },
+    {
+      "neuron": 1479,
+      "token_id": 2299,
+      "token_str": "Ġteam",
+      "activation": 0.52513
+    },
+    {
+      "neuron": 5,
+      "token_id": 10262,
+      "token_str": "ĠJack",
+      "activation": 0.174699
+    },
+    {
+      "neuron": 172,
+      "token_id": 10262,
+      "token_str": "ĠJack",
+      "activation": 0.311862
+    },
+    {
+      "neuron": 179,
+      "token_id": 10262,
+      "token_str": "ĠJack",
+      "activation": 0.254382
+    },
+    {
+      "neuron": 291,
+      "token_id": 10262,
+      "token_str": "ĠJack",
+      "activation": 0.394242
+    },
+    {
+      "neuron": 303,
+      "token_id": 10262,
+      "token_str": "ĠJack",
+      "activation": 0.180054
+    },
+    {
+      "neuron": 567,
+      "token_id": 10262,
+      "token_str": "ĠJack",
+      "activation": 0.249776
+    },
+    {
+      "neuron": 591,
+      "token_id": 10262,
+      "token_str": "ĠJack",
+      "activation": -0.203352
+    },
+    {
+      "neuron": 632,
+      "token_id": 10262,
+      "token_str": "ĠJack",
+      "activation": -0.186098
+    },
+    {
+      "neuron": 683,
+      "token_id": 10262,
+      "token_str": "ĠJack",
+      "activation": -0.327752
+    },
+    {
+      "neuron": 722,
+      "token_id": 10262,
+      "token_str": "ĠJack",
+      "activation": 0.275321
+    },
+    {
+      "neuron": 724,
+      "token_id": 10262,
+      "token_str": "ĠJack",
+      "activation": -0.336616
+    },
+    {
+      "neuron": 847,
+      "token_id": 10262,
+      "token_str": "ĠJack",
+      "activation": -0.500683
+    },
+    {
+      "neuron": 896,
+      "token_id": 10262,
+      "token_str": "ĠJack",
+      "activation": 0.141736
+    },
+    {
+      "neuron": 999,
+      "token_id": 10262,
+      "token_str": "ĠJack",
+      "activation": 0.185629
+    },
+    {
+      "neuron": 1087,
+      "token_id": 10262,
+      "token_str": "ĠJack",
+      "activation": 0.335384
+    },
+    {
+      "neuron": 1135,
+      "token_id": 10262,
+      "token_str": "ĠJack",
+      "activation": 1.001364
+    },
+    {
+      "neuron": 1358,
+      "token_id": 10262,
+      "token_str": "ĠJack",
+      "activation": 1.367221
+    },
+    {
+      "neuron": 1491,
+      "token_id": 10262,
+      "token_str": "ĠJack",
+      "activation": 0.383488
+    },
+    {
+      "neuron": 101,
+      "token_id": 8544,
+      "token_str": "Ġ;",
+      "activation": -0.171427
+    },
+    {
+      "neuron": 280,
+      "token_id": 8544,
+      "token_str": "Ġ;",
+      "activation": -0.208379
+    },
+    {
+      "neuron": 364,
+      "token_id": 8544,
+      "token_str": "Ġ;",
+      "activation": 0.224319
+    },
+    {
+      "neuron": 453,
+      "token_id": 8544,
+      "token_str": "Ġ;",
+      "activation": 0.22198
+    },
+    {
+      "neuron": 468,
+      "token_id": 8544,
+      "token_str": "Ġ;",
+      "activation": -0.481612
+    },
+    {
+      "neuron": 497,
+      "token_id": 8544,
+      "token_str": "Ġ;",
+      "activation": 6.743724
+    },
+    {
+      "neuron": 643,
+      "token_id": 8544,
+      "token_str": "Ġ;",
+      "activation": 0.236959
+    },
+    {
+      "neuron": 669,
+      "token_id": 8544,
+      "token_str": "Ġ;",
+      "activation": -0.37234
+    },
+    {
+      "neuron": 711,
+      "token_id": 8544,
+      "token_str": "Ġ;",
+      "activation": 0.312661
+    },
+    {
+      "neuron": 755,
+      "token_id": 8544,
+      "token_str": "Ġ;",
+      "activation": -0.250202
+    },
+    {
+      "neuron": 773,
+      "token_id": 8544,
+      "token_str": "Ġ;",
+      "activation": -0.413153
+    },
+    {
+      "neuron": 837,
+      "token_id": 8544,
+      "token_str": "Ġ;",
+      "activation": 0.179223
+    },
+    {
+      "neuron": 868,
+      "token_id": 8544,
+      "token_str": "Ġ;",
+      "activation": -0.65569
+    },
+    {
+      "neuron": 876,
+      "token_id": 8544,
+      "token_str": "Ġ;",
+      "activation": -0.202605
+    },
+    {
+      "neuron": 940,
+      "token_id": 8544,
+      "token_str": "Ġ;",
+      "activation": -0.14836
+    },
+    {
+      "neuron": 971,
+      "token_id": 8544,
+      "token_str": "Ġ;",
+      "activation": -0.347747
+    },
+    {
+      "neuron": 1184,
+      "token_id": 8544,
+      "token_str": "Ġ;",
+      "activation": 0.243461
+    },
+    {
+      "neuron": 1325,
+      "token_id": 8544,
+      "token_str": "Ġ;",
+      "activation": 0.266288
+    },
+    {
+      "neuron": 1359,
+      "token_id": 8544,
+      "token_str": "Ġ;",
+      "activation": 0.245067
+    },
+    {
+      "neuron": 1395,
+      "token_id": 8544,
+      "token_str": "Ġ;",
+      "activation": -0.427173
+    },
+    {
+      "neuron": 68,
+      "token_id": 216,
+      "token_str": "Ġ",
+      "activation": 3.584567
+    },
+    {
+      "neuron": 270,
+      "token_id": 216,
+      "token_str": "Ġ",
+      "activation": 0.136637
+    },
+    {
+      "neuron": 444,
+      "token_id": 216,
+      "token_str": "Ġ",
+      "activation": -0.197385
+    },
+    {
+      "neuron": 679,
+      "token_id": 216,
+      "token_str": "Ġ",
+      "activation": 0.45176
+    },
+    {
+      "neuron": 943,
+      "token_id": 216,
+      "token_str": "Ġ",
+      "activation": -0.441949
+    },
+    {
+      "neuron": 1485,
+      "token_id": 216,
+      "token_str": "Ġ",
+      "activation": -0.248055
+    },
+    {
+      "neuron": 2,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": 0.156967
+    },
+    {
+      "neuron": 26,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": -0.162103
+    },
+    {
+      "neuron": 49,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": 1.232638
+    },
+    {
+      "neuron": 54,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": 0.234484
+    },
+    {
+      "neuron": 126,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": 0.168561
+    },
+    {
+      "neuron": 160,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": 0.234423
+    },
+    {
+      "neuron": 256,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": 0.290561
+    },
+    {
+      "neuron": 396,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": 0.215347
+    },
+    {
+      "neuron": 456,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": -0.287264
+    },
+    {
+      "neuron": 501,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": 0.223496
+    },
+    {
+      "neuron": 668,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": 0.200705
+    },
+    {
+      "neuron": 744,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": 0.133237
+    },
+    {
+      "neuron": 759,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": 0.25513
+    },
+    {
+      "neuron": 770,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": 0.322471
+    },
+    {
+      "neuron": 947,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": -0.404374
+    },
+    {
+      "neuron": 948,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": -0.228545
+    },
+    {
+      "neuron": 994,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": -0.37559
+    },
+    {
+      "neuron": 1123,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": -0.176375
+    },
+    {
+      "neuron": 1156,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": -0.291889
+    },
+    {
+      "neuron": 1240,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": 0.306549
+    },
+    {
+      "neuron": 1243,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": -0.182314
+    },
+    {
+      "neuron": 1257,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": 0.297842
+    },
+    {
+      "neuron": 1300,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": 0.15372
+    },
+    {
+      "neuron": 1384,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": 0.142464
+    },
+    {
+      "neuron": 1387,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": -0.24171
+    },
+    {
+      "neuron": 1494,
+      "token_id": 47692,
+      "token_str": "ĠBarker",
+      "activation": -0.366321
+    },
+    {
+      "neuron": 74,
+      "token_id": 436,
+      "token_str": "Ġwas",
+      "activation": -0.321018
+    },
+    {
+      "neuron": 135,
+      "token_id": 436,
+      "token_str": "Ġwas",
+      "activation": 0.765526
+    },
+    {
+      "neuron": 155,
+      "token_id": 436,
+      "token_str": "Ġwas",
+      "activation": 0.169788
+    },
+    {
+      "neuron": 357,
+      "token_id": 436,
+      "token_str": "Ġwas",
+      "activation": 4.033607
+    },
+    {
+      "neuron": 373,
+      "token_id": 436,
+      "token_str": "Ġwas",
+      "activation": -0.258003
+    },
+    {
+      "neuron": 479,
+      "token_id": 436,
+      "token_str": "Ġwas",
+      "activation": -0.3839
+    },
+    {
+      "neuron": 529,
+      "token_id": 436,
+      "token_str": "Ġwas",
+      "activation": -0.681724
+    },
+    {
+      "neuron": 590,
+      "token_id": 436,
+      "token_str": "Ġwas",
+      "activation": -0.146488
+    },
+    {
+      "neuron": 885,
+      "token_id": 436,
+      "token_str": "Ġwas",
+      "activation": 0.448261
+    },
+    {
+      "neuron": 887,
+      "token_id": 436,
+      "token_str": "Ġwas",
+      "activation": -0.149712
+    },
+    {
+      "neuron": 942,
+      "token_id": 436,
+      "token_str": "Ġwas",
+      "activation": 1.832049
+    },
+    {
+      "neuron": 1000,
+      "token_id": 436,
+      "token_str": "Ġwas",
+      "activation": 0.20069
+    },
+    {
+      "neuron": 1047,
+      "token_id": 436,
+      "token_str": "Ġwas",
+      "activation": -0.277751
+    },
+    {
+      "neuron": 1061,
+      "token_id": 436,
+      "token_str": "Ġwas",
+      "activation": -0.22135
+    },
+    {
+      "neuron": 1065,
+      "token_id": 436,
+      "token_str": "Ġwas",
+      "activation": 0.363113
+    },
+    {
+      "neuron": 1219,
+      "token_id": 436,
+      "token_str": "Ġwas",
+      "activation": 0.375718
+    },
+    {
+      "neuron": 1265,
+      "token_id": 436,
+      "token_str": "Ġwas",
+      "activation": 0.182604
+    },
+    {
+      "neuron": 1392,
+      "token_id": 436,
+      "token_str": "Ġwas",
+      "activation": 0.166773
+    },
+    {
+      "neuron": 1413,
+      "token_id": 436,
+      "token_str": "Ġwas",
+      "activation": -0.503312
+    },
+    {
+      "neuron": 228,
+      "token_id": 33,
+      "token_str": "1",
+      "activation": -0.383547
+    },
+    {
+      "neuron": 243,
+      "token_id": 33,
+      "token_str": "1",
+      "activation": -0.722518
+    },
+    {
+      "neuron": 414,
+      "token_id": 33,
+      "token_str": "1",
+      "activation": -0.179122
+    },
+    {
+      "neuron": 475,
+      "token_id": 33,
+      "token_str": "1",
+      "activation": -0.358033
+    },
+    {
+      "neuron": 531,
+      "token_id": 33,
+      "token_str": "1",
+      "activation": 0.271575
+    },
+    {
+      "neuron": 585,
+      "token_id": 33,
+      "token_str": "1",
+      "activation": -4.353383
+    },
+    {
+      "neuron": 1024,
+      "token_id": 33,
+      "token_str": "1",
+      "activation": -1.668083
+    },
+    {
+      "neuron": 1256,
+      "token_id": 33,
+      "token_str": "1",
+      "activation": 0.174734
+    },
+    {
+      "neuron": 1295,
+      "token_id": 33,
+      "token_str": "1",
+      "activation": 0.258067
+    },
+    {
+      "neuron": 13,
+      "token_id": 99,
+      "token_str": "s",
+      "activation": -0.733379
+    },
+    {
+      "neuron": 14,
+      "token_id": 99,
+      "token_str": "s",
+      "activation": -0.601122
+    },
+    {
+      "neuron": 43,
+      "token_id": 99,
+      "token_str": "s",
+      "activation": -0.696641
+    },
+    {
+      "neuron": 288,
+      "token_id": 99,
+      "token_str": "s",
+      "activation": 0.359108
+    },
+    {
+      "neuron": 289,
+      "token_id": 99,
+      "token_str": "s",
+      "activation": 4.145255
+    },
+    {
+      "neuron": 344,
+      "token_id": 99,
+      "token_str": "s",
+      "activation": 0.13949
+    },
+    {
+      "neuron": 565,
+      "token_id": 99,
+      "token_str": "s",
+      "activation": 0.1387
+    },
+    {
+      "neuron": 756,
+      "token_id": 99,
+      "token_str": "s",
+      "activation": 0.482113
+    },
+    {
+      "neuron": 1029,
+      "token_id": 99,
+      "token_str": "s",
+      "activation": -0.190033
+    },
+    {
+      "neuron": 1035,
+      "token_id": 99,
+      "token_str": "s",
+      "activation": -0.246901
+    },
+    {
+      "neuron": 1040,
+      "token_id": 99,
+      "token_str": "s",
+      "activation": 2.929478
+    },
+    {
+      "neuron": 1162,
+      "token_id": 99,
+      "token_str": "s",
+      "activation": -0.865593
+    },
+    {
+      "neuron": 1223,
+      "token_id": 99,
+      "token_str": "s",
+      "activation": 0.251785
+    },
+    {
+      "neuron": 1460,
+      "token_id": 99,
+      "token_str": "s",
+      "activation": 0.246045
+    },
+    {
+      "neuron": 1484,
+      "token_id": 99,
+      "token_str": "s",
+      "activation": 0.290737
+    },
+    {
+      "neuron": 231,
+      "token_id": 41,
+      "token_str": "9",
+      "activation": -0.145964
+    },
+    {
+      "neuron": 298,
+      "token_id": 41,
+      "token_str": "9",
+      "activation": 6.366065
+    },
+    {
+      "neuron": 626,
+      "token_id": 41,
+      "token_str": "9",
+      "activation": -1.033955
+    },
+    {
+      "neuron": 682,
+      "token_id": 41,
+      "token_str": "9",
+      "activation": -0.290836
+    },
+    {
+      "neuron": 701,
+      "token_id": 41,
+      "token_str": "9",
+      "activation": 0.310071
+    },
+    {
+      "neuron": 1097,
+      "token_id": 41,
+      "token_str": "9",
+      "activation": -0.331882
+    },
+    {
+      "neuron": 1281,
+      "token_id": 41,
+      "token_str": "9",
+      "activation": 0.237131
+    },
+    {
+      "neuron": 1313,
+      "token_id": 41,
+      "token_str": "9",
+      "activation": -0.482074
+    },
+    {
+      "neuron": 1326,
+      "token_id": 41,
+      "token_str": "9",
+      "activation": -0.245313
+    },
+    {
+      "neuron": 1379,
+      "token_id": 41,
+      "token_str": "9",
+      "activation": 0.512988
+    },
+    {
+      "neuron": 7,
+      "token_id": 2481,
+      "token_str": "Ġ)",
+      "activation": -0.214889
+    },
+    {
+      "neuron": 220,
+      "token_id": 2481,
+      "token_str": "Ġ)",
+      "activation": -0.225803
+    },
+    {
+      "neuron": 339,
+      "token_id": 2481,
+      "token_str": "Ġ)",
+      "activation": 0.251311
+    },
+    {
+      "neuron": 449,
+      "token_id": 2481,
+      "token_str": "Ġ)",
+      "activation": -0.370125
+    },
+    {
+      "neuron": 516,
+      "token_id": 2481,
+      "token_str": "Ġ)",
+      "activation": 0.228963
+    },
+    {
+      "neuron": 574,
+      "token_id": 2481,
+      "token_str": "Ġ)",
+      "activation": 0.500626
+    },
+    {
+      "neuron": 577,
+      "token_id": 2481,
+      "token_str": "Ġ)",
+      "activation": -0.179331
+    },
+    {
+      "neuron": 619,
+      "token_id": 2481,
+      "token_str": "Ġ)",
+      "activation": -0.221119
+    },
+    {
+      "neuron": 986,
+      "token_id": 2481,
+      "token_str": "Ġ)",
+      "activation": 0.214834
+    },
+    {
+      "neuron": 1161,
+      "token_id": 2481,
+      "token_str": "Ġ)",
+      "activation": 0.248483
+    },
+    {
+      "neuron": 1185,
+      "token_id": 2481,
+      "token_str": "Ġ)",
+      "activation": -0.433885
+    },
+    {
+      "neuron": 1237,
+      "token_id": 2481,
+      "token_str": "Ġ)",
+      "activation": 5.234674
+    },
+    {
+      "neuron": 1329,
+      "token_id": 2481,
+      "token_str": "Ġ)",
+      "activation": 0.153335
+    },
+    {
+      "neuron": 1364,
+      "token_id": 2481,
+      "token_str": "Ġ)",
+      "activation": -0.22494
+    },
+    {
+      "neuron": 1531,
+      "token_id": 2481,
+      "token_str": "Ġ)",
+      "activation": 0.313758
+    },
+    {
+      "neuron": 976,
+      "token_id": 4290,
+      "token_str": "ĠBlack",
+      "activation": 0.373997
+    },
+    {
+      "neuron": 1456,
+      "token_id": 4290,
+      "token_str": "ĠBlack",
+      "activation": 0.667914
+    },
+    {
+      "neuron": 22,
+      "token_id": 592,
+      "token_str": "Ġwere",
+      "activation": 0.150563
+    },
+    {
+      "neuron": 116,
+      "token_id": 592,
+      "token_str": "Ġwere",
+      "activation": -0.183261
+    },
+    {
+      "neuron": 242,
+      "token_id": 592,
+      "token_str": "Ġwere",
+      "activation": 0.248241
+    },
+    {
+      "neuron": 283,
+      "token_id": 592,
+      "token_str": "Ġwere",
+      "activation": -0.96109
+    },
+    {
+      "neuron": 559,
+      "token_id": 592,
+      "token_str": "Ġwere",
+      "activation": -0.213436
+    },
+    {
+      "neuron": 586,
+      "token_id": 592,
+      "token_str": "Ġwere",
+      "activation": 0.262581
+    },
+    {
+      "neuron": 597,
+      "token_id": 592,
+      "token_str": "Ġwere",
+      "activation": -0.261093
+    },
+    {
+      "neuron": 677,
+      "token_id": 592,
+      "token_str": "Ġwere",
+      "activation": -3.194646
+    },
+    {
+      "neuron": 815,
+      "token_id": 592,
+      "token_str": "Ġwere",
+      "activation": 0.461938
+    },
+    {
+      "neuron": 1159,
+      "token_id": 592,
+      "token_str": "Ġwere",
+      "activation": -0.150432
+    },
+    {
+      "neuron": 1198,
+      "token_id": 592,
+      "token_str": "Ġwere",
+      "activation": -0.24315
+    },
+    {
+      "neuron": 667,
+      "token_id": 1175,
+      "token_str": "ets",
+      "activation": 0.196268
+    },
+    {
+      "neuron": 975,
+      "token_id": 1175,
+      "token_str": "ets",
+      "activation": -2.318394
+    },
+    {
+      "neuron": 1512,
+      "token_id": 1175,
+      "token_str": "ets",
+      "activation": -0.181698
+    },
+    {
+      "neuron": 322,
+      "token_id": 40954,
+      "token_str": "ĠArsen",
+      "activation": -0.341555
+    },
+    {
+      "neuron": 674,
+      "token_id": 40954,
+      "token_str": "ĠArsen",
+      "activation": 0.142538
+    },
+    {
+      "neuron": 713,
+      "token_id": 284,
+      "token_str": "Ġand",
+      "activation": 4.934651
+    },
+    {
+      "neuron": 1020,
+      "token_id": 284,
+      "token_str": "Ġand",
+      "activation": 0.183763
+    },
+    {
+      "neuron": 409,
+      "token_id": 808,
+      "token_str": "Ġfirst",
+      "activation": -2.148772
+    },
+    {
+      "neuron": 649,
+      "token_id": 808,
+      "token_str": "Ġfirst",
+      "activation": -0.229397
+    },
+    {
+      "neuron": 746,
+      "token_id": 808,
+      "token_str": "Ġfirst",
+      "activation": 0.220612
+    },
+    {
+      "neuron": 821,
+      "token_id": 808,
+      "token_str": "Ġfirst",
+      "activation": 1.318718
+    },
+    {
+      "neuron": 1158,
+      "token_id": 808,
+      "token_str": "Ġfirst",
+      "activation": -0.218094
+    },
+    {
+      "neuron": 1249,
+      "token_id": 808,
+      "token_str": "Ġfirst",
+      "activation": 0.403442
+    },
+    {
+      "neuron": 1361,
+      "token_id": 808,
+      "token_str": "Ġfirst",
+      "activation": -0.170136
+    },
+    {
+      "neuron": 4,
+      "token_id": 411,
+      "token_str": "Ġby",
+      "activation": -1.055
+    },
+    {
+      "neuron": 193,
+      "token_id": 411,
+      "token_str": "Ġby",
+      "activation": -0.703414
+    },
+    {
+      "neuron": 279,
+      "token_id": 411,
+      "token_str": "Ġby",
+      "activation": -4.168446
+    },
+    {
+      "neuron": 707,
+      "token_id": 411,
+      "token_str": "Ġby",
+      "activation": -0.488754
+    },
+    {
+      "neuron": 783,
+      "token_id": 411,
+      "token_str": "Ġby",
+      "activation": -0.314164
+    },
+    {
+      "neuron": 1025,
+      "token_id": 411,
+      "token_str": "Ġby",
+      "activation": -0.228865
+    },
+    {
+      "neuron": 1133,
+      "token_id": 411,
+      "token_str": "Ġby",
+      "activation": -1.602769
+    },
+    {
+      "neuron": 1206,
+      "token_id": 411,
+      "token_str": "Ġby",
+      "activation": 0.44935
+    },
+    {
+      "neuron": 1224,
+      "token_id": 411,
+      "token_str": "Ġby",
+      "activation": 1.38402
+    },
+    {
+      "neuron": 38,
+      "token_id": 761,
+      "token_str": "Ġhad",
+      "activation": -0.202952
+    },
+    {
+      "neuron": 401,
+      "token_id": 761,
+      "token_str": "Ġhad",
+      "activation": -0.193566
+    },
+    {
+      "neuron": 635,
+      "token_id": 761,
+      "token_str": "Ġhad",
+      "activation": -0.297904
+    },
+    {
+      "neuron": 705,
+      "token_id": 761,
+      "token_str": "Ġhad",
+      "activation": -0.191279
+    },
+    {
+      "neuron": 784,
+      "token_id": 761,
+      "token_str": "Ġhad",
+      "activation": 0.587486
+    },
+    {
+      "neuron": 1307,
+      "token_id": 761,
+      "token_str": "Ġhad",
+      "activation": 0.185566
+    },
+    {
+      "neuron": 1450,
+      "token_id": 761,
+      "token_str": "Ġhad",
+      "activation": -0.263456
+    },
+    {
+      "neuron": 94,
+      "token_id": 18176,
+      "token_str": "ĠColumbus",
+      "activation": -0.284654
+    },
+    {
+      "neuron": 552,
+      "token_id": 18176,
+      "token_str": "ĠColumbus",
+      "activation": -0.447226
+    },
+    {
+      "neuron": 897,
+      "token_id": 18176,
+      "token_str": "ĠColumbus",
+      "activation": 0.177189
+    },
+    {
+      "neuron": 1054,
+      "token_id": 18176,
+      "token_str": "ĠColumbus",
+      "activation": -0.479596
+    },
+    {
+      "neuron": 1234,
+      "token_id": 18176,
+      "token_str": "ĠColumbus",
+      "activation": 0.134687
+    },
+    {
+      "neuron": 1258,
+      "token_id": 18176,
+      "token_str": "ĠColumbus",
+      "activation": -0.367224
+    },
+    {
+      "neuron": 1455,
+      "token_id": 18176,
+      "token_str": "ĠColumbus",
+      "activation": -0.183661
+    },
+    {
+      "neuron": 1466,
+      "token_id": 18176,
+      "token_str": "ĠColumbus",
+      "activation": -0.170681
+    },
+    {
+      "neuron": 804,
+      "token_id": 281,
+      "token_str": "Ġin",
+      "activation": 0.31932
+    },
+    {
+      "neuron": 1222,
+      "token_id": 281,
+      "token_str": "Ġin",
+      "activation": 0.167021
+    },
+    {
+      "neuron": 1304,
+      "token_id": 281,
+      "token_str": "Ġin",
+      "activation": 6.249526
+    },
+    {
+      "neuron": 1400,
+      "token_id": 281,
+      "token_str": "Ġin",
+      "activation": -0.264372
+    },
+    {
+      "neuron": 58,
+      "token_id": 354,
+      "token_str": "Ġan",
+      "activation": -0.173417
+    },
+    {
+      "neuron": 258,
+      "token_id": 354,
+      "token_str": "Ġan",
+      "activation": 0.922106
+    },
+    {
+      "neuron": 360,
+      "token_id": 354,
+      "token_str": "Ġan",
+      "activation": 0.202358
+    },
+    {
+      "neuron": 739,
+      "token_id": 354,
+      "token_str": "Ġan",
+      "activation": -0.62382
+    },
+    {
+      "neuron": 748,
+      "token_id": 354,
+      "token_str": "Ġan",
+      "activation": -0.661425
+    },
+    {
+      "neuron": 1193,
+      "token_id": 354,
+      "token_str": "Ġan",
+      "activation": 0.187388
+    },
+    {
+      "neuron": 1252,
+      "token_id": 354,
+      "token_str": "Ġan",
+      "activation": 0.722169
+    },
+    {
+      "neuron": 1301,
+      "token_id": 354,
+      "token_str": "Ġan",
+      "activation": 0.181855
+    },
+    {
+      "neuron": 1370,
+      "token_id": 354,
+      "token_str": "Ġan",
+      "activation": 0.162189
+    },
+    {
+      "neuron": 103,
+      "token_id": 874,
+      "token_str": "Ġher",
+      "activation": 0.161985
+    },
+    {
+      "neuron": 105,
+      "token_id": 874,
+      "token_str": "Ġher",
+      "activation": -0.379245
+    },
+    {
+      "neuron": 350,
+      "token_id": 874,
+      "token_str": "Ġher",
+      "activation": 0.208094
+    },
+    {
+      "neuron": 522,
+      "token_id": 874,
+      "token_str": "Ġher",
+      "activation": -0.330184
+    },
+    {
+      "neuron": 657,
+      "token_id": 874,
+      "token_str": "Ġher",
+      "activation": -0.171016
+    },
+    {
+      "neuron": 995,
+      "token_id": 874,
+      "token_str": "Ġher",
+      "activation": -0.243922
+    },
+    {
+      "neuron": 1347,
+      "token_id": 874,
+      "token_str": "Ġher",
+      "activation": -0.228271
+    },
+    {
+      "neuron": 1420,
+      "token_id": 874,
+      "token_str": "Ġher",
+      "activation": -0.195175
+    },
+    {
+      "neuron": 405,
+      "token_id": 3645,
+      "token_str": "Ġseason",
+      "activation": 0.428679
+    },
+    {
+      "neuron": 697,
+      "token_id": 3645,
+      "token_str": "Ġseason",
+      "activation": -0.330029
+    },
+    {
+      "neuron": 1337,
+      "token_id": 3645,
+      "token_str": "Ġseason",
+      "activation": -0.222483
+    },
+    {
+      "neuron": 1437,
+      "token_id": 3645,
+      "token_str": "Ġseason",
+      "activation": -0.173157
+    },
+    {
+      "neuron": 1438,
+      "token_id": 3645,
+      "token_str": "Ġseason",
+      "activation": -0.147005
+    },
+    {
+      "neuron": 178,
+      "token_id": 45,
+      "token_str": "=",
+      "activation": 0.9343
+    },
+    {
+      "neuron": 250,
+      "token_id": 45,
+      "token_str": "=",
+      "activation": -0.351498
+    },
+    {
+      "neuron": 422,
+      "token_id": 45,
+      "token_str": "=",
+      "activation": 0.138063
+    },
+    {
+      "neuron": 646,
+      "token_id": 45,
+      "token_str": "=",
+      "activation": -0.146479
+    },
+    {
+      "neuron": 806,
+      "token_id": 45,
+      "token_str": "=",
+      "activation": 0.171676
+    },
+    {
+      "neuron": 1533,
+      "token_id": 45,
+      "token_str": "=",
+      "activation": 0.150386
+    },
+    {
+      "neuron": 612,
+      "token_id": 40,
+      "token_str": "8",
+      "activation": 1.073195
+    },
+    {
+      "neuron": 753,
+      "token_id": 40,
+      "token_str": "8",
+      "activation": -0.236824
+    },
+    {
+      "neuron": 1333,
+      "token_id": 40,
+      "token_str": "8",
+      "activation": 0.38106
+    },
+    {
+      "neuron": 306,
+      "token_id": 288,
+      "token_str": "Ġto",
+      "activation": -0.175804
+    },
+    {
+      "neuron": 1207,
+      "token_id": 288,
+      "token_str": "Ġto",
+      "activation": -0.581501
+    },
+    {
+      "neuron": 507,
+      "token_id": 351,
+      "token_str": "Ġwith",
+      "activation": -0.861758
+    },
+    {
+      "neuron": 788,
+      "token_id": 351,
+      "token_str": "Ġwith",
+      "activation": -0.315055
+    },
+    {
+      "neuron": 1316,
+      "token_id": 351,
+      "token_str": "Ġwith",
+      "activation": 1.262619
+    },
+    {
+      "neuron": 767,
+      "token_id": 282,
+      "token_str": "Ġof",
+      "activation": -5.666167
+    },
+    {
+      "neuron": 769,
+      "token_id": 282,
+      "token_str": "Ġof",
+      "activation": -0.193227
+    },
+    {
+      "neuron": 834,
+      "token_id": 253,
+      "token_str": "Ġa",
+      "activation": -0.175071
+    },
+    {
+      "neuron": 21,
+      "token_id": 34,
+      "token_str": "2",
+      "activation": 0.233902
+    },
+    {
+      "neuron": 295,
+      "token_id": 34,
+      "token_str": "2",
+      "activation": 0.470445
+    },
+    {
+      "neuron": 477,
+      "token_id": 34,
+      "token_str": "2",
+      "activation": -0.223814
+    },
+    {
+      "neuron": 1501,
+      "token_id": 34,
+      "token_str": "2",
+      "activation": -0.27922
+    },
+    {
+      "neuron": 112,
+      "token_id": 519,
+      "token_str": "ie",
+      "activation": 0.25152
+    },
+    {
+      "neuron": 1220,
+      "token_id": 519,
+      "token_str": "ie",
+      "activation": 0.387654
+    },
+    {
+      "neuron": 1436,
+      "token_id": 519,
+      "token_str": "ie",
+      "activation": -0.356878
+    },
+    {
+      "neuron": 133,
+      "token_id": 32,
+      "token_str": "0",
+      "activation": -0.305877
+    },
+    {
+      "neuron": 397,
+      "token_id": 18402,
+      "token_str": "ĠArkansas",
+      "activation": 0.178483
+    },
+    {
+      "neuron": 1169,
+      "token_id": 365,
+      "token_str": "Ġ(",
+      "activation": 1.874482
+    },
+    {
+      "neuron": 776,
+      "token_id": 378,
+      "token_str": "ĠThe",
+      "activation": 0.252117
+    },
+    {
+      "neuron": 168,
+      "token_id": 335,
+      "token_str": "Ġon",
+      "activation": -5.688262
+    },
+    {
+      "neuron": 185,
+      "token_id": 335,
+      "token_str": "Ġon",
+      "activation": 0.390447
+    },
+    {
+      "neuron": 224,
+      "token_id": 335,
+      "token_str": "Ġon",
+      "activation": -0.280024
+    },
+    {
+      "neuron": 1474,
+      "token_id": 335,
+      "token_str": "Ġon",
+      "activation": 1.081988
+    },
+    {
+      "neuron": 437,
+      "token_id": 36,
+      "token_str": "4",
+      "activation": -0.325459
+    },
+    {
+      "neuron": 457,
+      "token_id": 347,
+      "token_str": "Ġas",
+      "activation": -0.260122
+    },
+    {
+      "neuron": 675,
+      "token_id": 347,
+      "token_str": "Ġas",
+      "activation": 0.145752
+    },
+    {
+      "neuron": 690,
+      "token_id": 347,
+      "token_str": "Ġas",
+      "activation": 0.205773
+    },
+    {
+      "neuron": 790,
+      "token_id": 418,
+      "token_str": "Ġat",
+      "activation": -0.169058
+    },
+    {
+      "neuron": 52,
+      "token_id": 35,
+      "token_str": "3",
+      "activation": -0.203456
+    },
+    {
+      "neuron": 1170,
+      "token_id": 35,
+      "token_str": "3",
+      "activation": 0.337989
+    },
+    {
+      "neuron": 327,
+      "token_id": 327,
+      "token_str": "Ġfor",
+      "activation": -0.253525
+    },
+    {
+      "neuron": 412,
+      "token_id": 327,
+      "token_str": "Ġfor",
+      "activation": 0.246724
+    },
+    {
+      "neuron": 661,
+      "token_id": 338,
+      "token_str": "Ġthat",
+      "activation": -0.203956
+    },
+    {
+      "neuron": 691,
+      "token_id": 429,
+      "token_str": "Ġfrom",
+      "activation": 0.289711
+    },
+    {
+      "neuron": 1462,
+      "token_id": 429,
+      "token_str": "Ġfrom",
+      "activation": -0.938336
+    },
+    {
+      "neuron": 997,
+      "token_id": 476,
+      "token_str": "Ġ\"",
+      "activation": -0.436823
+    },
+    {
+      "neuron": 537,
+      "token_id": 38,
+      "token_str": "6",
+      "activation": 0.307833
+    },
+    {
+      "neuron": 495,
+      "token_id": 441,
+      "token_str": "Ġnot",
+      "activation": 0.135829
+    },
+    {
+      "neuron": 1096,
+      "token_id": 441,
+      "token_str": "Ġnot",
+      "activation": 0.288656
+    },
+    {
+      "neuron": 610,
+      "token_id": 325,
+      "token_str": "Ġbe",
+      "activation": -1.132282
+    },
+    {
+      "neuron": 631,
+      "token_id": 60,
+      "token_str": "L",
+      "activation": 0.161837
+    },
+    {
+      "neuron": 970,
+      "token_id": 480,
+      "token_str": "Ġtheir",
+      "activation": 0.336617
+    },
+    {
+      "neuron": 741,
+      "token_id": 597,
+      "token_str": "Ġalso",
+      "activation": -0.72239
+    },
+    {
+      "neuron": 1069,
+      "token_id": 650,
+      "token_str": "Ġhis",
+      "activation": 0.441972
+    },
+    {
+      "neuron": 1090,
+      "token_id": 504,
+      "token_str": "The",
+      "activation": -0.615871
+    },
+    {
+      "neuron": 1425,
+      "token_id": 370,
+      "token_str": "ies",
+      "activation": -0.523459
+    },
+    {
+      "neuron": 1477,
+      "token_id": 314,
+      "token_str": "Ġis",
+      "activation": 0.1643
+    }
+  ]
+}
