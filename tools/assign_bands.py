@@ -124,11 +124,11 @@ def main():
     args = parser.parse_args()
 
     print(f"[bands] loading {args.triggers}...")
-    with open(args.triggers) as f:
+    with open(args.triggers, encoding="utf-8") as f:
         triggers = json.load(f)
 
     print(f"[bands] loading {args.profile}...")
-    with open(args.profile) as f:
+    with open(args.profile, encoding="utf-8") as f:
         profile = json.load(f)
 
     fire_rate_index = build_fire_rate_index(profile)
@@ -220,7 +220,7 @@ def main():
         ],
     }
 
-    with open(args.output, "w") as f:
+    with open(args.output, "w", encoding="utf-8") as f:
         json.dump(out, f, indent=2)
 
     print(f"\n[bands] written to {args.output}")
