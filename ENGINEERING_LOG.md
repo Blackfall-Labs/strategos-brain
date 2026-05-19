@@ -905,12 +905,98 @@ curve, always-on neurons in final 2-3 layers (~2% of FFN dim).
 
 ### Next step
 
-Spectral band assignment algorithm. Given trigger profiles for both models:
-1. Cluster neurons by Jensen-Shannon divergence of their trigger distributions
-2. Assign frequency band proportional to cluster centroid's mean trigger_rate
-   (high trigger_rate = narrow band = high frequency)
-3. Output: per-neuron band assignment, cluster size, spectral fingerprint vector
+Spectral band assignment — cluster neurons by trigger_rate into frequency bands.
 
-This is the last tool before the first distillation attempt.
+---
+
+## 2026-05-19 — Spectral Band Assignment
+
+### Band taxonomy
+
+Five bands by trigger_rate of the top token and fire_rate:
+
+| Band | Name | Criterion | SmolLM2 | Qwen3 |
+|------|------|-----------|---------|-------|
+| 0 | always-on | fire_rate > 0.95 | 0 (excluded from triggers) | 0 |
+| 1 | pure-token | top TR > 0.90 | 3,858 (8.4%) | 7,733 (5.1%) |
+| 2 | selective | top TR 0.40-0.90 | 13,128 (28.7%) | 37,760 (24.9%) |
+| 3 | contextual | top TR 0.10-0.40 | 22,902 (50.0%) | 52,645 (34.8%) |
+| 4 | diffuse | top TR < 0.10 | 5,891 (12.9%) | 53,283 (35.2%) |
+
+Band 0 neurons (fire_rate > 0.95) are excluded from the trigger profile
+(selective neurons only: 1-95%). Band 0 must be pulled from the calibrated
+profile directly — a small number in L28-L29 of SmolLM2, L25-L27 of Qwen3.
+
+### Clustering
+
+Band 1 clusters by trigger token identity — two neurons detecting the same token
+belong to the same cluster. Bands 2-4 also cluster by top trigger token.
+This avoids false merges from shared function words (the JSD/Jaccard approach
+collapsed all bands 2-4 into 3 mega-clusters because every neuron shares
+' the', ' ,', '.' in its top-10).
+
+Results:
+- SmolLM2: Band 1 = 87 token clusters; Band 2 = 99; Band 3 = 58; Band 4 = 24
+- Qwen3: Band 1 = 220 token clusters; Band 2 = 260; Band 3 = 131; Band 4 = 42
+
+### The prediction/recognition (P/R) ratio
+
+Within Band 1 clusters, neurons split between early layers (recognition) and
+late layers (prediction). The ratio varies enormously by token:
+
+```
+SmolLM2:
+  ' Val':    127 recognition / 118 prediction  P/R = 0.93
+  '-':       217 recognition /   9 prediction  P/R = 0.04
+  '@':       518 recognition /   1 prediction  P/R = 0.002
+
+Qwen3 (early=L0-3, late=L17-27):
+  ' Valk':   497 recognition / 953 prediction  P/R = 1.92
+  ' Little':  72 recognition / 247 prediction  P/R = 3.43
+  'yr':      622 recognition /  84 prediction  P/R = 0.14
+  ' Rock':   321 recognition /  32 prediction  P/R = 0.10
+  ' Jackets':302 recognition /   6 prediction  P/R = 0.02
+```
+
+High P/R: the token strongly constrains what comes next. The model invests more
+neurons in generating the specific continuation than in recognizing the token.
+
+Low P/R: the token is easy to recognize but doesn't constrain the next token much.
+' Jackets' can precede many things (a verb, a noun, a comma...). ' Valk' almost
+always precedes 'yrie' — so the model pre-loads 953 neurons to handle it.
+
+**The P/R ratio is the distillation priority ranking.** High-P/R neurons are
+the most compact to represent (token lookup + fixed output vector) and the most
+impactful to preserve precisely (they drive specific output predictions).
+
+### Depth × band structure (SmolLM2)
+
+Band 1 token clusters show a consistent pattern across both models:
+- Named entities: high recognition early, high prediction late, near-zero mid
+- Special characters ('@', '-'): heavy recognition early, almost no prediction late
+- Function words (' the', ' ,'): almost no recognition early, heavy mid/late
+
+The generalization gap (mid-layer disappearance of pure detectors) is tightest
+for named entities — confirming that the model strips token identity down to
+pure semantic context in the middle layers, then reconstructs token-specific
+predictions at the output end.
+
+### Files produced
+
+- `tools/assign_bands.py` — band assigner (reads trigger + calibrated profile)
+- `smollm2_bands.json` — 45,779 neurons in 5 bands, 268 clusters
+- `qwen3_bands.json` — 151,421 neurons in 5 bands, 653 clusters
+
+### Next step
+
+First distillation proof. Target: Band 1 clusters with high P/R ratio.
+
+The proof: replace the weight matrix computation for L0 pure-token neurons with
+a token lookup table. Instead of computing `ffn_hidden[i] = silu(gate[i]) * up[i]`
+using matrix multiply, substitute: `if tok in cluster_tokens → ffn_hidden[i] = mean_activation`.
+
+Measure output divergence on held-out wikitext2 validation set (perplexity delta).
+If perplexity increase < 0.5% for the replaced neurons, the weight-free
+representation is valid.
 
 ---
