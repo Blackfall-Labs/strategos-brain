@@ -7,6 +7,7 @@ mod corpus;
 mod gpt2_probe;
 mod grokking_probe;
 mod smollm2_probe;
+mod qwen3_probe;
 
 #[derive(Parser)]
 #[command(name = "probe", about = "Activation prober for neuronal distillation")]
@@ -39,8 +40,9 @@ fn main() {
         "gpt2" => run_gpt2(&args),
         "grokking" => run_grokking(&args),
         "smollm2" => run_smollm2(&args),
+        "qwen3" => run_qwen3(&args),
         other => {
-            eprintln!("[probe] unknown model: {other}. Supported: gpt2, grokking");
+            eprintln!("[probe] unknown model: {other}. Supported: gpt2, grokking, smollm2, qwen3");
             std::process::exit(1);
         }
     }
@@ -73,12 +75,50 @@ fn run_smollm2(args: &Args) {
     let tokens = corpus::load_tokens(&args.corpus, &args.tokenizer, args.n_tokens)
         .unwrap_or_else(|e| { eprintln!("[probe] corpus failed: {e}"); std::process::exit(1); });
 
-    let mut captures = capture::CaptureStore::for_smollm2(model.n_layer, model.n_head, model.ffn_dim);
+    let thresholds = load_thresholds(&args.weights, model.n_layer);
+    let mut captures = capture::CaptureStore::for_smollm2(model.n_layer, model.n_head, model.ffn_dim, &thresholds);
 
     eprintln!("[probe] running {} tokens through SmolLM2-135M ({} layers)...", tokens.len(), model.n_layer);
     model.run_corpus(&tokens, &mut captures);
 
     let profile = captures.finalize("smollm2-135m", &args.corpus);
+    let json = serde_json::to_string_pretty(&profile)
+        .unwrap_or_else(|e| { eprintln!("[probe] serialize failed: {e}"); std::process::exit(1); });
+    std::fs::write(&args.output, &json)
+        .unwrap_or_else(|e| { eprintln!("[probe] write failed: {e}"); std::process::exit(1); });
+
+    eprintln!("[probe] profile written to {}", args.output);
+    eprintln!("[probe] {} tokens, {} layers captured", profile.n_tokens, profile.layers.len());
+}
+
+fn load_thresholds(weights_dir: &str, n_layers: usize) -> Vec<f32> {
+    let path = Path::new(weights_dir).join("ffn_thresholds.json");
+    if let Ok(data) = std::fs::read_to_string(&path) {
+        #[derive(serde::Deserialize)]
+        struct ThresholdFile { thresholds: Vec<f32> }
+        if let Ok(tf) = serde_json::from_str::<ThresholdFile>(&data) {
+            eprintln!("[probe] loaded {} per-layer FFN thresholds from {}", tf.thresholds.len(), path.display());
+            return tf.thresholds;
+        }
+    }
+    eprintln!("[probe] ffn_thresholds.json not found, using default threshold 0.1");
+    vec![0.1f32; n_layers]
+}
+
+fn run_qwen3(args: &Args) {
+    let model = qwen3_probe::Qwen3Probe::load(Path::new(&args.weights))
+        .unwrap_or_else(|e| { eprintln!("[probe] load failed: {e}"); std::process::exit(1); });
+
+    let tokens = corpus::load_tokens(&args.corpus, &args.tokenizer, args.n_tokens)
+        .unwrap_or_else(|e| { eprintln!("[probe] corpus failed: {e}"); std::process::exit(1); });
+
+    let thresholds = load_thresholds(&args.weights, model.n_layer);
+    let mut captures = capture::CaptureStore::for_qwen3(model.n_layer, model.n_head, model.ffn_dim, &thresholds);
+
+    eprintln!("[probe] running {} tokens through Qwen3-1.7B ({} layers)...", tokens.len(), model.n_layer);
+    model.run_corpus(&tokens, &mut captures);
+
+    let profile = captures.finalize("qwen3-1.7b", &args.corpus);
     let json = serde_json::to_string_pretty(&profile)
         .unwrap_or_else(|e| { eprintln!("[probe] serialize failed: {e}"); std::process::exit(1); });
     std::fs::write(&args.output, &json)

@@ -1,0 +1,243 @@
+use std::path::Path;
+use rayon::prelude::*;
+use strategos_ops::qtensor::{QTensor, QWeight};
+use strategos_ops::linear::linear_q;
+use strategos_ops::rmsnorm::{RmsNormWeights, rms_norm};
+use strategos_ops::rope::RopeTable;
+use strategos_runtime::loader::ModelWeights;
+use crate::capture::CaptureStore;
+
+// Architecture constants from config.json
+const HIDDEN:        usize = 2048;
+const Q_HEADS:       usize = 16;
+const KV_HEADS:      usize = 8;
+const HEAD_DIM:      usize = 128;
+const INTERMEDIATE:  usize = 6144;
+const VOCAB:         usize = 151936;
+const N_LAYERS:      usize = 28;
+const RMS_EPS:       f32   = 1e-6;
+const ROPE_THETA:    f32   = 1_000_000.0;
+const MAX_SEQ:       usize = 512;
+const KV_GROUP:      usize = Q_HEADS / KV_HEADS;
+
+pub struct Qwen3Probe {
+    embed:      Vec<f32>,   // [VOCAB, HIDDEN]
+    layers:     Vec<Qwen3Layer>,
+    rope:       RopeTable,
+    pub n_layer:  usize,
+    pub n_head:   usize,
+    pub ffn_dim:  usize,
+}
+
+struct Qwen3Layer {
+    input_norm:     RmsNormWeights,
+    q_proj:         QWeight,   // [Q_HEADS*HEAD_DIM, HIDDEN]
+    k_proj:         QWeight,   // [KV_HEADS*HEAD_DIM, HIDDEN]
+    v_proj:         QWeight,   // [KV_HEADS*HEAD_DIM, HIDDEN]
+    o_proj:         QWeight,   // [HIDDEN, Q_HEADS*HEAD_DIM]
+    q_norm:         RmsNormWeights, // per-head QK-norm, applied to each HEAD_DIM slice
+    k_norm:         RmsNormWeights,
+    post_attn_norm: RmsNormWeights,
+    gate_proj:      QWeight,   // [INTERMEDIATE, HIDDEN]
+    up_proj:        QWeight,   // [INTERMEDIATE, HIDDEN]
+    down_proj:      QWeight,   // [HIDDEN, INTERMEDIATE]
+}
+
+struct KVCache {
+    k: Vec<Vec<Vec<Vec<f32>>>>,  // [layer][kv_head][seq][head_dim]
+    v: Vec<Vec<Vec<Vec<f32>>>>,
+}
+
+impl KVCache {
+    fn new() -> Self {
+        let k = (0..N_LAYERS).map(|_| (0..KV_HEADS).map(|_| Vec::new()).collect()).collect();
+        let v = (0..N_LAYERS).map(|_| (0..KV_HEADS).map(|_| Vec::new()).collect()).collect();
+        Self { k, v }
+    }
+}
+
+impl Qwen3Probe {
+    pub fn load(manifest_dir: &Path) -> Result<Self, String> {
+        let weights = ModelWeights::load(manifest_dir)?;
+        let get = |name: &str| -> Result<Vec<f32>, String> {
+            weights.require(name).map(|s| s.to_vec())
+        };
+
+        let embed = get("model.embed_tokens.weight")?;
+
+        let mut layers = Vec::with_capacity(N_LAYERS);
+        for i in 0..N_LAYERS {
+            let p = format!("model.layers.{i}");
+            // HF stores [out, in] row-major — QWeight::from_f32(data, in_dim, out_dim).
+            layers.push(Qwen3Layer {
+                input_norm:     rmsnorm(&get(&format!("{p}.input_layernorm.weight"))?)?,
+                q_proj:         qweight(&get(&format!("{p}.self_attn.q_proj.weight"))?,  HIDDEN, Q_HEADS * HEAD_DIM)?,
+                k_proj:         qweight(&get(&format!("{p}.self_attn.k_proj.weight"))?,  HIDDEN, KV_HEADS * HEAD_DIM)?,
+                v_proj:         qweight(&get(&format!("{p}.self_attn.v_proj.weight"))?,  HIDDEN, KV_HEADS * HEAD_DIM)?,
+                o_proj:         qweight(&get(&format!("{p}.self_attn.o_proj.weight"))?,  Q_HEADS * HEAD_DIM, HIDDEN)?,
+                q_norm:         rmsnorm_dim(&get(&format!("{p}.self_attn.q_norm.weight"))?, HEAD_DIM)?,
+                k_norm:         rmsnorm_dim(&get(&format!("{p}.self_attn.k_norm.weight"))?, HEAD_DIM)?,
+                post_attn_norm: rmsnorm(&get(&format!("{p}.post_attention_layernorm.weight"))?)?,
+                gate_proj:      qweight(&get(&format!("{p}.mlp.gate_proj.weight"))?,     HIDDEN, INTERMEDIATE)?,
+                up_proj:        qweight(&get(&format!("{p}.mlp.up_proj.weight"))?,       HIDDEN, INTERMEDIATE)?,
+                down_proj:      qweight(&get(&format!("{p}.mlp.down_proj.weight"))?,     INTERMEDIATE, HIDDEN)?,
+            });
+
+            if (i + 1) % 7 == 0 {
+                eprintln!("[qwen3-probe] loaded layer {}/{}", i + 1, N_LAYERS);
+            }
+        }
+
+        let rope = RopeTable::new(HEAD_DIM, MAX_SEQ, ROPE_THETA);
+        eprintln!("[qwen3-probe] loaded {} layers", N_LAYERS);
+
+        Ok(Self { embed, layers, rope, n_layer: N_LAYERS, n_head: Q_HEADS, ffn_dim: INTERMEDIATE })
+    }
+
+    pub fn run_corpus(&self, tokens: &[u32], captures: &mut CaptureStore) {
+        const CONTEXT_LEN: usize = 128;
+
+        let partials: Vec<CaptureStore> = tokens
+            .par_chunks(CONTEXT_LEN)
+            .map(|chunk| {
+                let mut store = captures.make_empty_copy();
+                let mut cache = KVCache::new();
+                for (ctx_pos, &tok) in chunk.iter().enumerate() {
+                    self.forward_token(tok, ctx_pos, &mut cache, &mut store);
+                    store.n_tokens += 1;
+                }
+                store
+            })
+            .collect();
+
+        let total: u64 = partials.iter().map(|s| s.n_tokens).sum();
+        for partial in partials {
+            captures.merge(partial);
+        }
+        eprintln!("[probe] {} tokens processed", total);
+    }
+
+    fn forward_token(&self, tok: u32, ctx_pos: usize, cache: &mut KVCache, captures: &mut CaptureStore) {
+        let tok_off = (tok as usize).min(VOCAB - 1) * HIDDEN;
+        let mut hidden = self.embed[tok_off..tok_off + HIDDEN].to_vec();
+
+        for (li, layer) in self.layers.iter().enumerate() {
+            // --- Attention ---
+            let pre_attn = rms_norm(&hidden, &layer.input_norm);
+            captures.observe(li, "attn_pre_rms", &pre_attn);
+
+            let x_q = QTensor::from_f32(&pre_attn);
+            let q_raw = linear_q(&x_q, &layer.q_proj, &vec![0.0f32; Q_HEADS * HEAD_DIM]).to_f32();
+            let k_raw = linear_q(&x_q, &layer.k_proj, &vec![0.0f32; KV_HEADS * HEAD_DIM]).to_f32();
+            let v_raw = linear_q(&x_q, &layer.v_proj, &vec![0.0f32; KV_HEADS * HEAD_DIM]).to_f32();
+
+            captures.observe(li, "attn_q", &q_raw);
+            captures.observe(li, "attn_k", &k_raw);
+            captures.observe(li, "attn_v", &v_raw);
+
+            // Apply per-head QK-norm then RoPE (Qwen3-specific).
+            let mut q = q_raw;
+            let mut k = k_raw;
+            for h in 0..Q_HEADS {
+                let slice = &mut q[h * HEAD_DIM..(h + 1) * HEAD_DIM];
+                let normed = rms_norm(slice, &layer.q_norm);
+                slice.copy_from_slice(&normed);
+                self.rope.apply(&mut q[h * HEAD_DIM..(h + 1) * HEAD_DIM], ctx_pos);
+            }
+            for h in 0..KV_HEADS {
+                let slice = &mut k[h * HEAD_DIM..(h + 1) * HEAD_DIM];
+                let normed = rms_norm(slice, &layer.k_norm);
+                slice.copy_from_slice(&normed);
+                self.rope.apply(&mut k[h * HEAD_DIM..(h + 1) * HEAD_DIM], ctx_pos);
+            }
+
+            // Store KV for this position.
+            for kv_h in 0..KV_HEADS {
+                cache.k[li][kv_h].push(k[kv_h * HEAD_DIM..(kv_h + 1) * HEAD_DIM].to_vec());
+                cache.v[li][kv_h].push(v_raw[kv_h * HEAD_DIM..(kv_h + 1) * HEAD_DIM].to_vec());
+            }
+
+            let seq_len = cache.k[li][0].len();
+            let scale = (HEAD_DIM as f32).sqrt();
+            let mut attn_out = vec![0.0f32; HIDDEN];
+            let mut head_scores_snap: Vec<Vec<f32>> = Vec::with_capacity(Q_HEADS);
+
+            for q_h in 0..Q_HEADS {
+                let kv_h = q_h / KV_GROUP;
+                let mut scores = vec![0.0f32; seq_len];
+                for ki in 0..seq_len {
+                    let mut dot = 0.0f32;
+                    for d in 0..HEAD_DIM {
+                        dot += q[q_h * HEAD_DIM + d] * cache.k[li][kv_h][ki][d];
+                    }
+                    scores[ki] = dot / scale;
+                }
+                softmax(&mut scores);
+                head_scores_snap.push(scores.clone());
+                for d in 0..HEAD_DIM {
+                    let mut sum = 0.0f32;
+                    for ki in 0..seq_len { sum += scores[ki] * cache.v[li][kv_h][ki][d]; }
+                    attn_out[q_h * HEAD_DIM + d] = sum;
+                }
+            }
+
+            captures.observe_heads(li, "attn_weights", &head_scores_snap);
+            captures.observe(li, "attn_out", &attn_out);
+
+            let a_q = QTensor::from_f32(&attn_out);
+            let proj = linear_q(&a_q, &layer.o_proj, &vec![0.0f32; HIDDEN]).to_f32();
+            for i in 0..HIDDEN { hidden[i] += proj[i]; }
+
+            // --- FFN (SwiGLU) ---
+            let pre_ffn = rms_norm(&hidden, &layer.post_attn_norm);
+            captures.observe(li, "ffn_pre_rms", &pre_ffn);
+
+            let x2 = QTensor::from_f32(&pre_ffn);
+            let gate = linear_q(&x2, &layer.gate_proj, &vec![0.0f32; INTERMEDIATE]).to_f32();
+            let up   = linear_q(&x2, &layer.up_proj,   &vec![0.0f32; INTERMEDIATE]).to_f32();
+
+            let mut ffn_hidden = vec![0.0f32; INTERMEDIATE];
+            for i in 0..INTERMEDIATE {
+                ffn_hidden[i] = silu(gate[i]) * up[i];
+            }
+            captures.observe(li, "ffn_hidden", &ffn_hidden);
+
+            let h_q = QTensor::from_f32(&ffn_hidden);
+            let ff = linear_q(&h_q, &layer.down_proj, &vec![0.0f32; HIDDEN]).to_f32();
+            captures.observe(li, "ffn_out", &ff);
+
+            for i in 0..HIDDEN { hidden[i] += ff[i]; }
+            captures.observe(li, "residual", &hidden);
+        }
+    }
+}
+
+fn qweight(data: &[f32], in_dim: usize, out_dim: usize) -> Result<QWeight, String> {
+    if data.len() != in_dim * out_dim {
+        return Err(format!("qweight: expected {}×{}={}, got {}", out_dim, in_dim, in_dim * out_dim, data.len()));
+    }
+    Ok(QWeight::from_f32(data, in_dim, out_dim))
+}
+
+fn rmsnorm(data: &[f32]) -> Result<RmsNormWeights, String> {
+    Ok(RmsNormWeights::from_f32(data, RMS_EPS))
+}
+
+fn rmsnorm_dim(data: &[f32], expected: usize) -> Result<RmsNormWeights, String> {
+    if data.len() != expected {
+        return Err(format!("rmsnorm: expected {} elements, got {}", expected, data.len()));
+    }
+    Ok(RmsNormWeights::from_f32(data, RMS_EPS))
+}
+
+#[inline]
+fn silu(x: f32) -> f32 {
+    x / (1.0 + (-x).exp())
+}
+
+fn softmax(x: &mut [f32]) {
+    let max = x.iter().cloned().fold(f32::NEG_INFINITY, f32::max);
+    let mut sum = 0.0f32;
+    for v in x.iter_mut() { *v = (*v - max).exp(); sum += *v; }
+    if sum > 0.0 { for v in x.iter_mut() { *v /= sum; } }
+}

@@ -545,11 +545,179 @@ entropy across all layers, or randomized structure, or inverse pattern. It didn'
 
 ### Next step
 
-Qwen3 1.7B. This is the first model in the sequence where the weights are already
-loaded in the main strategos runtime (qwen3.rs exists). The probe needs to hook into
-that forward pass rather than reimplement it. FFN threshold calibration will be done
-first: measure the empirical distribution of SwiGLU output magnitudes on a small
-sample, then set the threshold at the 10th percentile — units below that are
-genuinely narrowly tuned.
+FFN threshold calibration — needed before neuron_freq is meaningful for SmolLM2
+(threshold=0.0 on abs() fires on every non-zero float).
+
+---
+
+## 2026-05-19 — SmolLM2-135M: FFN Threshold Calibration
+
+### The problem with threshold=0.0
+
+SwiGLU hidden activations are signed: `silu(gate) * up`. Setting threshold=0.0
+and checking `abs(v) > threshold` fires on every non-zero float — 100% fire rate
+for all neurons. This is not a measurement of sparsity; it is a measurement of
+numerical precision. The neuron_freq field was useless.
+
+### Calibration method
+
+Source: `smollm2_profile.json` (first run, 20K tokens).
+
+For each layer, take `abs(p5)` of the signed ffn_hidden distribution. This is the
+5th percentile of activation *magnitude* — neurons that consistently fire above this
+are meaningfully selective, not just slightly above floating-point zero. At this
+threshold, average fire rate across layers is ~10%, which is in the biologically
+plausible range for sparse coding.
+
+Thresholds grow with depth (L00: 0.1321 → L29: 1.4831), tracking the growing
+activation magnitudes in later layers. Saved to `models/smollm2/ffn_thresholds.json`.
+
+### Calibrated results (20K tokens, wikitext2)
+
+```
+Layer  threshold  mean_freq   dead%   broad%  always%
+   0     0.1321      0.119     0.0%    60.0%     0.0%
+   6     0.1859      0.092     0.0%    22.1%     0.0%
+  11     0.1805      0.136     0.0%    63.7%     0.0%
+  18     0.3145      0.102     0.4%    28.3%     0.0%
+  24     0.7660      0.070     2.0%    14.1%     0.0%
+  29     1.4831      0.120     7.2%    21.0%     0.0%
+```
+
+(dead = fire rate <1%; broad = 10%-90%; always = fire rate >99%)
+
+### Distribution structure
+
+Early layers (L0-L11): bimodal in 0-20% range. Most neurons fire selectively at
+similar low rates. No always-on neurons. No dead neurons. The network is doing
+uniform sparse computation — every unit contributes something, nothing dominates.
+
+Late layers (L18-L29): polarization increases. L29 histogram:
+- 1171/1536 neurons fire <10% (near-dead, narrowly tuned)
+- 43/1536 neurons fire >90% (always-on, universal computations)
+- Remainder spread across middle (selective, discriminative)
+
+This is the expected structure for distillation:
+
+- **Always-on neurons** (L28-L29, <0.2% of total): lowest spectral frequency.
+  These correspond to computations the model performs on every token regardless of
+  context — likely position/token-type normalization at output. Encode as
+  unconditional wiring in the cortical column.
+
+- **Near-dead neurons** (L20+, up to 7.2% at L29): either unused capacity or
+  specialized for rare inputs not well-represented in wikitext2. Candidates for
+  pruning in the distillation. Worth checking against a more diverse corpus.
+
+- **Selective neurons** (broad middle, dominant everywhere): these carry the
+  discriminative load. Their spectral fingerprints (which token patterns drive them)
+  are the primary input to the invariant extractor.
+
+### Implementation changes
+
+`CaptureStore::for_smollm2` now takes `thresholds: &[f32]` per layer.
+`run_smollm2()` in main.rs loads `{weights_dir}/ffn_thresholds.json` at startup.
+If the file is missing, falls back to 0.1 per layer.
+
+### Files produced
+
+- `smollm2_profile_calibrated.json` — 30 layers, 20K tokens, calibrated thresholds
+- `models/smollm2/ffn_thresholds.json` — 30 per-layer thresholds
+
+### Next step
+
+Qwen3 1.7B probe — same calibration method, same corpus.
+
+---
+
+## 2026-05-19 — Qwen3-1.7B: Activation Probe
+
+### Architecture differences from SmolLM2
+
+Qwen3 has one structural addition: **QK-norm** — per-head RMSNorm applied to each Q
+and K head slice (HEAD_DIM=128) before RoPE. This normalizes attention logits before
+scaling, preventing attention score explosion at depth. The probe captures Q/K after
+projection but before QK-norm, so the raw projection magnitudes are measured.
+
+RoPE is standard interleaved (pairs 2i, 2i+1) vs SmolLM2's LLaMA-style non-interleaved.
+GQA: 16 Q heads / 8 KV heads (KV_GROUP=2), vs SmolLM2's 9/3.
+
+### Calibration
+
+Same method: abs(p5) of signed ffn_hidden distribution → ~10% average fire rate.
+Thresholds range 0.068 (L0) to 1.526 (L27), scaling with depth — same shape as
+SmolLM2's 0.132→1.483 curve. Confirms depth-scaling is architecture-independent.
+
+### Layer-by-layer structure (20K tokens, wikitext2)
+
+```
+Layer   thresh   mean_freq   dead%   broad%  always%  resid_std
+   0    0.0682      0.124     0.0%    59.5%     0.0%      0.336
+   1    0.1132      0.081    15.0%    23.4%     0.0%      0.520
+   2    0.1480      0.082     0.2%    22.8%     0.0%     29.292
+  13    0.4080      0.083    23.7%    20.9%     0.0%     29.480
+  15    0.5576      0.097    36.5%    24.9%     0.0%     29.574
+  23    0.6972      0.129     1.2%    35.7%     0.0%     46.772
+  27    1.5260      0.112    21.4%    21.7%     0.8%    112.610
+```
+
+### Key findings
+
+**L0→L1 transition is a hard phase boundary.**
+L0: uniform sparse — 40% of neurons fire <10%, 51% fire 10-20%. Nearly no dead
+neurons. L1: 76% of neurons fire <10%, 15% dead (fire <1%), 24 neurons fire >90%.
+The distribution flips from uniform-peaked to bimodal in a single layer. This is
+Qwen3's first-layer specialization circuit: L1 immediately partitions neurons into
+relevant vs irrelevant for this input, before any residual accumulation has occurred.
+SmolLM2 made this transition gradually across L0-L6. Qwen3 does it in one step.
+
+**L2 is a magnitude amplifier, not a circuit boundary.**
+The residual std jumps 56× at L2: 0.52 → 29.3. But the neuron_freq distribution
+at L2 is nearly identical to L1 (same bimodal shape, same dead%). The "what" was
+determined at L1; L2 amplifies that signal into the residual stream. After L2, the
+residual std stays flat (29.3-29.6) through L9 — subsequent layers refine without
+expanding the signal.
+
+**L10-L15 is a dead zone (up to 36.5% dead at L15).**
+After the residual stabilizes at L2, the high thresholds (0.37-0.56) suppress many
+neurons — only those responding to strong input patterns cross threshold. This is
+the model's middle-depth compression phase. The residual grows slowly here (29.3→29.6).
+
+**L23-L26 is the second active zone.**
+As residual std accelerates (46→78), more neurons cross their thresholds. Broad%
+peaks at 39.3% (L24) — the highest of any layer. These layers are doing active
+selective computation against a large dynamic background.
+
+**L27 final polarization: 121 always-on neurons (2.0% of 6144).**
+Histogram: 4691 fire <10%, 121 fire >90%, right tail visible (72+73+95 in 70-90%).
+Proportionally similar to SmolLM2 L29 (43/1536 = 2.8%). The always-on neurons
+are slightly fewer by percentage in the larger model — more capacity allows more
+specialization with fewer universal fallback neurons.
+
+**Cross-model comparison:**
+- SmolLM2: gradual early-layer activation, one spike at L11, always-on emerges L28-L29
+- Qwen3: hard L1 transition + L2 explosion, dead zone L10-L15, second active phase L23-L26
+- Both: depth-scaling threshold curve, always-on neurons at ~2% in the final 2-3 layers
+- Both: always-on neurons are the distillation target for unconditional static wiring
+
+### Residual drift and RMSNorm
+
+ResidStd grows in two phases: L2 jump (0.5→29.3), then acceleration L17-L27
+(30→112). The post-attn RMSNorm absorbs both. At L27 std=112, the next forward
+pass would see a clean normalized input at ~1.0 scale. The accumulation is real
+model behavior (pre-norm Llama architecture), not a numerical artifact.
+
+### Files produced
+
+- `crates/probe/src/qwen3_probe.rs` — instrumented forward pass
+- `qwen3_profile_init.json` — 28 layers, 20K tokens, default 0.1 threshold
+- `qwen3_profile_calibrated.json` — 28 layers, 20K tokens, per-layer thresholds
+- `models/qwen3/ffn_thresholds.json` — 28 per-layer thresholds (0.068→1.526)
+
+### Next step
+
+Four of five models probed (Grokking, GPT-2, SmolLM2, Qwen3). The proof sequence
+is ready for the invariant extractor: given neuron_freq profiles across all four
+models, identify input patterns that reliably activate specific neurons. That is
+the bridge from "what fires" to "what makes it fire" — the spectral fingerprint.
 
 ---

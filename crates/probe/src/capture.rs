@@ -122,9 +122,10 @@ impl CaptureStore {
         Self { ops, n_tokens: 0 }
     }
 
-    pub fn for_smollm2(n_layers: usize, n_heads: usize, ffn_dim: usize) -> Self {
+    pub fn for_qwen3(n_layers: usize, n_heads: usize, ffn_dim: usize, thresholds: &[f32]) -> Self {
         let mut ops = HashMap::new();
         for l in 0..n_layers {
+            let threshold = thresholds.get(l).copied().unwrap_or(0.1);
             ops.insert((l, "attn_pre_rms"), OpAccum::scalar());
             ops.insert((l, "attn_q"),       OpAccum::scalar());
             ops.insert((l, "attn_k"),       OpAccum::scalar());
@@ -132,8 +133,25 @@ impl CaptureStore {
             ops.insert((l, "attn_weights"), OpAccum::with_head_entropy(n_heads));
             ops.insert((l, "attn_out"),     OpAccum::scalar());
             ops.insert((l, "ffn_pre_rms"),  OpAccum::scalar());
-            // SwiGLU hidden: use 0.0 threshold — measure positive-activating units only.
-            ops.insert((l, "ffn_hidden"),   OpAccum::with_neuron_freq(ffn_dim, 0.0));
+            ops.insert((l, "ffn_hidden"),   OpAccum::with_neuron_freq(ffn_dim, threshold));
+            ops.insert((l, "ffn_out"),      OpAccum::scalar());
+            ops.insert((l, "residual"),     OpAccum::scalar());
+        }
+        Self { ops, n_tokens: 0 }
+    }
+
+    pub fn for_smollm2(n_layers: usize, n_heads: usize, ffn_dim: usize, thresholds: &[f32]) -> Self {
+        let mut ops = HashMap::new();
+        for l in 0..n_layers {
+            let threshold = thresholds.get(l).copied().unwrap_or(0.1);
+            ops.insert((l, "attn_pre_rms"), OpAccum::scalar());
+            ops.insert((l, "attn_q"),       OpAccum::scalar());
+            ops.insert((l, "attn_k"),       OpAccum::scalar());
+            ops.insert((l, "attn_v"),       OpAccum::scalar());
+            ops.insert((l, "attn_weights"), OpAccum::with_head_entropy(n_heads));
+            ops.insert((l, "attn_out"),     OpAccum::scalar());
+            ops.insert((l, "ffn_pre_rms"),  OpAccum::scalar());
+            ops.insert((l, "ffn_hidden"),   OpAccum::with_neuron_freq(ffn_dim, threshold));
             ops.insert((l, "ffn_out"),      OpAccum::scalar());
             ops.insert((l, "residual"),     OpAccum::scalar());
         }
