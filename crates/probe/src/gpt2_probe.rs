@@ -1,4 +1,5 @@
 use std::path::Path;
+use rayon::prelude::*;
 use strategos_ops::qtensor::{QTensor, QWeight};
 use strategos_ops::linear::linear_q;
 use strategos_ops::lut::SwishLut;
@@ -108,116 +109,112 @@ impl GPT2Probe {
         })
     }
 
-    /// Run a token sequence through the model, capturing activations into `captures`.
-    /// KV cache is reset every CONTEXT_LEN tokens to keep attention O(1) amortized.
+    /// Run a token sequence through the model, capturing activations.
+    /// Context windows are processed in parallel — each window has an independent KV cache.
     pub fn run_corpus(&self, tokens: &[u32], captures: &mut CaptureStore) {
-        const CONTEXT_LEN: usize = 256;
+        const CONTEXT_LEN: usize = 128;
 
+        let partials: Vec<CaptureStore> = tokens
+            .par_chunks(CONTEXT_LEN)
+            .map(|chunk| {
+                let mut store = captures.make_empty_copy();
+                let mut cache = KVCache::new(self.n_layer, self.n_head);
+                for (ctx_pos, &tok) in chunk.iter().enumerate() {
+                    self.forward_token(tok, ctx_pos, &mut cache, &mut store);
+                    store.n_tokens += 1;
+                }
+                store
+            })
+            .collect();
+
+        let total: u64 = partials.iter().map(|s| s.n_tokens).sum();
+        for partial in partials {
+            captures.merge(partial);
+        }
+        eprintln!("[probe] {} tokens processed", total);
+    }
+
+    fn forward_token(&self, tok: u32, ctx_pos: usize, cache: &mut KVCache, captures: &mut CaptureStore) {
         let d = self.n_embd;
         let n_head = self.n_head;
         let head_dim = d / n_head;
-        let mut cache = KVCache::new(self.n_layer, n_head);
 
-        for (pos, &tok) in tokens.iter().enumerate() {
-            // Reset KV cache at context boundaries so attention stays bounded.
-            if pos % CONTEXT_LEN == 0 {
-                cache = KVCache::new(self.n_layer, n_head);
-            }
-            let ctx_pos = pos % CONTEXT_LEN;
+        let tok_off = (tok as usize).min(self.vocab_size - 1) * d;
+        let pos_off = ctx_pos.min(1023) * d;
+        let mut hidden = vec![0.0f32; d];
+        for i in 0..d {
+            hidden[i] = self.wte[tok_off + i] + self.wpe[pos_off + i];
+        }
 
-            let tok_off = (tok as usize).min(self.vocab_size - 1) * d;
-            let pos_off = ctx_pos.min(1023) * d;
-            let mut hidden = vec![0.0f32; d];
-            for i in 0..d {
-                hidden[i] = self.wte[tok_off + i] + self.wpe[pos_off + i];
-            }
+        for (li, layer) in self.layers.iter().enumerate() {
+            let pre_attn = layer_norm(&hidden, &layer.ln_1_w, &layer.ln_1_b, 1e-5);
+            captures.observe(li, "attn_pre_ln", &pre_attn);
 
-            for (li, layer) in self.layers.iter().enumerate() {
-                // Attention block
-                let pre_attn = layer_norm(&hidden, &layer.ln_1_w, &layer.ln_1_b, 1e-5);
-                captures.observe(li, "attn_pre_ln", &pre_attn);
+            let x_q = QTensor::from_f32(&pre_attn);
+            let qkv = linear_q(&x_q, &layer.c_attn_w, &layer.c_attn_b);
+            let qkv_f = qkv.to_f32();
 
-                let x_q = QTensor::from_f32(&pre_attn);
-                let qkv = linear_q(&x_q, &layer.c_attn_w, &layer.c_attn_b);
-                let qkv_f = qkv.to_f32();
+            captures.observe(li, "attn_q", &qkv_f[..d]);
+            captures.observe(li, "attn_k", &qkv_f[d..2 * d]);
+            captures.observe(li, "attn_v", &qkv_f[2 * d..]);
 
-                captures.observe(li, "attn_q", &qkv_f[..d]);
-                captures.observe(li, "attn_k", &qkv_f[d..2 * d]);
-                captures.observe(li, "attn_v", &qkv_f[2 * d..]);
-
-                // Update KV cache
-                for h in 0..n_head {
-                    let mut k = vec![0.0f32; head_dim];
-                    let mut v = vec![0.0f32; head_dim];
-                    for di in 0..head_dim {
-                        k[di] = qkv_f[d + h * head_dim + di];
-                        v[di] = qkv_f[2 * d + h * head_dim + di];
-                    }
-                    cache.k[li][h].push(k);
-                    cache.v[li][h].push(v);
+            for h in 0..n_head {
+                let mut k = vec![0.0f32; head_dim];
+                let mut v = vec![0.0f32; head_dim];
+                for di in 0..head_dim {
+                    k[di] = qkv_f[d + h * head_dim + di];
+                    v[di] = qkv_f[2 * d + h * head_dim + di];
                 }
+                cache.k[li][h].push(k);
+                cache.v[li][h].push(v);
+            }
 
-                let seq_len = cache.k[li][0].len();
-                let scale = (head_dim as f32).sqrt();
-                let mut attn_out = vec![0.0f32; d];
-                let mut head_scores_snap: Vec<Vec<f32>> = Vec::with_capacity(n_head);
+            let seq_len = cache.k[li][0].len();
+            let scale = (head_dim as f32).sqrt();
+            let mut attn_out = vec![0.0f32; d];
+            let mut head_scores_snap: Vec<Vec<f32>> = Vec::with_capacity(n_head);
 
-                for h in 0..n_head {
-                    let mut scores = vec![0.0f32; seq_len];
-                    for ki in 0..seq_len {
-                        let mut dot = 0.0f32;
-                        for di in 0..head_dim {
-                            dot += qkv_f[h * head_dim + di] * cache.k[li][h][ki][di];
-                        }
-                        scores[ki] = dot / scale;
-                    }
-                    softmax(&mut scores);
-                    head_scores_snap.push(scores.clone());
-
-                    for di in 0..head_dim {
-                        let mut sum = 0.0f32;
-                        for ki in 0..seq_len {
-                            sum += scores[ki] * cache.v[li][h][ki][di];
-                        }
-                        attn_out[h * head_dim + di] = sum;
-                    }
+            for h in 0..n_head {
+                let mut scores = vec![0.0f32; seq_len];
+                for ki in 0..seq_len {
+                    let mut dot = 0.0f32;
+                    for di in 0..head_dim { dot += qkv_f[h * head_dim + di] * cache.k[li][h][ki][di]; }
+                    scores[ki] = dot / scale;
                 }
-
-                captures.observe_heads(li, "attn_weights", &head_scores_snap);
-                captures.observe(li, "attn_out", &attn_out);
-
-                // Attention residual
-                let a_q = QTensor::from_f32(&attn_out);
-                let proj = linear_q(&a_q, &layer.c_proj_w, &layer.c_proj_b);
-                let proj_f = proj.to_f32();
-                for i in 0..d { hidden[i] += proj_f[i]; }
-
-                // FFN block
-                let pre_ffn = layer_norm(&hidden, &layer.ln_2_w, &layer.ln_2_b, 1e-5);
-                captures.observe(li, "ffn_pre_ln", &pre_ffn);
-
-                let x2 = QTensor::from_f32(&pre_ffn);
-                let mut h_ff = linear_q(&x2, &layer.c_fc_w, &layer.c_fc_b);
-
-                let gelu = self.find_gelu(h_ff.scale);
-                for v in h_ff.data.iter_mut() { *v = gelu.lookup(*v); }
-
-                let ffn_hidden_f = h_ff.to_f32();
-                captures.observe(li, "ffn_hidden", &ffn_hidden_f);
-
-                let ff_out = linear_q(&h_ff, &layer.mlp_proj_w, &layer.mlp_proj_b);
-                let ff_f = ff_out.to_f32();
-                captures.observe(li, "ffn_out", &ff_f);
-
-                for i in 0..d { hidden[i] += ff_f[i]; }
-                captures.observe(li, "residual", &hidden);
+                softmax(&mut scores);
+                head_scores_snap.push(scores.clone());
+                for di in 0..head_dim {
+                    let mut sum = 0.0f32;
+                    for ki in 0..seq_len { sum += scores[ki] * cache.v[li][h][ki][di]; }
+                    attn_out[h * head_dim + di] = sum;
+                }
             }
 
-            captures.n_tokens += 1;
+            captures.observe_heads(li, "attn_weights", &head_scores_snap);
+            captures.observe(li, "attn_out", &attn_out);
 
-            if captures.n_tokens % 1000 == 0 {
-                eprintln!("[probe] {} tokens processed", captures.n_tokens);
-            }
+            let a_q = QTensor::from_f32(&attn_out);
+            let proj = linear_q(&a_q, &layer.c_proj_w, &layer.c_proj_b);
+            let proj_f = proj.to_f32();
+            for i in 0..d { hidden[i] += proj_f[i]; }
+
+            let pre_ffn = layer_norm(&hidden, &layer.ln_2_w, &layer.ln_2_b, 1e-5);
+            captures.observe(li, "ffn_pre_ln", &pre_ffn);
+
+            let x2 = QTensor::from_f32(&pre_ffn);
+            let mut h_ff = linear_q(&x2, &layer.c_fc_w, &layer.c_fc_b);
+            let gelu = self.find_gelu(h_ff.scale);
+            for v in h_ff.data.iter_mut() { *v = gelu.lookup(*v); }
+
+            let ffn_hidden_f = h_ff.to_f32();
+            captures.observe(li, "ffn_hidden", &ffn_hidden_f);
+
+            let ff_out = linear_q(&h_ff, &layer.mlp_proj_w, &layer.mlp_proj_b);
+            let ff_f = ff_out.to_f32();
+            captures.observe(li, "ffn_out", &ff_f);
+
+            for i in 0..d { hidden[i] += ff_f[i]; }
+            captures.observe(li, "residual", &hidden);
         }
     }
 

@@ -6,6 +6,7 @@ mod capture;
 mod corpus;
 mod gpt2_probe;
 mod grokking_probe;
+mod smollm2_probe;
 
 #[derive(Parser)]
 #[command(name = "probe", about = "Activation prober for neuronal distillation")]
@@ -37,6 +38,7 @@ fn main() {
     match args.model.as_str() {
         "gpt2" => run_gpt2(&args),
         "grokking" => run_grokking(&args),
+        "smollm2" => run_smollm2(&args),
         other => {
             eprintln!("[probe] unknown model: {other}. Supported: gpt2, grokking");
             std::process::exit(1);
@@ -62,6 +64,28 @@ fn run_grokking(args: &Args) {
         .unwrap_or_else(|e| { eprintln!("[probe] write failed: {e}"); std::process::exit(1); });
 
     eprintln!("[probe] profile written to {}", args.output);
+}
+
+fn run_smollm2(args: &Args) {
+    let model = smollm2_probe::SmolLM2Probe::load(Path::new(&args.weights))
+        .unwrap_or_else(|e| { eprintln!("[probe] load failed: {e}"); std::process::exit(1); });
+
+    let tokens = corpus::load_tokens(&args.corpus, &args.tokenizer, args.n_tokens)
+        .unwrap_or_else(|e| { eprintln!("[probe] corpus failed: {e}"); std::process::exit(1); });
+
+    let mut captures = capture::CaptureStore::for_smollm2(model.n_layer, model.n_head, model.ffn_dim);
+
+    eprintln!("[probe] running {} tokens through SmolLM2-135M ({} layers)...", tokens.len(), model.n_layer);
+    model.run_corpus(&tokens, &mut captures);
+
+    let profile = captures.finalize("smollm2-135m", &args.corpus);
+    let json = serde_json::to_string_pretty(&profile)
+        .unwrap_or_else(|e| { eprintln!("[probe] serialize failed: {e}"); std::process::exit(1); });
+    std::fs::write(&args.output, &json)
+        .unwrap_or_else(|e| { eprintln!("[probe] write failed: {e}"); std::process::exit(1); });
+
+    eprintln!("[probe] profile written to {}", args.output);
+    eprintln!("[probe] {} tokens, {} layers captured", profile.n_tokens, profile.layers.len());
 }
 
 fn run_gpt2(args: &Args) {

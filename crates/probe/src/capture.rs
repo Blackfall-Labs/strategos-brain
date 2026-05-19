@@ -44,6 +44,22 @@ impl OpAccum {
         }
     }
 
+    pub fn make_empty_copy(&self) -> Self {
+        Self {
+            scalar: ScalarAccum::new(),
+            neuron_freq: self.neuron_freq.as_ref()
+                .map(|nf| NeuronFreqAccum::new(nf.n_neurons, nf.threshold)),
+            head_entropy: self.head_entropy.as_ref()
+                .map(|he| HeadEntropyAccum::new(he.n_heads)),
+        }
+    }
+
+    pub fn merge(&mut self, other: OpAccum) {
+        self.scalar.merge(other.scalar);
+        if let (Some(nf), Some(o)) = (&mut self.neuron_freq, other.neuron_freq) { nf.merge(o); }
+        if let (Some(he), Some(o)) = (&mut self.head_entropy, other.head_entropy) { he.merge(o); }
+    }
+
     pub fn finalize(self) -> OpStats {
         OpStats {
             scalar: self.scalar.finalize(),
@@ -104,6 +120,42 @@ impl CaptureStore {
             ops.insert((l, "residual"),     OpAccum::scalar());
         }
         Self { ops, n_tokens: 0 }
+    }
+
+    pub fn for_smollm2(n_layers: usize, n_heads: usize, ffn_dim: usize) -> Self {
+        let mut ops = HashMap::new();
+        for l in 0..n_layers {
+            ops.insert((l, "attn_pre_rms"), OpAccum::scalar());
+            ops.insert((l, "attn_q"),       OpAccum::scalar());
+            ops.insert((l, "attn_k"),       OpAccum::scalar());
+            ops.insert((l, "attn_v"),       OpAccum::scalar());
+            ops.insert((l, "attn_weights"), OpAccum::with_head_entropy(n_heads));
+            ops.insert((l, "attn_out"),     OpAccum::scalar());
+            ops.insert((l, "ffn_pre_rms"),  OpAccum::scalar());
+            // SwiGLU hidden: use 0.0 threshold — measure positive-activating units only.
+            ops.insert((l, "ffn_hidden"),   OpAccum::with_neuron_freq(ffn_dim, 0.0));
+            ops.insert((l, "ffn_out"),      OpAccum::scalar());
+            ops.insert((l, "residual"),     OpAccum::scalar());
+        }
+        Self { ops, n_tokens: 0 }
+    }
+
+    /// Create a zero-valued copy with the same op registrations — used for parallel chunk processing.
+    pub fn make_empty_copy(&self) -> Self {
+        let ops = self.ops.iter()
+            .map(|(&key, accum)| (key, accum.make_empty_copy()))
+            .collect();
+        Self { ops, n_tokens: 0 }
+    }
+
+    /// Merge another CaptureStore into this one (parallel Welford combination).
+    pub fn merge(&mut self, other: CaptureStore) {
+        self.n_tokens += other.n_tokens;
+        for (key, other_accum) in other.ops {
+            if let Some(accum) = self.ops.get_mut(&key) {
+                accum.merge(other_accum);
+            }
+        }
     }
 
     pub fn observe(&mut self, layer: usize, op: &'static str, values: &[f32]) {

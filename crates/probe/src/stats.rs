@@ -43,6 +43,21 @@ impl ScalarAccum {
         }
     }
 
+    /// Parallel Welford combination — merge another accumulator into this one.
+    pub fn merge(&mut self, other: ScalarAccum) {
+        if other.count == 0 { return; }
+        let combined = self.count + other.count;
+        let delta = other.mean - self.mean;
+        self.m2 += other.m2 + delta * delta * (self.count as f64 * other.count as f64) / combined as f64;
+        self.mean = (self.mean * self.count as f64 + other.mean * other.count as f64) / combined as f64;
+        self.count = combined;
+        if other.min < self.min { self.min = other.min; }
+        if other.max > self.max { self.max = other.max; }
+        for v in other.reservoir {
+            if self.reservoir.len() < RESERVOIR_SIZE { self.reservoir.push(v); }
+        }
+    }
+
     pub fn finalize(self) -> ScalarStats {
         let std = if self.count > 1 {
             (self.m2 / (self.count - 1) as f64).sqrt() as f32
@@ -104,6 +119,13 @@ impl NeuronFreqAccum {
         }
     }
 
+    pub fn merge(&mut self, other: NeuronFreqAccum) {
+        self.total += other.total;
+        for (a, b) in self.fire_count.iter_mut().zip(other.fire_count.iter()) {
+            *a += b;
+        }
+    }
+
     pub fn finalize(self) -> Vec<f32> {
         if self.total == 0 {
             return vec![0.0; self.n_neurons];
@@ -142,6 +164,13 @@ impl HeadEntropyAccum {
                 }
             }
             self.entropy_sum[h] += entropy;
+        }
+    }
+
+    pub fn merge(&mut self, other: HeadEntropyAccum) {
+        self.count += other.count;
+        for (a, b) in self.entropy_sum.iter_mut().zip(other.entropy_sum.iter()) {
+            *a += b;
         }
     }
 
