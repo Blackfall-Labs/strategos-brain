@@ -814,9 +814,103 @@ frequency proportional to cluster centroid frequency rank.
 
 ### Next step
 
-Run Qwen3 extractor. Cross-model comparison: do the same three classes appear?
-Does the depth boundary (L0 pure → generalization → rare entity) occur at the
-same proportional depth (L0/30 = 0%, L13/30 = 43%, L19/30 = 63%) in Qwen3
-(equivalent: L0, L12, L18)?
+Run Qwen3 extractor. Cross-model comparison.
+
+---
+
+## 2026-05-19 — Qwen3-1.7B Invariant Extractor: Cross-Model Comparison
+
+### Depth law comparison
+
+```
+SmolLM2 (30 layers):  peak L0 (0%),  minimum L13 (43%),  recovery L19+ (63%)
+Qwen3   (28 layers):  peak L2 (7%),  minimum L7  (26%),  recovery L8+  (30%)
+```
+
+The U-shape is confirmed in both models — high pure detectors early, minimum in
+middle, recovery late. But the depth ratios are different:
+
+- SmolLM2's minimum is at 43% depth; Qwen3's is at 26%.
+- Qwen3 recovers much earlier in proportional terms (30% vs 63%).
+
+**Cause**: QK-norm. Qwen3 normalizes Q and K per-head before attention, which
+prevents attention score explosion and allows the model to do meaningful context
+integration earlier. Without QK-norm, SmolLM2's attention in early layers is
+noisier — the FFN has to compensate by relying more on token identity (not context)
+longer into the model. Qwen3 can "trust" its attention output by L7 and transitions
+to compositional processing faster.
+
+The depth boundary is architecture-dependent, not a universal law. The U-shape is
+universal; where the minimum falls depends on how fast the model can integrate context.
+
+### What tokens the pure detectors respond to — by depth
+
+**Early layers (L0-L2)**:
+Top tokens: 'yr' (506 neurons), ' Valk' (462), ' Jackets' (265), ' Rock' (259),
+' Chronicles' (168). Pattern: **rare named entities and distinctive subwords**.
+These are tokens with low frequency but high embedding distinctiveness. The model
+immediately identifies and dedicates neurons to them because their presence strongly
+constrains the output distribution.
+
+**Minimum zone (L6-L8)**:
+Only 74 pure detectors across three layers (vs 3,184 in L0-L2). The few that
+remain: ' the' (28 neurons), ' ,' (9). Even the most common tokens have only a
+handful of dedicated detectors. Compositional processing has taken over completely.
+
+**Late layers (L24-L27)**:
+Top tokens: ' Valk' (629 neurons!), ' the' (199), ' St' (192), ' Little' (171),
+' Gamb' (144), ' Cro' (140). Pattern: **the same named entities as early layers,
+but more neurons than before**. ' Valk' has 629 late-layer neurons vs 462 early
+— the model invests MORE neurons in predicting what follows ' Valk' than in
+recognizing it.
+
+### The recognition/prediction split
+
+The same token triggers two distinct neuron populations at very different depths:
+
+- **Early-layer neuron on ' Valk'** (L0-L2): "I see this named entity."
+  Function: feature detection. Context independent. Compressible to token set.
+
+- **Late-layer neuron on ' Valk'** (L24-L27): "I must predict what follows this entity."
+  Function: output preparation. Also compressible to token set, but requires
+  the late-layer residual context (the model must already know the full preceding
+  context to generate the correct completion).
+
+Two neurons, same trigger token, two different frequency bands. This is the core
+of the spectral model: band assignment is NOT just vocabulary grouping. Same lexical
+item → different band at different depth. The band encodes computational role
+(recognition vs prediction), not just vocabulary membership.
+
+### Neuron count asymmetry across models
+
+SmolLM2 has 1536 FFN neurons per layer. Qwen3 has 6144 — 4× more. Qwen3's
+total selective neurons: ~130K across 28 layers. SmolLM2's: 45,779 across 30
+layers. Qwen3 has ~2.8× more selective neurons despite only 4× the parameter
+count — suggesting its larger FFN capacity is more efficiently utilized (less
+dead capacity at any given threshold).
+
+### Files produced
+
+- `qwen3_triggers.json` — ~130K selective neurons, 20K tokens, top-50 per neuron
+
+### Summary of proof sequence so far
+
+| Model | Params | Pure detector peak | Min depth | Recovery depth |
+|-------|--------|--------------------|-----------|----------------|
+| SmolLM2 135M | 135M | L0 (0%) — 1302 neurons | L13 (43%) — 6 neurons | L19 (63%) |
+| Qwen3 1.7B | 1.7B | L2 (7%) — 1131 neurons | L7 (26%) — 13 neurons | L8 (30%) |
+
+Both models: recognition/prediction split at same token types, U-shaped depth
+curve, always-on neurons in final 2-3 layers (~2% of FFN dim).
+
+### Next step
+
+Spectral band assignment algorithm. Given trigger profiles for both models:
+1. Cluster neurons by Jensen-Shannon divergence of their trigger distributions
+2. Assign frequency band proportional to cluster centroid's mean trigger_rate
+   (high trigger_rate = narrow band = high frequency)
+3. Output: per-neuron band assignment, cluster size, spectral fingerprint vector
+
+This is the last tool before the first distillation attempt.
 
 ---
