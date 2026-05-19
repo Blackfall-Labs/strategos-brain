@@ -4,6 +4,7 @@ members = [
     "crates/runtime",
     "crates/ops",
     "crates/frame-catalog",
+    "crates/probe",
 ]
 
 [workspace.package]
