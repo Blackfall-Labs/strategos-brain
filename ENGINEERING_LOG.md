@@ -1472,3 +1472,147 @@ If the dynamics match, we have proof that structural initialization from probe d
 correctly. That's the foundation for the full synthesis pipeline.
 
 ---
+
+## 2026-05-19 — Phase 7: Architectural Pivot — Model-Derived Brain
+
+### What went wrong in Phase 6
+
+Phase 6 ended by patching cross-model seeds into sigcortex via `xmodel.rs` and wiring them
+into `brain_daemon`. The build succeeded and the brain ran. But that was the wrong move.
+
+sigcortex is a human neuroanatomy simulation. Its regions are named and shaped after the
+human cortex: Broca's area, Wernicke's area, angular gyrus, hippocampus (CA3), vmPFC.
+The tracts between them mirror human white matter pathways. The dynamics (Hebbian learning,
+L23/L5 bistability, theta oscillation, predictive coding) are all tuned to that anatomy.
+
+The probe data has nothing to do with human neuroanatomy. What it tells us is:
+- Three depth zones where different computational roles live (structural, functional, compositional)
+- Five spectral bands that describe how selective each unit is
+- A recognition/prediction split for every pure-token detector
+- A ~10% sparse activation regime across all depths and architectures
+
+Forcing this into sigcortex's anatomical containers (Wernicke for one depth zone, Broca
+for output, hippocampus for memory) is like pouring new structure into old bottles.
+The bottles will constrain the structure, not the other way around.
+
+### What we keep from sigcortex
+
+The sigcortex primitives are proven and work well. We keep:
+
+- `CortexSheet` / `CortexKernel` — the column array, WTA, rate adaptation, Hebbian learning
+- `ColumnParams` — pv_scale, attn_k, charge_decay, interval, homeostasis
+- L23 / L5 layers, bistability, recurrent collaterals
+- `FiberTract` — broadcast from one sheet to another
+- The signal atom (polarity, magnitude, K-field for refractory)
+
+We discard:
+- Every named human-anatomy region (Wernicke, Broca, CA3, angular gyrus, vmPFC...)
+- Every hardcoded tract that mirrors a human white matter pathway
+- The assumption that language needs a "speech production area" or a "working memory area"
+  structured after human physiology
+
+### The new model: probe-derived spectral brain
+
+The probe data defines the structure. We build exactly what the data says, nothing more.
+
+**Three depth zones → three region tiers:**
+
+```
+Tier 0 — Recognition (depth 0.00-0.33, Band 1-2):
+  Job: token identity, surface form, named entity detection.
+  Probe evidence: 1302 pure-token detectors at L0 (trigger_rate > 0.90).
+  Structure: one sheet per Band 1 cluster (87 clusters in SmolLM2).
+             Each sheet has exactly the neurons from that cluster.
+             Columns are tuned to a single narrow frequency band.
+
+Tier 1 — Integration (depth 0.33-0.67, Band 2-3):
+  Job: context-dependent selective processing.
+  Probe evidence: mean_top_tr drops to 0.243 in generalization zone.
+                  Neurons respond to distributed patterns, not single tokens.
+  Structure: a population of sheets tuned to broader frequency bands.
+             Columns respond to Band 2/3 signals only — not Band 1 narrow-band input.
+             Density: ~28.7% of SmolLM2's neurons live here.
+
+Tier 2 — Composition (depth 0.67-1.00, Band 3-4 + always-on):
+  Job: output preparation, rare entity prediction, unconditional baseline.
+  Probe evidence: 621 late-layer neurons on rare named entities (L19-L29).
+                  43 always-on neurons (2.8% of FFN dim) in L28-L29.
+  Structure: a wide-band broadcast tier.
+             Always-on neurons → static unconditional columns (fire every cycle).
+             Rare entity neurons → narrow-band but at low frequency vocabulary.
+```
+
+**Frequency assignment — no explicit tracts:**
+
+A signal carries a band ID when it fires. Columns respond only if their tuning
+overlaps the band ID. Distance (tier hop count) is the only propagation gate.
+This is the spectral coherence model from Phase 2. No tract synthesis required.
+
+The band ID is derived from the cluster's depth and neuron class:
+```
+Band 1, Tier 0 → band_id = token_rank (token frequency rank in vocabulary)
+Band 2, Tier 1 → band_id = depth_bin × 16 + entropy_bin
+Band 3, Tier 1 → band_id = depth_bin × 8  + entropy_bin
+Band 4, Tier 2 → band_id = 0 (broadcast tier, responds to everything above threshold)
+Always-on      → unconditional (no band gate)
+```
+
+**No anatomy, no borrowed region names. The region layout IS the probe data.**
+
+### What this brain looks like at runtime
+
+```
+Input token stream
+       ↓
+  [Tier 0 sheets]  ← Band 1 clusters from smollm2_bands.json
+    87 narrow-band recognition sheets
+    Each fires when its trigger token appears
+    Broadcasts at narrow band ID to Tier 1
+       ↓
+  [Tier 1 sheets]  ← Band 2/3 neurons from spectral profile
+    Context integration, WTA convergence
+    Responds to distributed patterns from Tier 0 broadcasts
+    Broadcasts at medium band ID to Tier 2
+       ↓
+  [Tier 2 sheets]  ← Band 4 neurons + always-on
+    Wide-band output preparation
+    Always-on columns fire unconditionally each cycle
+    Prediction columns tuned to rare late-layer triggers
+```
+
+No Broca. No Wernicke. No hippocampus. The topology is what the model IS,
+not a metaphor for what a human brain looks like.
+
+### What this is NOT
+
+This is not a new version of sigcortex. This is a new crate that uses sigcortex's
+primitives (CortexSheet, FiberTract, CortexKernel) as building blocks the way a
+programmer uses a standard library — not as a template to fill in.
+
+sigcortex remains intact as a separate experiment (human neuroanatomy simulation).
+This new brain lives in a new binary in strategos-brain, built from probe data
+output files, and validated against the probe data (not against human neuroscience).
+
+### Validation criterion
+
+The probe data is the ground truth. After building the brain from Band 1 clusters:
+1. Feed the same 20K wikitext2 tokens through the new brain that we fed through SmolLM2.
+2. For each token T, check whether Tier 0 sheet for T's cluster fired (binary).
+3. Compare against smollm2_triggers.json: did the real L0 neuron for T fire?
+4. Target: ≥95% agreement between brain Tier 0 activations and probe records.
+
+If the brain's recognition layer mirrors the model's L0 recognition layer at 95%+,
+the first tier is validated. That's the same standard we applied in Phases 1-3
+(100% recall, 99.5% precision for the lookup table). Same bar, different substrate.
+
+### Files to build next
+
+| File | What it is |
+|------|------------|
+| `strategos-brain/crates/spectral-brain/` | New crate — the probe-derived brain |
+| `crates/spectral-brain/src/builder.rs` | Reads bands JSON, constructs Tier 0/1/2 sheets |
+| `crates/spectral-brain/src/brain.rs` | CortexKernel assembly from built sheets |
+| `crates/spectral-brain/src/main.rs` | CLI: load bands + profile, build brain, run token stream |
+| `tools/export_band_topology.py` | Converts smollm2_bands.json → builder-ready JSON |
+
+---
