@@ -5,36 +5,20 @@ mod builder;
 use brain::SpectralBrain;
 use builder::{BrainTopology, build_columns, build_token_map};
 use clap::Parser;
-use serde::Deserialize;
 use std::collections::HashMap;
 
 #[derive(Parser)]
 struct Args {
-    /// Brain topology JSON (output of export_band_topology.py)
     #[arg(long)]
     topology: String,
-
-    /// Tokenizer vocab JSON (token_str → token_id map)
     #[arg(long)]
     vocab: String,
-
-    /// Plain text corpus to run through the brain
     #[arg(long)]
     corpus: String,
-
-    /// Number of tokens to process (0 = all)
     #[arg(long, default_value = "1000")]
     n_tokens: usize,
-
-    /// Ticks to run per token before accepting next
     #[arg(long, default_value = "8")]
     ticks_per_token: usize,
-}
-
-#[derive(Deserialize)]
-struct Vocab {
-    #[serde(flatten)]
-    map: HashMap<String, u32>,
 }
 
 fn main() {
@@ -50,11 +34,13 @@ fn main() {
     eprintln!("[spectral-brain] tier0 clusters: {}", topo.tier0_clusters.len());
     eprintln!("[spectral-brain] tier1 sheets:   {}", topo.tier1_sheets.len());
     eprintln!("[spectral-brain] tier2 sheets:   {}", topo.tier2_sheets.len());
+    eprintln!("[spectral-brain] band23 tokens:  {}", topo.band23_tokens.len());
 
-    let columns = build_columns(&topo);
-    let token_map = build_token_map(&topo);
+    let columns    = build_columns(&topo);
+    let token_map  = build_token_map(&topo);
     eprintln!("[spectral-brain] columns built:  {}", columns.len());
-    eprintln!("[spectral-brain] token triggers: {}", token_map.len());
+    eprintln!("[spectral-brain] token triggers: {} (band1={} band23={})",
+        token_map.len(), topo.tier0_clusters.len(), topo.band23_tokens.len());
 
     eprintln!("[spectral-brain] loading vocab: {}", args.vocab);
     let vocab: HashMap<String, u32> = {
@@ -62,8 +48,6 @@ fn main() {
             .unwrap_or_else(|e| panic!("cannot read vocab: {e}"));
         let v: serde_json::Value = serde_json::from_str(&s)
             .unwrap_or_else(|e| panic!("bad vocab JSON: {e}"));
-        // HuggingFace tokenizer.json: vocab at model.vocab
-        // Flat format: {"token": id, ...}
         if let Some(vocab_map) = v.get("model").and_then(|m| m.get("vocab")) {
             vocab_map.as_object().unwrap()
                 .iter()
@@ -81,19 +65,24 @@ fn main() {
     let text = std::fs::read_to_string(&args.corpus)
         .unwrap_or_else(|e| panic!("cannot read corpus: {e}"));
 
+    let always_on_baseline: usize = columns.iter().filter(|c| c.always_on).count()
+        * args.ticks_per_token;
+    eprintln!("[spectral-brain] always-on baseline per token: {} fires", always_on_baseline);
+
     let mut brain = SpectralBrain::new(columns);
 
-    // Simple whitespace tokenizer — good enough for validation against smollm2_triggers.json
     let words: Vec<&str> = text.split_whitespace().collect();
     let limit = if args.n_tokens == 0 { words.len() } else { args.n_tokens.min(words.len()) };
 
-    let mut hits = 0usize;
+    let mut hits  = 0usize;
     let mut misses = 0usize;
-    let mut total_fired = [0u64; 3];
+    let mut total_cascade = [0u64; 3];
+    let mut total_always_on = [0u64; 3];
+
+    // SmolLM2/BPE vocab uses U+0120 (Ġ) as word-leading-space prefix
+    const GPREF: char = '\u{0120}';
 
     for (i, word) in words[..limit].iter().enumerate() {
-        // SmolLM2/BPE vocab uses U+0120 (Ġ) as word-leading-space prefix, not literal ' '
-        const GPREF: char = '\u{0120}';
         let tok_id = vocab.get(&format!("{GPREF}{word}"))
             .or_else(|| vocab.get(*word))
             .copied();
@@ -109,28 +98,43 @@ fn main() {
             misses += 1;
         }
 
-        let mut token_fired = [0usize; 3];
+        let mut tok_cascade   = [0usize; 3];
+        let mut tok_always_on = [0usize; 3];
+
         for _ in 0..args.ticks_per_token {
             brain.tick();
-            let f = brain.fired_by_tier();
-            for t in 0..3 { token_fired[t] += f[t]; }
+            let s = brain.last_stats;
+            for t in 0..3 {
+                tok_cascade[t]   += s.cascade[t];
+                tok_always_on[t] += s.always_on[t];
+            }
         }
-        for t in 0..3 { total_fired[t] += token_fired[t] as u64; }
+
+        for t in 0..3 {
+            total_cascade[t]   += tok_cascade[t] as u64;
+            total_always_on[t] += tok_always_on[t] as u64;
+        }
 
         if (i + 1) % 100 == 0 {
             eprintln!(
-                "[spectral-brain] token {:4}  hits={} misses={}  fired T0={} T1={} T2={}",
-                i + 1, hits, misses, token_fired[0], token_fired[1], token_fired[2]
+                "[spectral-brain] token {:4}  hits={} miss={}  \
+                 T2 cascade={} always-on={}  T1 cascade={}  T0 cascade={}",
+                i + 1, hits, misses,
+                tok_cascade[2], tok_always_on[2],
+                tok_cascade[1], tok_cascade[0],
             );
         }
     }
 
+    let tokens_with_hit = hits;
     eprintln!("\n[spectral-brain] run complete");
-    eprintln!("  tokens processed: {}", limit);
-    eprintln!("  vocab hits:       {} ({:.1}%)", hits, 100.0 * hits as f64 / limit as f64);
-    eprintln!("  vocab misses:     {}", misses);
-    eprintln!("  total fired T0:   {}", total_fired[0]);
-    eprintln!("  total fired T1:   {}", total_fired[1]);
-    eprintln!("  total fired T2:   {}", total_fired[2]);
-    eprintln!("  ticks total:      {}", brain.tick_count);
+    eprintln!("  tokens processed: {limit}");
+    eprintln!("  vocab hits:       {hits} ({:.1}%)", 100.0 * hits as f64 / limit as f64);
+    eprintln!("  vocab misses:     {misses}");
+    eprintln!("  T0  cascade total: {}", total_cascade[0]);
+    eprintln!("  T1  cascade total: {}", total_cascade[1]);
+    eprintln!("  T2  cascade total: {}", total_cascade[2]);
+    eprintln!("  T2  always-on tot: {}", total_always_on[2]);
+    eprintln!("  T2  cascade/hit:   {:.1}", total_cascade[2] as f64 / tokens_with_hit.max(1) as f64);
+    eprintln!("  ticks total:       {}", brain.tick_count);
 }

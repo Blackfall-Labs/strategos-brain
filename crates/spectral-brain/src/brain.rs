@@ -1,6 +1,5 @@
 use crate::column::Column;
 
-/// A broadcast event emitted when any column fires.
 #[derive(Clone, Debug)]
 pub struct BroadcastEvent {
     pub source_col:  usize,
@@ -9,47 +8,57 @@ pub struct BroadcastEvent {
     pub magnitude:   u32,
 }
 
-pub struct SpectralBrain {
-    pub columns: Vec<Column>,
+/// Per-tick firing stats, split by cause.
+#[derive(Default, Clone, Copy, Debug)]
+pub struct FireStats {
+    pub always_on: [usize; 3],  // always-on fires by tier
+    pub cascade:   [usize; 3],  // cascade-driven fires by tier
+}
 
-    /// Pending events for this tick. Double-buffered so columns fired this tick
-    /// don't recursively re-evaluate in the same tick.
+impl FireStats {
+    pub fn total(&self, tier: usize) -> usize { self.always_on[tier] + self.cascade[tier] }
+}
+
+pub struct SpectralBrain {
+    pub columns:    Vec<Column>,
+    pub always_on_count: [usize; 3],  // pre-computed always-on per tier
+
     pending:  Vec<BroadcastEvent>,
     next:     Vec<BroadcastEvent>,
 
     pub tick_count: u64,
-    pub fired_this_tick: Vec<usize>,  // column IDs that fired
+    pub last_stats: FireStats,
 }
 
 impl SpectralBrain {
     pub fn new(columns: Vec<Column>) -> Self {
+        let mut always_on_count = [0usize; 3];
+        for col in &columns {
+            if col.always_on {
+                always_on_count[col.tier as usize] += 1;
+            }
+        }
         Self {
             columns,
+            always_on_count,
             pending: Vec::new(),
             next:    Vec::new(),
             tick_count: 0,
-            fired_this_tick: Vec::new(),
+            last_stats: FireStats::default(),
         }
     }
 
-    /// Inject an external event (e.g. token recognition from Band 1 trigger lookup).
-    /// source_tier=0, band_id derived from token cluster, magnitude from trigger_rate.
     pub fn inject(&mut self, band_id: u32, magnitude: u32, source_tier: u8) {
         self.pending.push(BroadcastEvent {
-            source_col: usize::MAX, // external input
+            source_col: usize::MAX,
             source_tier,
             band_id,
             magnitude,
         });
     }
 
-    /// One brain tick:
-    /// 1. Always-on columns fire unconditionally → add to pending.
-    /// 2. Dispatch pending events to all columns.
-    /// 3. Columns that fire add events to next buffer.
-    /// 4. Swap buffers. Tick K counters.
     pub fn tick(&mut self) {
-        self.fired_this_tick.clear();
+        let mut stats = FireStats::default();
 
         // Always-on columns fire unconditionally
         for col in &mut self.columns {
@@ -61,7 +70,7 @@ impl SpectralBrain {
                     band_id:     col.band_lo,
                     magnitude:   col.threshold * 2,
                 });
-                self.fired_this_tick.push(col.id);
+                stats.always_on[col.tier as usize] += 1;
             }
         }
 
@@ -76,29 +85,21 @@ impl SpectralBrain {
                         band_id:     col.band_lo + (col.band_hi - col.band_lo) / 2,
                         magnitude:   fired_m,
                     });
-                    self.fired_this_tick.push(col.id);
+                    if col.always_on {
+                        stats.always_on[col.tier as usize] += 1;
+                    } else {
+                        stats.cascade[col.tier as usize] += 1;
+                    }
                 }
             }
         }
 
-        // Swap buffers
         std::mem::swap(&mut self.pending, &mut self.next);
         self.next.clear();
 
-        // Tick refractory counters
-        for col in &mut self.columns {
-            col.tick();
-        }
+        for col in &mut self.columns { col.tick(); }
 
+        self.last_stats = stats;
         self.tick_count += 1;
-    }
-
-    pub fn fired_by_tier(&self) -> [usize; 3] {
-        let mut counts = [0usize; 3];
-        for &id in &self.fired_this_tick {
-            let tier = self.columns[id].tier as usize;
-            if tier < 3 { counts[tier] += 1; }
-        }
-        counts
     }
 }

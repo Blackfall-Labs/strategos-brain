@@ -5,10 +5,22 @@ use crate::column::Column;
 /// Output of export_band_topology.py
 #[derive(Deserialize, Debug)]
 pub struct BrainTopology {
-    pub n_cols_total:  usize,
-    pub tier0_clusters: Vec<Tier0Cluster>,
-    pub tier1_sheets:   Vec<SpectralSheet>,
-    pub tier2_sheets:   Vec<SpectralSheet>,
+    pub n_cols_total:    usize,
+    pub tier0_clusters:  Vec<Tier0Cluster>,
+    pub tier1_sheets:    Vec<SpectralSheet>,
+    pub tier2_sheets:    Vec<SpectralSheet>,
+    /// Band 2/3 token entries for broader injection coverage.
+    #[serde(default)]
+    pub band23_tokens:   Vec<Band23Token>,
+}
+
+/// A Band 2 or 3 token trigger — context-dependent, so magnitude is lower.
+#[derive(Deserialize, Debug)]
+pub struct Band23Token {
+    pub token_id:      u32,
+    pub band:          u8,    // 2 or 3
+    pub band_id:       u32,   // where to broadcast (within T1 range)
+    pub magnitude:     u32,   // scaled from mean trigger_rate
 }
 
 /// One Band 1 cluster = one recognition sheet in Tier 0.
@@ -109,12 +121,18 @@ fn pv_scale_to_threshold(pv: f32) -> u32 {
     t as u32
 }
 
-/// Build the token → (band_id, magnitude) lookup from Tier 0 clusters.
-/// Used by main to inject events when a token is seen.
+/// Build the token → (band_id, magnitude) lookup.
+/// Tier 0 (Band 1) takes priority. Band 2/3 fill in tokens not in Band 1.
 pub fn build_token_map(topo: &BrainTopology) -> HashMap<u32, (u32, u32)> {
     let mut map = HashMap::new();
+
+    // Band 2/3 first (lower priority — overwritten by Band 1)
+    for t in &topo.band23_tokens {
+        map.insert(t.token_id, (t.band_id, t.magnitude));
+    }
+
+    // Band 1 overwrites — strongest signal takes precedence
     for cluster in &topo.tier0_clusters {
-        // magnitude: mean trigger_rate of cluster members, scaled to u32
         let mean_tr = if cluster.members.is_empty() {
             0.5
         } else {
@@ -123,5 +141,6 @@ pub fn build_token_map(topo: &BrainTopology) -> HashMap<u32, (u32, u32)> {
         let magnitude = (mean_tr * 30000.0) as u32;
         map.insert(cluster.token_id, (cluster.band_id, magnitude));
     }
+
     map
 }

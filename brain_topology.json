@@ -24537,5 +24537,151 @@
       ],
       "always_on_frac": 0.015299479166666668
     }
+  ],
+  "band23_tokens": [
+    {
+      "token_id": 30,
+      "band": 2,
+      "band_id": 108,
+      "magnitude": 8258
+    },
+    {
+      "token_id": 533,
+      "band": 2,
+      "band_id": 198,
+      "magnitude": 11538
+    },
+    {
+      "token_id": 715,
+      "band": 2,
+      "band_id": 108,
+      "magnitude": 8333
+    },
+    {
+      "token_id": 4175,
+      "band": 2,
+      "band_id": 108,
+      "magnitude": 13500
+    },
+    {
+      "token_id": 827,
+      "band": 2,
+      "band_id": 108,
+      "magnitude": 13125
+    },
+    {
+      "token_id": 624,
+      "band": 2,
+      "band_id": 108,
+      "magnitude": 10285
+    },
+    {
+      "token_id": 451,
+      "band": 2,
+      "band_id": 198,
+      "magnitude": 11110
+    },
+    {
+      "token_id": 357,
+      "band": 2,
+      "band_id": 198,
+      "magnitude": 7317
+    },
+    {
+      "token_id": 5096,
+      "band": 2,
+      "band_id": 108,
+      "magnitude": 10000
+    },
+    {
+      "token_id": 582,
+      "band": 2,
+      "band_id": 108,
+      "magnitude": 9130
+    },
+    {
+      "token_id": 1215,
+      "band": 2,
+      "band_id": 108,
+      "magnitude": 12000
+    },
+    {
+      "token_id": 1421,
+      "band": 2,
+      "band_id": 108,
+      "magnitude": 10714
+    },
+    {
+      "token_id": 10181,
+      "band": 2,
+      "band_id": 108,
+      "magnitude": 12499
+    },
+    {
+      "token_id": 42716,
+      "band": 2,
+      "band_id": 108,
+      "magnitude": 13333
+    },
+    {
+      "token_id": 3735,
+      "band": 2,
+      "band_id": 108,
+      "magnitude": 10312
+    },
+    {
+      "token_id": 1135,
+      "band": 2,
+      "band_id": 108,
+      "magnitude": 13125
+    },
+    {
+      "token_id": 8052,
+      "band": 2,
+      "band_id": 108,
+      "magnitude": 7143
+    },
+    {
+      "token_id": 13159,
+      "band": 2,
+      "band_id": 108,
+      "magnitude": 8571
+    },
+    {
+      "token_id": 4252,
+      "band": 2,
+      "band_id": 108,
+      "magnitude": 7200
+    },
+    {
+      "token_id": 8512,
+      "band": 2,
+      "band_id": 108,
+      "magnitude": 13500
+    },
+    {
+      "token_id": 527,
+      "band": 2,
+      "band_id": 108,
+      "magnitude": 9231
+    },
+    {
+      "token_id": 736,
+      "band": 2,
+      "band_id": 108,
+      "magnitude": 10555
+    },
+    {
+      "token_id": 85,
+      "band": 2,
+      "band_id": 108,
+      "magnitude": 7825
+    },
+    {
+      "token_id": 37,
+      "band": 3,
+      "band_id": 108,
+      "magnitude": 2464
+    }
   ]
 }
