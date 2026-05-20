@@ -1,0 +1,11 @@
+[package]
+name = "ternsig-cortex"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "proof"
+path = "src/bin/proof.rs"
+
+[dependencies]
+signode = { path = "../../../ternsig/crates/signode" }

@@ -6,6 +6,8 @@ members = [
     "crates/frame-catalog",
     "crates/probe",
     "crates/spectral-brain",
+    "crates/lang-cortex",
+    "crates/ternsig-cortex",
 ]
 
 [workspace.package]
