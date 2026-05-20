@@ -7,7 +7,7 @@ use strategos_ops::rope::RopeTable;
 use strategos_runtime::loader::ModelWeights;
 use crate::capture::CaptureStore;
 use crate::triggers::TriggerStore;
-use crate::l0_lookup::L0Lookup;
+use crate::l0_lookup::LayerLookup;
 
 // Architecture constants from config.json
 const HIDDEN:    usize = 576;
@@ -31,7 +31,7 @@ pub struct SmolLM2Probe {
     pub n_layer: usize,
     pub n_head:  usize,
     pub ffn_dim: usize,
-    pub lookup: Option<L0Lookup>,
+    pub lookup: Option<LayerLookup>,
 }
 
 struct SmolLM2Layer {
@@ -224,20 +224,25 @@ impl SmolLM2Probe {
             let x2 = QTensor::from_f32(&pre_ffn);
             let ffn_no_bias = vec![0.0f32; FFN_DIM];
 
-            // At L0: use skip-row matmul for lookup-covered neurons, then overwrite.
-            let ffn_hidden = if li == 0 {
-                if let Some(ref lut) = self.lookup {
-                    if let Some(skip) = lut.skip_mask(tok, FFN_DIM) {
+            // Use skip-row matmul when lookup covers enough rows to justify Rayon overhead.
+            const MIN_SKIP: usize = 32;
+            let ffn_hidden = if let Some(ref lut) = self.lookup {
+                if let Some(skip) = lut.skip_mask(li, tok, FFN_DIM) {
+                    let n_skip = skip.iter().filter(|&&s| s).count();
+                    if n_skip >= MIN_SKIP {
                         let gate_f = linear_q_skip_rows(&x2, &layer.gate_proj, &ffn_no_bias, &skip).to_f32();
                         let up_f   = linear_q_skip_rows(&x2, &layer.up_proj,   &ffn_no_bias, &skip).to_f32();
                         let mut h = vec![0.0f32; FFN_DIM];
                         for i in 0..FFN_DIM {
                             if !skip[i] { h[i] = silu(gate_f[i]) * up_f[i]; }
                         }
-                        lut.apply(tok, &mut h);
+                        lut.apply(li, tok, &mut h);
                         h
                     } else {
-                        ffn_standard(&x2, layer, &ffn_no_bias)
+                        // Too few skips — run full FFN then overwrite the few lookup neurons.
+                        let mut h = ffn_standard(&x2, layer, &ffn_no_bias);
+                        lut.apply(li, tok, &mut h);
+                        h
                     }
                 } else {
                     ffn_standard(&x2, layer, &ffn_no_bias)

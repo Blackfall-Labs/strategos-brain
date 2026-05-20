@@ -78,9 +78,9 @@ fn run_smollm2(args: &Args) {
         .unwrap_or_else(|e| { eprintln!("[probe] load failed: {e}"); std::process::exit(1); });
 
     if let Some(lookup_path) = &args.lookup {
-        let lut = l0_lookup::L0Lookup::load(Path::new(lookup_path))
+        let lut = l0_lookup::LayerLookup::load(Path::new(lookup_path), model.n_layer)
             .unwrap_or_else(|e| { eprintln!("[probe] lookup load failed: {e}"); std::process::exit(1); });
-        eprintln!("[probe] L0 lookup active: {} neurons, {} trigger tokens", lut.n_entries, lut.n_tokens);
+        eprintln!("[probe] layer-lookup active: {} entries, {} token-layer pairs", lut.n_entries, lut.n_tokens);
         model.lookup = Some(lut);
     }
 
@@ -90,7 +90,7 @@ fn run_smollm2(args: &Args) {
     let thresholds = load_thresholds(&args.weights, model.n_layer);
     let mut captures = capture::CaptureStore::for_smollm2(model.n_layer, model.n_head, model.ffn_dim, &thresholds);
 
-    let lookup_label = if model.lookup.is_some() { " [L0-lookup]" } else { "" };
+    let lookup_label = if model.lookup.is_some() { " [layer-lookup]" } else { "" };
     eprintln!("[probe] running {} tokens through SmolLM2-135M ({} layers){}...",
         tokens.len(), model.n_layer, lookup_label);
 
