@@ -80,10 +80,10 @@ impl TernSigCortex {
         acts
     }
 
-    /// Cascade a set of tier-N activations into tier N+1.
+    /// Cascade a set of tier-N activations into tier N+1 WITHOUT lateral inhibition.
     ///
-    /// Each fired column re-injects at its own resonant_freq into the next tier.
-    /// This is the feedforward cortical projection: L4 → L2/3 → L5.
+    /// Every activation fans out freely — produces broadcast storm at scale.
+    /// Use cascade_wta() for neurobiologically correct sparse propagation.
     pub fn cascade(&self, acts: &[Activation]) -> Vec<Activation> {
         let mut next: Vec<Activation> = Vec::new();
         for act in acts {
@@ -91,7 +91,48 @@ impl TernSigCortex {
             let tier_acts = self.inject(act.resonant_freq, act.output.m, next_tier);
             next.extend(tier_acts);
         }
-        // Deduplicate by col_idx, keeping highest output_m
+        next.sort_by(|a, b| b.output.m.cmp(&a.output.m));
+        next.dedup_by_key(|a| a.col_idx);
+        next
+    }
+
+    /// Cascade with Winner-Take-All lateral inhibition (Phase 4).
+    ///
+    /// After each winner fires, its frequency neighborhood (inhibit_radius) is
+    /// suppressed — other activations in that zone are cleared before they cascade.
+    /// This is the GABAergic interneuron mechanism: principal cell fires → PV
+    /// interneurons fire → neighbors silenced → single interpretation propagates.
+    ///
+    /// Algorithm:
+    ///   1. Process tier-N activations in order of strength (strongest first).
+    ///   2. For each activation, check whether its freq falls in a suppressed zone.
+    ///      If suppressed: skip (the winner already claimed this band).
+    ///   3. If not suppressed: cascade to tier N+1, then mark its inhibit_radius
+    ///      as suppressed so weaker neighbours are blocked.
+    ///
+    /// Result: O(winners) cascades instead of O(all resonant) cascades.
+    pub fn cascade_wta(&self, acts: &[Activation]) -> Vec<Activation> {
+        // Acts must arrive sorted strongest-first (inject() guarantees this).
+        let mut suppressed: Vec<(f32, f32)> = Vec::new(); // (center_freq, radius)
+        let mut next: Vec<Activation> = Vec::new();
+
+        for act in acts {
+            // Skip if this frequency is inside any suppressed zone.
+            let blocked = suppressed.iter().any(|&(center, r)| {
+                (act.resonant_freq - center).abs() <= r
+            });
+            if blocked { continue; }
+
+            // This winner cascades to the next tier.
+            let next_tier = act.tier.saturating_add(1);
+            let tier_acts = self.inject(act.resonant_freq, act.output.m, next_tier);
+            next.extend(tier_acts);
+
+            // Mark the inhibitory zone so weaker neighbours are silenced.
+            let inhibit_r = self.columns[act.col_idx].inhibit_radius;
+            suppressed.push((act.resonant_freq, inhibit_r));
+        }
+
         next.sort_by(|a, b| b.output.m.cmp(&a.output.m));
         next.dedup_by_key(|a| a.col_idx);
         next

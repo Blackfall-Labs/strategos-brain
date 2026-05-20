@@ -1,11 +1,12 @@
 //! Architectural proof: TernSig Cortical Column properties.
 //!
-//! Four proofs validate the architecture before any distillation:
+//! Five proofs validate the architecture before any distillation:
 //!
-//!   1. Resonance Selectivity  — input at freq F activates columns near F strongest
-//!   2. Multi-Freq Coexistence — two simultaneous inputs stay distinct (no collision)
-//!   3. Tier Cascade           — Tier0 → Tier1 → Tier2 feedforward projection
-//!   4. E/I Polarity           — excitatory and inhibitory columns produce opposite P
+//!   1. Resonance Selectivity    — input at freq F activates columns near F strongest
+//!   2. Multi-Freq Coexistence   — two simultaneous inputs stay distinct (no collision)
+//!   3. Tier Cascade (no WTA)    — feedforward projection, broadcast storm visible
+//!   4. E/I Polarity             — excitatory and inhibitory columns produce opposite P
+//!   5. WTA Lateral Inhibition   — cascade_wta() contains the broadcast storm
 
 use ternsig_cortex::{column::TernSigColumn, cortex::TernSigCortex};
 
@@ -17,7 +18,6 @@ fn main() {
     // ── Cortex setup ─────────────────────────────────────────────────────────
     // 21 frequency bins across [0.0, 1.0], 3 tiers each = 63 excitatory columns.
     // bandwidth = 0.06: at distance 0.06, resonance = 0.607 (1/e). At 0.18: 0.011.
-    // This means columns separated by >0.18 are effectively deaf to each other.
     let n_freqs = 21;
     let bandwidth = 0.06f32;
     let inhibit_radius = 0.10f32;
@@ -35,7 +35,7 @@ fn main() {
 
     // ── Proof 1: Resonance Selectivity ───────────────────────────────────────
     println!("PROOF 1: Resonance Selectivity");
-    println!("  Inject at freq 0.300 — expect strongest activation near 0.300");
+    println!("  Inject at freq 0.300 — expect Gaussian peak centred on 0.300");
 
     let target = 0.30f32;
     let acts = cortex.inject(target, 10_000, 0);
@@ -56,7 +56,7 @@ fn main() {
 
     // ── Proof 2: Multi-Frequency Coexistence ─────────────────────────────────
     println!("PROOF 2: Multi-Frequency Coexistence");
-    println!("  Two signals (0.200 and 0.750) must activate distinct column populations");
+    println!("  Signals at 0.200 and 0.750 must activate distinct populations");
 
     let freq_a = 0.20f32;
     let freq_b = 0.75f32;
@@ -81,40 +81,31 @@ fn main() {
     println!("  Separation: {separation:.3}  (no collision)  PASS ✓");
     println!();
 
-    // ── Proof 3: Tier Cascade ─────────────────────────────────────────────────
-    println!("PROOF 3: Tier Cascade  (Tier0 → Tier1 → Tier2)");
-    println!("  Inject at freq 0.500 into tier-0, cascade to tier-1, cascade to tier-2");
+    // ── Proof 3: Tier Cascade without WTA ────────────────────────────────────
+    println!("PROOF 3: Tier Cascade (no WTA) — broadcast storm baseline");
+    println!("  Cascade without lateral inhibition: every resonant column fans out");
 
     let cascade_freq = 0.50f32;
 
     let tier0 = cortex.inject(cascade_freq, 10_000, 0);
-    assert!(!tier0.is_empty(), "tier0 produced no activations");
-
     let tier1 = cortex.cascade(&tier0);
-    assert!(!tier1.is_empty(), "tier1 received no cascade from tier0");
-
     let tier2 = cortex.cascade(&tier1);
-    assert!(!tier2.is_empty(), "tier2 received no cascade from tier1");
+
+    assert!(!tier0.is_empty(), "tier0 empty");
+    assert!(!tier1.is_empty(), "tier1 empty");
+    assert!(!tier2.is_empty(), "tier2 empty");
 
     let t0_top = &tier0[0];
     let t1_top = &tier1[0];
     let t2_top = &tier2[0];
 
-    println!("  Tier0: {} activations  winner@{:.3}  m={}", tier0.len(), t0_top.resonant_freq, t0_top.output_m());
-    println!("  Tier1: {} activations  winner@{:.3}  m={}", tier1.len(), t1_top.resonant_freq, t1_top.output_m());
-    println!("  Tier2: {} activations  winner@{:.3}  m={}", tier2.len(), t2_top.resonant_freq, t2_top.output_m());
+    println!("  Tier0: {:3} activations  winner@{:.3}  m={}", tier0.len(), t0_top.resonant_freq, t0_top.output_m());
+    println!("  Tier1: {:3} activations  winner@{:.3}  m={}", tier1.len(), t1_top.resonant_freq, t1_top.output_m());
+    println!("  Tier2: {:3} activations  winner@{:.3}  m={}", tier2.len(), t2_top.resonant_freq, t2_top.output_m());
 
-    // Cascade should preserve frequency (winner at same freq across tiers)
     let freq_drift = (t0_top.resonant_freq - t2_top.resonant_freq).abs();
-    assert!(
-        freq_drift < bandwidth * 3.0,
-        "cascade drifted {freq_drift:.3} Hz — should stay near {cascade_freq:.3}"
-    );
-    println!("  Freq drift across tiers: {freq_drift:.4}  (within {:.4})  PASS ✓", bandwidth * 3.0);
-    if tier2.len() > tier0.len() * 10 {
-        println!("  NOTE: cascade fanout ({} → {}) is broadcast storm without lateral inhibition.", tier0.len(), tier2.len());
-        println!("  Expected — Phase 4 (lateral inhibition) adds WTA to contain it.");
-    }
+    assert!(freq_drift < bandwidth * 3.0, "cascade drifted {freq_drift:.3}");
+    println!("  Freq preserved: drift={freq_drift:.4}  PASS ✓ (WTA proof below will fix the fanout)");
     println!();
 
     // ── Proof 4: E/I Polarity ─────────────────────────────────────────────────
@@ -124,38 +115,83 @@ fn main() {
 
     let mut ei_cortex = TernSigCortex::new(1000);
     let probe_freq = 0.50f32;
-    ei_cortex.add_column(TernSigColumn::new(probe_freq, bandwidth, 1, 0, inhibit_radius, n_cells));  // excitatory
-    ei_cortex.add_column(TernSigColumn::new(probe_freq, bandwidth, -1, 0, inhibit_radius, n_cells)); // inhibitory
+    ei_cortex.add_column(TernSigColumn::new(probe_freq, bandwidth, 1, 0, inhibit_radius, n_cells));
+    ei_cortex.add_column(TernSigColumn::new(probe_freq, bandwidth, -1, 0, inhibit_radius, n_cells));
 
     let ei_acts = ei_cortex.inject(probe_freq, 10_000, 0);
-    assert_eq!(ei_acts.len(), 2, "expected exactly 2 activations, got {}", ei_acts.len());
+    assert_eq!(ei_acts.len(), 2, "expected 2 activations, got {}", ei_acts.len());
 
-    let exc_act = ei_acts.iter().find(|a| a.is_excitatory());
-    let inh_act = ei_acts.iter().find(|a| !a.is_excitatory());
+    let exc = ei_acts.iter().find(|a| a.is_excitatory()).unwrap();
+    let inh = ei_acts.iter().find(|a| !a.is_excitatory()).unwrap();
 
-    assert!(exc_act.is_some(), "excitatory column did not fire");
-    assert!(inh_act.is_some(), "inhibitory column did not fire");
-
-    let exc = exc_act.unwrap();
-    let inh = inh_act.unwrap();
-
-    println!("  Excitatory col@{:.3}: P={:+5}  M={}  (reinforcing)", exc.resonant_freq, exc.output.p, exc.output_m());
-    println!("  Inhibitory col@{:.3}: P={:+5}  M={}  (suppressing)", inh.resonant_freq, inh.output.p, inh.output_m());
     assert!(exc.output.p > 0, "excitatory P must be > 0, got {}", exc.output.p);
     assert!(inh.output.p < 0, "inhibitory P must be < 0, got {}", inh.output.p);
+
+    println!("  Excitatory col@{:.3}: P={:+}  M={}  (reinforcing)", exc.resonant_freq, exc.output.p, exc.output_m());
+    println!("  Inhibitory col@{:.3}: P={:+}  M={}  (suppressing)", inh.resonant_freq, inh.output.p, inh.output_m());
     println!("  Polarity distinction verified  PASS ✓");
+    println!();
+
+    // ── Proof 5: WTA Lateral Inhibition ──────────────────────────────────────
+    println!("PROOF 5: WTA Lateral Inhibition  (cascade_wta vs cascade)");
+    println!("  When a winner fires, its inhibit_radius zone blocks weaker neighbours.");
+    println!("  Cortex has two signal sources 0.20 apart — without WTA both cascade,");
+    println!("  with WTA the stronger winner takes the band.");
+
+    // Two nearby input sources: close enough that inhibit_radius overlaps.
+    // Input A at 0.20 (stronger), Input B at 0.30 (weaker).
+    // inhibit_radius = 0.10, so A should suppress B.
+    let acts_ab = {
+        let mut combined = cortex.inject(0.20, 10_000, 0);
+        combined.extend(cortex.inject(0.30, 6_000, 0)); // B is ~60% as strong
+        combined.sort_by(|a, b| b.output.m.cmp(&a.output.m));
+        combined.dedup_by_key(|a| a.col_idx);
+        combined
+    };
+
+    // Without WTA: both fans out freely
+    let wta_off_t1 = cortex.cascade(&acts_ab);
+    // With WTA: winner at 0.20 fires and blocks 0.30 zone before it cascades
+    let wta_on_t1 = cortex.cascade_wta(&acts_ab);
+
+    assert!(!wta_on_t1.is_empty(), "WTA cascade produced nothing");
+    assert!(
+        wta_off_t1.len() > wta_on_t1.len(),
+        "WTA should reduce activations: {} vs {}",
+        wta_off_t1.len(), wta_on_t1.len()
+    );
+
+    // The WTA winner should still be near 0.20 (the stronger signal)
+    let wta_winner_freq = wta_on_t1[0].resonant_freq;
+    assert!(
+        (wta_winner_freq - 0.20).abs() < bandwidth * 2.0,
+        "WTA winner {wta_winner_freq:.3} not near the stronger input 0.200"
+    );
+
+    // WTA tier2: continue suppressing downstream
+    let wta_off_t2 = cortex.cascade(&wta_off_t1);
+    let wta_on_t2  = cortex.cascade_wta(&wta_on_t1);
+
+    println!("  Tier1  without WTA: {:3} activations", wta_off_t1.len());
+    println!("  Tier1  with    WTA: {:3} activations  (winner@{:.3})", wta_on_t1.len(), wta_winner_freq);
+    println!("  Tier2  without WTA: {:3} activations", wta_off_t2.len());
+    println!("  Tier2  with    WTA: {:3} activations", wta_on_t2.len());
+
+    let reduction_t1 = 100 - (wta_on_t1.len() * 100 / wta_off_t1.len().max(1));
+    let reduction_t2 = 100 - (wta_on_t2.len() * 100 / wta_off_t2.len().max(1));
+    println!("  Reduction: Tier1 {reduction_t1}%  Tier2 {reduction_t2}%  PASS ✓");
     println!();
 
     // ── Summary ───────────────────────────────────────────────────────────────
     println!("══════════════════════════════════════════════");
-    println!("All 4 proofs passed.");
+    println!("All 5 proofs passed.");
     println!();
     println!("Architecture confirmed:");
-    println!("  • Continuous resonant_freq replaces integer band_id");
-    println!("  • Gaussian falloff encodes semantic proximity");
-    println!("  • Signode K-latch gives per-cell independent confidence");
-    println!("  • Tier cascade routes Tier0 → Tier1 → Tier2 cleanly");
-    println!("  • E/I polarity via P channel — no separate inhibitory type needed");
+    println!("  • Continuous resonant_freq + Gaussian falloff = real semantic geometry");
+    println!("  • Signode K-latch: per-cell independent confidence, no central gate");
+    println!("  • Tier cascade: T0 → T1 → T2 feedforward, freq preserved");
+    println!("  • E/I polarity: P=+1 excitatory, P=-1 inhibitory — one mechanism, two effects");
+    println!("  • WTA via lateral inhibition: broadcast storm → sparse O(winners) cascade");
     println!();
-    println!("Next: load Neel Nanda 1L weights, map circuits to column freq bands.");
+    println!("Next: Neel Nanda 1L circuit mapping — 113 freq bins, modular addition routing.");
 }
