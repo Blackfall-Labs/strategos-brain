@@ -15,5 +15,9 @@ path = "src/bin/neel_nanda.rs"
 name = "grokking_distill"
 path = "src/bin/grokking_distill.rs"
 
+[[bin]]
+name = "fourier_cortex"
+path = "src/bin/fourier_cortex.rs"
+
 [dependencies]
 signode = { path = "../../../ternsig/crates/signode" }
