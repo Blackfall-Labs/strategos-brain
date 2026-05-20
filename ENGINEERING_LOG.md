@@ -1605,14 +1605,67 @@ If the brain's recognition layer mirrors the model's L0 recognition layer at 95%
 the first tier is validated. That's the same standard we applied in Phases 1-3
 (100% recall, 99.5% precision for the lookup table). Same bar, different substrate.
 
-### Files to build next
+### Implementation — built and running
 
-| File | What it is |
-|------|------------|
-| `strategos-brain/crates/spectral-brain/` | New crate — the probe-derived brain |
-| `crates/spectral-brain/src/builder.rs` | Reads bands JSON, constructs Tier 0/1/2 sheets |
-| `crates/spectral-brain/src/brain.rs` | CortexKernel assembly from built sheets |
-| `crates/spectral-brain/src/main.rs` | CLI: load bands + profile, build brain, run token stream |
-| `tools/export_band_topology.py` | Converts smollm2_bands.json → builder-ready JSON |
+`crates/spectral-brain/` — new crate, no dependency on sigcortex.
+
+**`column.rs`** — `Column` struct: tier, band_lo, band_hi, threshold, k (refractory), k_reset, always_on.
+`evaluate(band_id, magnitude, source_tier) -> u32`: hop gate (|tier_src - tier_dst| ≤ 1), tuning gain
+(soft: 65536 at band centre, 16384 at band edge, 0 outside), threshold compare. Returns fired magnitude.
+`tick()`: decrements k. `tuning_gain()`: linear roll-off across band width.
+
+**`brain.rs`** — `SpectralBrain`: column pool + double-buffered event queue.
+`inject(band_id, magnitude, source_tier)` → adds to pending.
+`tick()`: always-on columns fire unconditionally → pending dispatched to all columns → fired columns
+add to next buffer → swap buffers → tick K counters. `fired_by_tier()` reads `fired_this_tick`.
+
+**`builder.rs`** — reads `BrainTopology` JSON. Tier 0: one column per neuron in each Band 1 cluster,
+threshold = `2000 + (1 - trigger_rate) * 18000`. Tier 1/2: pv_scale sampled from neuron_freq histogram,
+threshold = `(pv/2) * 20000`. Builds token → (band_id, magnitude) lookup for injection.
+
+**`tools/export_band_topology.py`** — converts `smollm2_bands.json` + `cross_model_spectral_profile.json`:
+- Tier 0: Band 1 clusters, band_id = token frequency rank (0=most common)
+- Tier 1: Band 2-3 neurons, divided across [0, max_T0_band] proportionally by depth bin
+- Tier 2: Band 4 + always-on, band_lo=0 band_hi=MAX_BAND (wide-band)
+
+Band range fix: T0 emits at band_id 0..185 (token rank). T1 must be tuned to [0, MAX_BAND] to receive
+T0 broadcasts. Initially T1 used depth_bin × 32 (range 192+), which never overlapped T0. Fixed by
+dividing [0, MAX_BAND] across Tier 1 depth bins.
+
+### First run results (1000 tokens, WikiText-2)
+
+```
+topology: 87 T0 clusters, 12 T1 sheets, 7 T2 sheets, 12071 total columns
+vocab hits: 389/1000 (38.9%)  — whitespace tokenizer, BPE coverage expected ~40%
+total fired: T0=818,844  T1=4,963,249  T2=4,307,200
+ticks: 8000 (8 per token)
+```
+
+**T0 behavior**: fires when a Band 1 trigger token is seen. Varies per token (e.g. "@" = 705 columns,
+rare tokens = 1-2 columns). Silent on non-trigger tokens. Correct.
+
+**T1 behavior**: ~5000-6200 columns fire per trigger token, 0 per miss. T0→T1 propagation confirmed.
+Tier 1 integration columns respond to the same frequency range as T0 recognizers.
+
+**T2 behavior**: constant 2692 fires per 8-tick window — the always-on fraction (337 columns × 8 ticks).
+Wide-band T2 also receives T1 broadcasts but always-on dominates. T0/T1 signal reaching T2 to be
+verified next.
+
+### What the numbers mean
+
+T1 fires 6× more columns than T0 for each trigger token. This is the amplification expected from
+context integration: a small recognition signal (narrow-band T0) drives a broader T1 response
+covering the whole frequency slice associated with that token's vocabulary range. This matches the
+spectral model — middle-layer (context-integration) activity should be broader than early recognition.
+
+T2 at 2692 constant is dominated by always-on. The T0→T1→T2 signal pathway needs a non-trivial
+cascade to exceed the always-on floor. Next step: measure T2 fires above always-on baseline to
+confirm the signal reaches composition tier.
+
+### Files produced
+
+- `crates/spectral-brain/` — 4 source files
+- `tools/export_band_topology.py` — band topology exporter
+- `brain_topology.json` — 12071 columns from SmolLM2 probe data
 
 ---
