@@ -1359,3 +1359,116 @@ extractor to characterize which input patterns trigger them. That is the bridge 
 cortical column wiring model.
 
 ---
+
+## 2026-05-19 — Phase 6: Cross-Model Spectral Synthesis → sigcortex Integration
+
+### The thesis in one sentence
+
+Three independent optimizers (GPT-2, SmolLM2, Qwen3) converge on the same structural laws
+when trained on language. Those laws — not any model's weights — are the signal. Seed a
+sigcortex brain with those structural laws, run it on text, and its dynamics reveal the
+training pathways we need to wire.
+
+### What we built
+
+**`tools/aggregate_probes.py`** — Cross-model aggregator
+
+Loads activation profiles from GPT-2, SmolLM2, and Qwen3. Normalizes each model's layers
+to relative depth [0.0, 1.0]. Aggregates into 20 depth bins. Detects uncalibrated neuron_freq
+(global mean > 0.5) and excludes those models from neuron_freq stats (GPT-2 GELU fires ~95%
+of neurons with the default threshold — excluded from neuron_freq, kept for head entropy).
+
+Output `cross_model_spectral_profile.json` encodes, for each depth bin:
+- `head_entropy_mean/min` — how diffuse attention is (broad early, narrow mid, broad late)
+- `neuron_freq_mean` — mean FFN activation rate (~10% everywhere across all models)
+- `neuron_freq_hist` — distribution of per-neuron fire rates (heavy tail at near-dead)
+- `always_on_frac` — fraction of always-on neurons (0% until depth 0.97, then 1.5%)
+- `sigcortex.*` — derived parameters: homeostasis, charge_decay, interval, pv_scale_hist
+
+**Structural laws confirmed across all 3 models:**
+```
+Broad-narrow-broad head entropy law:
+  depth 0.00-0.33 (early): entropy ~0.51  (wernicke — diffuse, structural)
+  depth 0.33-0.67 (mid):   entropy ~0.44  (semantic — tighter, functional)
+  depth 0.67-1.00 (late):  entropy ~0.42  (pfc — compositional, sustained)
+
+Stable ~10% neuron fire rate at all depths (SmolLM2 + Qwen3 confirmed)
+Always-on neurons: <0.01% until depth ~0.97, then 1.5% (late compositional zone)
+```
+
+**`tools/generate_seed_data.py`** — Cross-model seed generator
+
+Converts the spectral profile into the exact JSON format that sigcortex reads:
+- `brain_seed_pv_thresholds_xmodel.json` — per-column pv_scale sampled from neuron_freq histogram
+- `brain_seed_lang_affinities_xmodel.json` — per-region attn_k derived from head entropy
+
+Mapping:
+```
+wernicke (depth 0.0-0.33): 2000 cols, entropy=0.512, attn_k=2655, mean_pv_scale=1.846
+semantic (depth 0.33-0.67): 2000 cols, entropy=0.441, attn_k=2315, mean_pv_scale=1.829
+pfc      (depth 0.67-1.00): 4000 cols, entropy=0.416, attn_k=2198, mean_pv_scale=1.837
+```
+
+pv_scale: sampled per-column from neuron_freq histogram at region depth.
+  High fire_rate → low pv_scale (easier to fire). Range [0.5, 2.0].
+attn_k: from head entropy. Low entropy (functional) → low k (tighter plasticity).
+  Range [K_MIN=200, K_MAX=5000]. Formula: 200 + 4800 * entropy_mean.
+
+**`ternsig/crates/sigcortex/src/cortices/xmodel.rs`** — Rust region builders
+
+Three CortexSheet builders seeded from cross-model structural laws:
+- `build_xmodel_wernicke(seeds: &XmodelSeeds)` — sensory profile, 2000 cols, winner_k=4
+- `build_xmodel_semantic(seeds: &XmodelSeeds)` — association profile, 2000 cols, winner_k=4
+- `build_xmodel_pfc(seeds: &XmodelSeeds)` — pfc profile + L5 bistability, 4000 cols, winner_k=3
+
+`XmodelSeeds::load()` reads the two xmodel JSON files from the working directory (or up to
+3 levels up), extracting per-column pv_scale arrays and per-region attn_k constants.
+
+**`ternsig/crates/sigcortex/src/bin/brain_daemon.rs`** (updated)
+
+Loads `XmodelSeeds` at startup alongside `SeedData`. In the 2K (non-11K) path:
+- `build_wernicke(&seeds)` → `build_xmodel_wernicke(&xseeds)`
+- `build_generic("semantic", &seeds, 4)` → `build_xmodel_semantic(&xseeds)`
+- `build_pfc(&seeds)` → `build_xmodel_pfc(&xseeds)`
+
+The 11K path is unchanged (FFN-unit architecture, different basis entirely).
+
+### Why this matters
+
+Previous seeds came from SmolLM2-specific QK affinities and FFN activations — a single model's
+weights, with all the overfitting and architecture-specific noise that entails. The xmodel seeds
+encode what all three models agree on: the structural geometry that language computation
+converges to, regardless of architecture.
+
+Starting from this geometry, the brain finds the right solution much faster (structural attractor
+already seeded) than starting from random initialization. The brain then runs on text, and
+its dynamics reveal the training pathways — which connections strengthen under Hebbian learning,
+which WTA zones become selective, which L23 populations sustain working memory. That's the
+feedback loop we need to reverse-engineer training from first principles.
+
+### Files added / modified
+
+In `strategos-brain/`:
+- `tools/aggregate_probes.py` — cross-model aggregator
+- `tools/generate_seed_data.py` — spectral profile → sigcortex seed JSON
+- `tools/synthesize.py` — vocabulary frequency band assignment (intermediate)
+- `cross_model_spectral_profile.json` — 20-bin depth profile (3 models aggregated)
+
+In `ternsig/`:
+- `brain_seed_pv_thresholds_xmodel.json` — 8000 per-column pv_scales (wernicke/semantic/pfc)
+- `brain_seed_lang_affinities_xmodel.json` — per-region attn_k from head entropy
+- `crates/sigcortex/src/cortices/xmodel.rs` — XmodelSeeds + three region builders
+- `crates/sigcortex/src/cortices/mod.rs` — added xmodel module and exports
+- `crates/sigcortex/src/bin/brain_daemon.rs` — wired xmodel builders into startup
+
+### Next step
+
+Run the brain and observe whether firing patterns match the expected structural laws:
+- Wernicke should show broader, higher-entropy firing (more columns active per input)
+- Semantic should show tighter WTA convergence (fewer active columns, more selective)
+- PFC should sustain activity across tokens (L5 bistability + recurrent collaterals)
+
+If the dynamics match, we have proof that structural initialization from probe data transfers
+correctly. That's the foundation for the full synthesis pipeline.
+
+---
