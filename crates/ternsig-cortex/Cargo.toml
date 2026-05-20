@@ -7,5 +7,13 @@ edition = "2021"
 name = "proof"
 path = "src/bin/proof.rs"
 
+[[bin]]
+name = "neel_nanda"
+path = "src/bin/neel_nanda.rs"
+
+[[bin]]
+name = "grokking_distill"
+path = "src/bin/grokking_distill.rs"
+
 [dependencies]
 signode = { path = "../../../ternsig/crates/signode" }

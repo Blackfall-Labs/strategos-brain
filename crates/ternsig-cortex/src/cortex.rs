@@ -143,6 +143,7 @@ impl TernSigCortex {
     ///
     /// This is the traffic-clearing mechanism: when a column fires excitatorily,
     /// it simultaneously clears competing interpretations in its frequency neighborhood.
+    #[allow(dead_code)]
     pub fn inhibit_neighbors(&self, center_freq: f32, radius: f32, magnitude: SigUint, tier: u8) -> Vec<Activation> {
         let inh_m = magnitude / 2; // inhibitory signal at half magnitude
         let mut inh_acts = Vec::new();
