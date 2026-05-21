@@ -5,6 +5,7 @@ use strategos_ops::linear::linear_q;
 use strategos_ops::lut::SwishLut;
 use strategos_runtime::loader::ModelWeights;
 use crate::capture::CaptureStore;
+use crate::triggers::TriggerStore;
 
 pub struct GPT2Probe {
     wte: Vec<f32>,
@@ -120,7 +121,7 @@ impl GPT2Probe {
                 let mut store = captures.make_empty_copy();
                 let mut cache = KVCache::new(self.n_layer, self.n_head);
                 for (ctx_pos, &tok) in chunk.iter().enumerate() {
-                    self.forward_token(tok, ctx_pos, &mut cache, &mut store);
+                    self.forward_token_inner(tok, ctx_pos, &mut cache, &mut store, None);
                     store.n_tokens += 1;
                 }
                 store
@@ -134,7 +135,38 @@ impl GPT2Probe {
         eprintln!("[probe] {} tokens processed", total);
     }
 
+    /// Run corpus capturing both activation stats and FFN neuron trigger data.
+    pub fn run_corpus_extract(&self, tokens: &[u32], captures: &mut CaptureStore, triggers: &mut TriggerStore) {
+        const CONTEXT_LEN: usize = 128;
+
+        let partials: Vec<(CaptureStore, TriggerStore)> = tokens
+            .par_chunks(CONTEXT_LEN)
+            .map(|chunk| {
+                let mut store = captures.make_empty_copy();
+                let mut trig  = triggers.make_empty_copy();
+                let mut cache = KVCache::new(self.n_layer, self.n_head);
+                for (ctx_pos, &tok) in chunk.iter().enumerate() {
+                    self.forward_token_inner(tok, ctx_pos, &mut cache, &mut store, Some((tok, &mut trig)));
+                    store.n_tokens += 1;
+                    trig.observe_token(tok);
+                }
+                (store, trig)
+            })
+            .collect();
+
+        let total: u64 = partials.iter().map(|(s, _)| s.n_tokens).sum();
+        for (ps, pt) in partials {
+            captures.merge(ps);
+            triggers.merge(pt);
+        }
+        eprintln!("[extract] {} tokens processed", total);
+    }
+
     fn forward_token(&self, tok: u32, ctx_pos: usize, cache: &mut KVCache, captures: &mut CaptureStore) {
+        self.forward_token_inner(tok, ctx_pos, cache, captures, None);
+    }
+
+    fn forward_token_inner(&self, tok: u32, ctx_pos: usize, cache: &mut KVCache, captures: &mut CaptureStore, mut trigger_hook: Option<(u32, &mut TriggerStore)>) {
         let d = self.n_embd;
         let n_head = self.n_head;
         let head_dim = d / n_head;
@@ -208,6 +240,9 @@ impl GPT2Probe {
 
             let ffn_hidden_f = h_ff.to_f32();
             captures.observe(li, "ffn_hidden", &ffn_hidden_f);
+            if let Some((current_tok, ref mut trig)) = trigger_hook {
+                trig.observe(li, &ffn_hidden_f, current_tok);
+            }
 
             let ff_out = linear_q(&h_ff, &layer.mlp_proj_w, &layer.mlp_proj_b);
             let ff_f = ff_out.to_f32();

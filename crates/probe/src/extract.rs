@@ -9,7 +9,6 @@ mod triggers;
 mod l0_lookup;
 mod smollm2_probe;
 mod qwen3_probe;
-// gpt2/grokking probes don't have extract support yet
 mod gpt2_probe;
 mod grokking_probe;
 
@@ -62,8 +61,9 @@ fn main() {
     match args.model.as_str() {
         "smollm2" => run_smollm2(&args, &profile),
         "qwen3"   => run_qwen3(&args, &profile),
+        "gpt2"    => run_gpt2(&args, &profile),
         other => {
-            eprintln!("[extract] unknown model: {other}. Supported: smollm2, qwen3");
+            eprintln!("[extract] unknown model: {other}. Supported: smollm2, qwen3, gpt2");
             std::process::exit(1);
         }
     }
@@ -114,6 +114,32 @@ fn load_vocab(tokenizer_path: &str) -> HashMap<u32, String> {
     }
     eprintln!("[extract] vocab loaded: {} tokens", vocab.len());
     vocab
+}
+
+fn run_gpt2(args: &Args, profile: &serde_json::Value) {
+    let model = gpt2_probe::GPT2Probe::load(Path::new(&args.weights))
+        .unwrap_or_else(|e| { eprintln!("[extract] load failed: {e}"); std::process::exit(1); });
+
+    let tokens = corpus::load_tokens(&args.corpus, &args.tokenizer, args.n_tokens)
+        .unwrap_or_else(|e| { eprintln!("[extract] corpus failed: {e}"); std::process::exit(1); });
+
+    let thresholds = load_thresholds(&args.weights, model.n_layer);
+    let mut triggers = TriggerStore::from_profile(profile, thresholds.clone(), args.min_rate, args.max_rate);
+    let mut captures = capture::CaptureStore::for_gpt2_extract(model.n_layer, model.n_head, model.ffn_dim, &thresholds);
+
+    eprintln!("[extract] running {} tokens through GPT-2 117M...", tokens.len());
+    model.run_corpus_extract(&tokens, &mut captures, &mut triggers);
+
+    let vocab = load_vocab(&args.tokenizer);
+    let trigger_profile = triggers.finalize("gpt2-117m", &args.corpus, Some(&vocab), args.top_k);
+
+    let json = serde_json::to_string_pretty(&trigger_profile)
+        .unwrap_or_else(|e| { eprintln!("[extract] serialize failed: {e}"); std::process::exit(1); });
+    std::fs::write(&args.output, &json)
+        .unwrap_or_else(|e| { eprintln!("[extract] write failed: {e}"); std::process::exit(1); });
+
+    eprintln!("[extract] trigger profile written to {}", args.output);
+    eprintln!("[extract] {} tokens, {} layers", trigger_profile.n_tokens, trigger_profile.layers.len());
 }
 
 fn run_smollm2(args: &Args, profile: &serde_json::Value) {
