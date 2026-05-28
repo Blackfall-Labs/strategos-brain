@@ -1,0 +1,7 @@
+=== PROBE vs QWEN2.5 COMPARISON ===
+Total words:     55
+No output:       0
+Top-1 accuracy:  100.0%  (55/55)
+Top-5 accuracy:  100.0%
+
+MISMATCHES:

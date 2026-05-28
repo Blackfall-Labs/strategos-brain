@@ -1,0 +1,98 @@
+digraph probe_brain_forward {
+    rankdir=TB;
+    node [shape=box, fontname="Courier", fontsize=11];
+    edge [fontsize=10];
+
+    // ── Build-time (probe_to_brnc.py) ──────────────────────────────────
+    subgraph cluster_build {
+        label="BUILD TIME — probe_to_brnc.py";
+        style=dashed; color=blue;
+
+        vocab_words  [label="vocab words\n(~60-83 words from qwen25_bands.json\ntrigger tokens with high selectivity)"];
+        token_ids    [label="BPE token_ids per word", shape=diamond];
+        embed_lookup [label="embed_tokens[token_id]\n→ h₀ per word\n[V × 896]", shape=diamond];
+
+        fwd_pass     [label="FULL QWEN2.5 FORWARD PASS\n(same 24 layers as ARCH_QWEN25.dot)\nincluding v_proj.bias per layer\nV words run in batch\n→ h_finals [V × 896]"];
+
+        // Afferent derivation
+        contrast     [label="contrast[X][j] = h_finals[X][j] - mean_j\n(deviation from population mean\nacross all vocab words)"];
+        aff_cols     [label="aff_cols[X] = top-10 j by contrast[X][j]\nindices in [0, 896)\nnear-zero overlap between words", shape=diamond];
+
+        // Logit predictions
+        logit_score  [label="scores[X][Y] = embed[tid_Y] @ h_finals[X]\n(lm_head tied to embed_tokens)\nscored over VOCAB ONLY (not full 151936)"];
+        predictions  [label="predictions[X] = top-3 Y by score\n= model's actual next-word predictions\nover the probe vocabulary", shape=diamond];
+
+        // Efferent layout
+        eff_cols     [label="eff_cols[Y] = [896 + Y×50 .. 896 + Y×50 + 49]\ndedicated 50-neuron block per word\nnon-overlapping by construction", shape=diamond];
+
+        // Cross-axon wiring
+        axon_wire    [label="cross_axons:\nfor each (X, Y_rank) in predictions[X]:\n  aff_cols[X] neurons → eff_cols[Y] neurons\n  strength: rank0=2000, rank1=1333, rank2=667\n  src_sheet=0, tgt_sheet=23\n  (10 src × 50 tgt = 500 axons per X→Y pair)"];
+
+        // KCa seeding
+        band_map     [label="qwen25_bands.json\nband assignment per (layer, neuron)\nB1=0, B2=128, B3=300, B4=450"];
+        kca_seed     [label="KCa per cell seeded from band data\n(selectivity encodes adaptation state)"];
+
+        vocab_words -> token_ids -> embed_lookup -> fwd_pass;
+        fwd_pass -> contrast -> aff_cols;
+        fwd_pass -> logit_score -> predictions;
+        predictions -> axon_wire;
+        aff_cols -> axon_wire;
+        eff_cols -> axon_wire;
+        band_map -> kca_seed;
+    }
+
+    // ── BRNC v5 Checkpoint ─────────────────────────────────────────────
+    brnc [label="brain_probe_v2.brnc\n(BRNC v5 format)\n• vocab list\n• aff_cols per word [0..895]\n• eff_cols per word [896..3895]\n• 24 sheets × KCa per cell\n• cross_axons list\n  (L0→L23 skip connections)",
+          shape=cylinder];
+
+    axon_wire -> brnc;
+    kca_seed -> brnc;
+
+    // ── Inference (sigbrain hear_probe) ────────────────────────────────
+    subgraph cluster_infer {
+        label="INFERENCE TIME — sigbrain hear_probe()";
+        style=dashed; color=red;
+
+        word_in    [label="input word\ne.g. \"the\"", shape=oval];
+
+        aff_encode [label="AfferentField.encode(word)\n→ burst: [(col_id, 50000), ...]\n10 pairs, col_ids = aff_cols[word]"];
+
+        l0_inject  [label="Sheet[0].reset_inboxes()\nSheet[0].inject(burst)\n→ 10 inbox entries charged at 50000"];
+
+        l0_read    [label="Sheet[0].top_charged(10)\n→ active: [col_id × 10]\n(= exactly aff_cols[word]\nsince only those were injected)"];
+
+        cross_fire [label="deliver_cross_axons(active, cross_by_src[0], ...)\n→ pending[23]: [(eff_col, strength), ...]\nonly axons from (sheet=0, cell ∈ active) fire\n= only word X's wired predictions get charged"];
+
+        l23_inject [label="Sheet[23].reset_inboxes()\nSheet[23].inject(pending[23])\n→ eff_cols[Y0]: each neuron += 10×2000 = 20000\n   eff_cols[Y1]: each neuron += 10×1333 = 13330\n   eff_cols[Y2]: each neuron += 10×667  =  6670\n   all other eff_cols: 0 charge"];
+
+        l23_read   [label="Sheet[23].top_charged(burst.len().max(8))\n= top_charged(10)\n→ top-10 neurons by charge\n= 10 of Y0's 50 neurons (all at 20000)\n  since 20000 > 13330 > 6670"];
+
+        eff_decode [label="EfferentField.decode(top)\n→ overlap count per word\nY0: 10/50 neurons matched → score=10\nY1: 0 matched → score=0\nbest_word = Y0"];
+
+        word_out   [label="predicted next word: Y0", shape=oval];
+
+        word_in -> aff_encode -> l0_inject -> l0_read -> cross_fire;
+        cross_fire -> l23_inject -> l23_read -> eff_decode -> word_out;
+    }
+
+    brnc -> aff_encode [label="loaded at startup"];
+    brnc -> cross_fire [label="cross_axons"];
+    brnc -> eff_decode [label="eff_cols"];
+
+    // ── Gap Analysis ───────────────────────────────────────────────────
+    gaps [label="KNOWN GAPS vs QWEN2.5:\n\
+1. VOCAB: ~60-83 words vs 151936. Predictions constrained to probe vocab.\n\
+2. CONTEXT: Single-word input only. Qwen2.5 uses full causal sequence.\n\
+3. SUBWORD: Qwen2.5 tokenizes 'hello!' as multiple tokens.\n\
+   Probe maps single words only.\n\
+4. CONTINUOUS vs DISCRETE: Qwen2.5 scores all 151936 tokens with real\n\
+   values. Probe uses integer charges with top-K discretization.\n\
+5. FIXED PREDICTIONS: Probe is a static lookup table — same input always\n\
+   gives same output regardless of prior context. Qwen2.5 is stateful.\n\
+\n\
+WHAT SHOULD MATCH:\n\
+  For any vocab word X, probe.predict(X) should equal\n\
+  argmax(qwen25.logits[X] restricted to probe_vocab).\n\
+  This is exact if forward pass is correct and v_bias is included.",
+        shape=note, style=filled, fillcolor=lightyellow];
+}

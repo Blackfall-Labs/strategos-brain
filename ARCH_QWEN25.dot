@@ -1,0 +1,120 @@
+digraph qwen25_forward {
+    rankdir=TB;
+    node [shape=box, fontname="Courier", fontsize=11];
+    edge [fontsize=10];
+
+    // ── Input ──────────────────────────────────────────────────────────
+    input      [label="input text\ne.g. \"hello\"", shape=oval];
+    tokenizer  [label="BPE Tokenizer\n(151,936 vocab)\ntokenizer.json"];
+    token_ids  [label="token_ids: [int]\ne.g. [14990]", shape=diamond];
+
+    input -> tokenizer -> token_ids;
+
+    // ── Embedding ──────────────────────────────────────────────────────
+    embed      [label="embed_tokens.weight\n[151936 × 896]\nfloat32"];
+    h0         [label="h₀: [seq_len × 896]\ninitial hidden states", shape=diamond];
+
+    token_ids -> embed -> h0;
+
+    // ── RoPE (computed once, shared across all layers) ─────────────────
+    rope       [label="RoPE positional embedding\nθ = 1,000,000.0\ndim = head_dim = 128\ncos/sin tables [seq_len × 128]"];
+    pos_ids    [label="position_ids: [0..seq_len-1]", shape=diamond];
+
+    pos_ids -> rope;
+
+    // ── 24 Decoder Layers ──────────────────────────────────────────────
+    subgraph cluster_layer {
+        label="× 24 decoder layers  (layer_idx = 0..23)";
+        style=dashed;
+
+        // Attention block
+        ln1        [label="input_layernorm\n(RMSNorm, weight only)\neps=1e-6"];
+        h1         [label="h₁ = RMSNorm(hᵢ)", shape=diamond];
+
+        q_proj     [label="q_proj\n[896 × 896]\nbias=True → [896]\n(14 heads × 64 dim)"];
+        k_proj     [label="k_proj\n[128 × 896]\nbias=True → [128]\n(2 KV heads × 64 dim)"];
+        v_proj     [label="v_proj\n[128 × 896]\nbias=True → [128]\n(2 KV heads × 64 dim)"];
+
+        q_out      [label="Q: [batch, 14, seq, 64]", shape=diamond];
+        k_out      [label="K: [batch, 2, seq, 64]\n→ repeat_kv ×7\n→ [batch, 14, seq, 64]", shape=diamond];
+        v_out      [label="V: [batch, 2, seq, 64]\n→ repeat_kv ×7\n→ [batch, 14, seq, 64]", shape=diamond];
+
+        rope_apply [label="apply_rotary_pos_emb\nQ, K rotated by RoPE cos/sin\n(V is NOT rotated)"];
+        q_rot      [label="Q_rot, K_rot", shape=diamond];
+
+        attn_score [label="attn_weights = softmax(\n  Q_rot @ K_rot.T / √64\n  + causal_mask\n)"];
+        attn_out   [label="attn_out = attn_weights @ V\n[batch, 14, seq, 64]\n→ reshape [batch, seq, 896]"];
+
+        o_proj     [label="o_proj\n[896 × 896]\nbias=False"];
+        attn_proj  [label="attn_proj: [batch, seq, 896]", shape=diamond];
+
+        res1       [label="residual add\nhᵢ₊₁_mid = hᵢ + attn_proj", shape=diamond];
+
+        // FFN block
+        ln2        [label="post_attention_layernorm\n(RMSNorm, weight only)"];
+        h2         [label="h₂ = RMSNorm(hᵢ₊₁_mid)", shape=diamond];
+
+        gate_proj  [label="gate_proj\n[4864 × 896]\nbias=False"];
+        up_proj    [label="up_proj\n[4864 × 896]\nbias=False"];
+        gate_act   [label="SiLU(gate_proj(h₂))\n× up_proj(h₂)\n= intermediate [batch, seq, 4864]"];
+        down_proj  [label="down_proj\n[896 × 4864]\nbias=False"];
+        ffn_out    [label="ffn_out: [batch, seq, 896]", shape=diamond];
+
+        res2       [label="residual add\nhᵢ₊₁ = hᵢ₊₁_mid + ffn_out", shape=diamond];
+
+        ln1 -> h1;
+        h1 -> q_proj -> q_out;
+        h1 -> k_proj -> k_out;
+        h1 -> v_proj -> v_out;
+        q_out -> rope_apply;
+        k_out -> rope_apply;
+        rope -> rope_apply;
+        rope_apply -> q_rot;
+        q_rot -> attn_score;
+        v_out -> attn_out;
+        attn_score -> attn_out;
+        attn_out -> o_proj -> attn_proj;
+        attn_proj -> res1;
+
+        res1 -> ln2 -> h2;
+        h2 -> gate_proj -> gate_act;
+        h2 -> up_proj -> gate_act;
+        gate_act -> down_proj -> ffn_out;
+        ffn_out -> res2;
+    }
+
+    h0 -> ln1 [label="hᵢ input"];
+    res2 -> final_norm [label="h₂₄ after all layers"];
+
+    // ── Output ─────────────────────────────────────────────────────────
+    final_norm [label="model.norm\n(RMSNorm, weight only)"];
+    h_final    [label="h_final: [batch, seq, 896]", shape=diamond];
+    lm_head    [label="lm_head.weight\n= embed_tokens.weight (TIED)\n[151936 × 896]\nbias=False"];
+    logits     [label="logits: [batch, seq, 151936]", shape=diamond];
+    softmax    [label="softmax / argmax\n(or sample with temperature)"];
+    next_tok   [label="next token id", shape=oval];
+    decode     [label="detokenize → text", shape=oval];
+
+    final_norm -> h_final;
+    h_final -> lm_head -> logits -> softmax -> next_tok -> decode;
+
+    // ── Key facts ──────────────────────────────────────────────────────
+    notes [label="KEY FACTS:\n\
+• hidden_size = 896\n\
+• num_attention_heads = 14\n\
+• num_key_value_heads = 2  (GQA: 7 Q groups per KV)\n\
+• head_dim = 64\n\
+• intermediate_size = 4864\n\
+• num_hidden_layers = 24\n\
+• vocab_size = 151936\n\
+• rope_theta = 1,000,000.0\n\
+• max_position_embeddings = 32768\n\
+• sliding_window: some layers use sliding_attention\n\
+• lm_head tied to embed_tokens (no extra params)\n\
+• QKV biases: q_proj/k_proj/v_proj have bias=True\n\
+• All MLP projections: bias=False\n\
+• Single-token simplification: RoPE=identity at pos 0,\n\
+  attn_weights=[[1.0]] → attn_out=V (Q/K irrelevant)\n\
+  BUT v_proj.bias still contributes every layer",
+        shape=note, style=filled, fillcolor=lightyellow];
+}

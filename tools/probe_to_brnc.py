@@ -27,7 +27,7 @@ Weight file layout (manifest.json):
     +0 input_layernorm [896]
     +1 q_proj [896, 896]  (not loaded — Q has no effect on single-token output)
     +2 k_proj [128, 896]  (not loaded)
-    +3 v_proj [128, 896]
+    +3 v_proj [128, 896]  (bias loaded separately from v_bias_{layer:02d}.bin)
     +4 o_proj [896, 896]
     +5 post_attention_layernorm [896]
     +6 gate_proj [4864, 896]
@@ -50,12 +50,13 @@ import os
 from collections import defaultdict
 
 N_SHEETS     = 24
-N_COLS       = 4864   # must fit: HIDDEN + V * neurons_per_word
+# N_COLS is computed dynamically in main() from actual vocab size.
+# It must be >= max(FFN_DIM, EFF_COL_OFFSET + V * neurons_per_word).
+FFN_DIM      = 4864   # FFN intermediate size (also KCa neuron index range)
 HIDDEN       = 896
-FFN_DIM      = 4864
-NUM_HEADS    = 7
-NUM_KV_HEADS = 1
-HEAD_DIM     = 128    # HIDDEN / NUM_HEADS
+NUM_HEADS    = 14      # Qwen2.5-0.5B: 14 Q attention heads
+NUM_KV_HEADS = 2       # 2 KV heads (GQA: 7 Q groups per KV head)
+HEAD_DIM     = 64      # HIDDEN / NUM_HEADS = 896 / 14
 
 # eff_cols start after the hidden-state range so aff and eff never overlap.
 EFF_COL_OFFSET = HIDDEN   # 896
@@ -132,7 +133,7 @@ def build_layer_token_neurons(bands_data, min_trigger_rate):
             if not token or not token.isalpha():
                 continue
             for n in cluster["neurons"]:
-                if n["neuron"] >= N_COLS:
+                if n["neuron"] >= FFN_DIM:
                     continue
                 if n["trigger_rate"] < min_trigger_rate:
                     continue
@@ -201,16 +202,26 @@ def run_full_forward_pass(vocab, model_dir):
             ).reshape(shape)
 
         ln1_w  = wt(0, (HIDDEN,))
-        v_proj = wt(3, (HEAD_DIM, HIDDEN))
+        v_proj = wt(3, (NUM_KV_HEADS * HEAD_DIM, HIDDEN))
         o_proj = wt(4, (HIDDEN,   HIDDEN))
         ln2_w  = wt(5, (HIDDEN,))
         gate_w = wt(6, (FFN_DIM,  HIDDEN))
         up_w   = wt(7, (FFN_DIM,  HIDDEN))
         down_w = wt(8, (HIDDEN,   FFN_DIM))
 
+        v_bias_path = os.path.join(model_dir, f"v_bias_{layer:02d}.bin")
+        v_bias = np.fromfile(v_bias_path, dtype=np.float32) if os.path.exists(v_bias_path) else None
+
         h1         = _rms_norm_batch(H, ln1_w)
-        v_out      = h1 @ v_proj.T
-        v_expanded = np.tile(v_out, (1, NUM_HEADS))
+        v_out      = h1 @ v_proj.T                                    # [V, NUM_KV_HEADS*HEAD_DIM]
+        if v_bias is not None:
+            v_out  = v_out + v_bias
+        # GQA: repeat each KV head for its 7 Q-groups → [V, NUM_HEADS*HEAD_DIM]
+        num_kv_groups = NUM_HEADS // NUM_KV_HEADS                     # = 7
+        v_expanded = np.repeat(
+            v_out.reshape(V, NUM_KV_HEADS, HEAD_DIM),
+            num_kv_groups, axis=1
+        ).reshape(V, HIDDEN)
         attn_out   = v_expanded @ o_proj.T
         H          = H + attn_out
 
@@ -233,13 +244,12 @@ def run_full_forward_pass(vocab, model_dir):
 # Discriminative afferent selection
 # ---------------------------------------------------------------------------
 
-def select_contrastive_hfinal_aff(h_finals, token_ids, max_neurons):
-    """Select top-K discriminative dimensions from each word's final hidden state.
+def select_exclusive_hfinal_aff(h_finals, token_ids, max_neurons):
+    """Assign each of the HIDDEN dimensions to exactly one word (its argmax owner).
+    Guarantees zero overlap between any two words' afferent neurons.
 
-    Uses contrast score (deviation from population mean) to pick dimensions that
-    are distinctively high for this word relative to the vocabulary. Words with
-    HIDDEN=896 dimensions selecting max_neurons=10 each have near-zero overlap by
-    construction, eliminating cross-axon contamination.
+    Each dimension d is owned by the word with the highest h_finals[i][d].
+    If a word owns more than max_neurons dims, keep the top-max by activation.
 
     Returns: list of lists of column IDs, indices in [0, HIDDEN)
     """
@@ -251,16 +261,34 @@ def select_contrastive_hfinal_aff(h_finals, token_ids, max_neurons):
     if not valid_rows:
         return [[] for _ in range(V)]
 
-    col_mean = h_finals[valid_rows].mean(axis=0)  # [HIDDEN]
+    valid_h = h_finals[valid_rows]              # [N_valid, HIDDEN]
+    owner_pos = np.argmax(valid_h, axis=0)      # [HIDDEN] — index into valid_rows
 
-    aff_cols = []
-    for i in range(V):
-        if token_ids[i] is None:
-            aff_cols.append([])
+    # Bucket each dimension into its owner
+    owned_dims = [[] for _ in range(len(valid_rows))]
+    for d in range(HIDDEN):
+        owned_dims[owner_pos[d]].append(d)
+
+    # rank_matrix[pos, d] = rank of word pos in dimension d (0 = highest activation)
+    rank_matrix = np.argsort(np.argsort(-valid_h, axis=0), axis=0)  # [N_valid, HIDDEN]
+
+    aff_cols = [[] for _ in range(V)]
+    for pos, i in enumerate(valid_rows):
+        dims = owned_dims[pos]
+        if len(dims) >= max_neurons:
+            dims.sort(key=lambda d: -h_finals[i][d])
+            aff_cols[i] = dims[:max_neurons]
+        elif dims:
+            aff_cols[i] = dims
         else:
-            contrast = h_finals[i] - col_mean        # [HIDDEN]
-            top_k    = np.argsort(contrast)[-max_neurons:][::-1].tolist()
-            aff_cols.append(top_k)
+            # Fallback: pick dims where this word has the best (lowest) rank
+            ranks = rank_matrix[pos]                         # [HIDDEN]
+            best  = np.argsort(ranks)[:max_neurons].tolist()
+            aff_cols[i] = best
+
+    owned_counts = [len(d) for d in owned_dims]
+    print(f"  Dimension ownership: min={min(owned_counts)} max={max(owned_counts)} "
+          f"mean={sum(owned_counts)/len(owned_counts):.1f} per word", flush=True)
 
     return aff_cols
 
@@ -354,11 +382,11 @@ def write_u32(f, v): f.write(struct.pack("<I", v))
 def write_i32(f, v): f.write(struct.pack("<i", v))
 
 
-def write_checkpoint(path, vocab, band_map, aff_cols, eff_cols, cross_axons):
+def write_checkpoint(path, vocab, band_map, aff_cols, eff_cols, cross_axons, n_cols):
     with open(path, "wb") as f:
         f.write(MAGIC)
         write_u32(f, VERSION)
-        write_u32(f, N_COLS)
+        write_u32(f, n_cols)
         write_u32(f, N_SHEETS)
         write_i32(f, PROJECTION_AMPL)
 
@@ -382,11 +410,11 @@ def write_checkpoint(path, vocab, band_map, aff_cols, eff_cols, cross_axons):
             write_u8(f, RESET_KCA_ON_TRAIN)
             write_u8(f, GATED)
 
-            kca = [0] * N_COLS
+            kca = [0] * n_cols
             for (layer, neuron), band_num in band_map.items():
-                if layer == layer_idx and neuron < N_COLS:
+                if layer == layer_idx and neuron < n_cols:
                     kca[neuron] = KCA_BY_BAND.get(band_num, 0)
-            write_u32(f, N_COLS)
+            write_u32(f, n_cols)
             for k in kca:
                 write_u16(f, k)
 
@@ -415,8 +443,8 @@ def main():
     parser.add_argument("--output",           required=True)
     parser.add_argument("--max-vocab",        type=int,   default=4000)
     parser.add_argument("--min-trigger-rate", type=float, default=0.4)
-    parser.add_argument("--max-aff-neurons",  type=int,   default=10,
-                        help="Contrast-selected h_final dimensions per word for afferent (default: 10)")
+    parser.add_argument("--max-aff-neurons",  type=int,   default=16,
+                        help="Exclusive h_final dimensions per word for afferent (default: 16)")
     parser.add_argument("--max-eff-neurons",  type=int,   default=50,
                         help="Dedicated L23 neurons per word for efferent (default: 50)")
     parser.add_argument("--cross-strength",   type=int,   default=2000)
@@ -425,12 +453,6 @@ def main():
 
     sys.stdout.reconfigure(encoding="utf-8")
 
-    # Validate geometry
-    max_eff_end = EFF_COL_OFFSET + args.max_vocab * args.max_eff_neurons
-    if max_eff_end > N_COLS:
-        print(f"ERROR: eff_cols would reach {max_eff_end} but N_COLS={N_COLS}. "
-              f"Reduce --max-vocab or --max-eff-neurons.", file=sys.stderr)
-        sys.exit(1)
     if args.max_aff_neurons > HIDDEN:
         print(f"ERROR: --max-aff-neurons {args.max_aff_neurons} exceeds HIDDEN={HIDDEN}.",
               file=sys.stderr)
@@ -454,16 +476,17 @@ def main():
     vocab = build_vocab(layer_token_neurons, args.max_vocab)
     print(f"  {len(vocab)} words: {', '.join(vocab[:10])}{'...' if len(vocab) > 10 else ''}")
 
-    # Geometry check with actual vocab size
-    actual_eff_end = EFF_COL_OFFSET + len(vocab) * args.max_eff_neurons
-    print(f"  Column layout: aff [0,{HIDDEN}), eff [{EFF_COL_OFFSET},{actual_eff_end}), N_COLS={N_COLS}")
+    # N_COLS must accommodate both FFN KCa neurons and dedicated eff blocks
+    n_cols = max(FFN_DIM, EFF_COL_OFFSET + len(vocab) * args.max_eff_neurons)
+    eff_end = EFF_COL_OFFSET + len(vocab) * args.max_eff_neurons
+    print(f"  Column layout: aff [0,{HIDDEN}), eff [{EFF_COL_OFFSET},{eff_end}), N_COLS={n_cols}")
 
     print(f"\nRunning full Qwen2.5-0.5B forward pass ({len(vocab)} tokens, {N_SHEETS} layers)...")
     h_finals, token_ids = run_full_forward_pass(vocab, args.model_dir)
 
     print(f"\nSelecting discriminative afferent neurons from final hidden states "
           f"(top-{args.max_aff_neurons} by contrast)...")
-    aff_cols    = select_contrastive_hfinal_aff(h_finals, token_ids, args.max_aff_neurons)
+    aff_cols    = select_exclusive_hfinal_aff(h_finals, token_ids, args.max_aff_neurons)
     aff_covered = sum(1 for c in aff_cols if c)
     print(f"  {aff_covered}/{len(vocab)} words have afferent coverage")
 
@@ -495,7 +518,7 @@ def main():
     print(f"  {len(cross_axons):,} cross-axons (L0→L23)")
 
     print(f"\nWriting {args.output}...")
-    write_checkpoint(args.output, vocab, band_map, aff_cols, eff_cols, cross_axons)
+    write_checkpoint(args.output, vocab, band_map, aff_cols, eff_cols, cross_axons, n_cols)
 
     size_mb = os.path.getsize(args.output) / 1024 / 1024
     print(f"Done — {size_mb:.1f} MB")
