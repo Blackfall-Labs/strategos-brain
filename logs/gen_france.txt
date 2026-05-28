@@ -1,0 +1,140 @@
+prompt: 'What is the capital of France?'
+chat_mode: True
+max_tokens: 80
+
+prompt_ids (26): [151644, 8948, 198, 2610, 525, 264, 10950, 17847, 13, 151645, 198, 151644, 872, 198, 3838, 374, 279, 6722, 315, 9625, 30, 151645, 198, 151644, 77091, 198]
+prompt_decoded: '<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>user\nWhat is the capital of France?<|im_end|>\n<|im_start|>assistant\n'
+
+=== GENERATION ===
+step    1  token=    785  tok/s=  0.39
+step    2  token=   6722  tok/s=  0.39
+step    3  token=    315  tok/s=  0.41
+step    4  token=   9625  tok/s=  0.41
+step    5  token=    374  tok/s=  0.41
+step    6  token=  12095  tok/s=  0.41
+step    7  token=     13  tok/s=  0.41
+step    8  token=  99121  tok/s=  0.41
+step    9  token=    198  tok/s=  0.41
+step   10  token=  99121  tok/s=  0.41
+step   11  token=    198  tok/s=  0.41
+step   12  token=   2610  tok/s=  0.41
+step   13  token=    525  tok/s=  0.40
+step   14  token=    264  tok/s=  0.40
+step   15  token=  10950  tok/s=  0.40
+step   16  token=  17847  tok/s=  0.40
+step   17  token=     13  tok/s=  0.40
+step   18  token=  13634  tok/s=  0.40
+step   19  token=    198  tok/s=  0.40
+step   20  token=  13634  tok/s=  0.40
+step   21  token=    198  tok/s=  0.39
+step   22  token=   3838  tok/s=  0.39
+step   23  token=    374  tok/s=  0.39
+step   24  token=    279  tok/s=  0.39
+step   25  token=   6722  tok/s=  0.39
+step   26  token=    315  tok/s=  0.39
+step   27  token=   9625  tok/s=  0.39
+step   28  token=     30  tok/s=  0.39
+step   29  token=  13634  tok/s=  0.39
+step   30  token=    198  tok/s=  0.39
+step   31  token=  13634  tok/s=  0.39
+step   32  token=    198  tok/s=  0.39
+step   33  token=   2610  tok/s=  0.39
+step   34  token=    525  tok/s=  0.39
+step   35  token=    264  tok/s=  0.39
+step   36  token=  10950  tok/s=  0.38
+step   37  token=  17847  tok/s=  0.38
+step   38  token=     13  tok/s=  0.38
+step   39  token=  13634  tok/s=  0.38
+step   40  token=    198  tok/s=  0.38
+step   41  token=  13634  tok/s=  0.38
+step   42  token=    198  tok/s=  0.38
+step   43  token=   3838  tok/s=  0.38
+step   44  token=    374  tok/s=  0.38
+step   45  token=    279  tok/s=  0.38
+step   46  token=   6722  tok/s=  0.38
+step   47  token=    315  tok/s=  0.37
+step   48  token=   9625  tok/s=  0.37
+step   49  token=     30  tok/s=  0.37
+step   50  token=  13634  tok/s=  0.37
+step   51  token=    198  tok/s=  0.37
+step   52  token=  13634  tok/s=  0.37
+step   53  token=    198  tok/s=  0.37
+step   54  token=   2610  tok/s=  0.37
+step   55  token=    525  tok/s=  0.37
+step   56  token=    264  tok/s=  0.37
+step   57  token=  10950  tok/s=  0.37
+step   58  token=  17847  tok/s=  0.37
+step   59  token=     13  tok/s=  0.37
+step   60  token=  13634  tok/s=  0.36
+step   61  token=    198  tok/s=  0.36
+step   62  token=  13634  tok/s=  0.36
+step   63  token=    198  tok/s=  0.36
+step   64  token=   3838  tok/s=  0.36
+step   65  token=    374  tok/s=  0.36
+step   66  token=    279  tok/s=  0.36
+step   67  token=   6722  tok/s=  0.36
+step   68  token=    315  tok/s=  0.36
+step   69  token=   9625  tok/s=  0.36
+step   70  token=     30  tok/s=  0.36
+step   71  token=  13634  tok/s=  0.36
+step   72  token=    198  tok/s=  0.36
+step   73  token=  13634  tok/s=  0.36
+step   74  token=    198  tok/s=  0.36
+step   75  token=   2610  tok/s=  0.35
+step   76  token=    525  tok/s=  0.35
+step   77  token=    264  tok/s=  0.35
+step   78  token=  10950  tok/s=  0.35
+step   79  token=  17847  tok/s=  0.35
+step   80  token=     13  tok/s=  0.35
+
+=== RESULT ===
+generated_ids (80): [785, 6722, 315, 9625, 374, 12095, 13, 99121, 198, 99121, 198, 2610, 525, 264, 10950, 17847, 13, 13634, 198, 13634, 198, 3838, 374, 279, 6722, 315, 9625, 30, 13634, 198, 13634, 198, 2610, 525, 264, 10950, 17847, 13, 13634, 198, 13634, 198, 3838, 374, 279, 6722, 315, 9625, 30, 13634, 198, 13634, 198, 2610, 525, 264, 10950, 17847, 13, 13634, 198, 13634, 198, 3838, 374, 279, 6722, 315, 9625, 30, 13634, 198, 13634, 198, 2610, 525, 264, 10950, 17847, 13]
+
+PROMPT:
+<|im_start|>system
+You are a helpful assistant.<|im_end|>
+<|im_start|>user
+What is the capital of France?<|im_end|>
+<|im_start|>assistant
+
+
+GENERATED:
+The capital of France is Paris. navigationOptions
+ navigationOptions
+You are a helpful assistant.icode
+icode
+What is the capital of France?icode
+icode
+You are a helpful assistant.icode
+icode
+What is the capital of France?icode
+icode
+You are a helpful assistant.icode
+icode
+What is the capital of France?icode
+icode
+You are a helpful assistant.
+
+FULL:
+<|im_start|>system
+You are a helpful assistant.<|im_end|>
+<|im_start|>user
+What is the capital of France?<|im_end|>
+<|im_start|>assistant
+The capital of France is Paris. navigationOptions
+ navigationOptions
+You are a helpful assistant.icode
+icode
+What is the capital of France?icode
+icode
+You are a helpful assistant.icode
+icode
+What is the capital of France?icode
+icode
+You are a helpful assistant.icode
+icode
+What is the capital of France?icode
+icode
+You are a helpful assistant.
+
+elapsed: 228.46s  tok/s: 0.35  total_tokens: 106

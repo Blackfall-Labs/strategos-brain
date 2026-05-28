@@ -1,0 +1,49 @@
+prompt: 'Hello'
+chat_mode: True
+max_tokens: 50
+
+prompt_ids (20): [151644, 8948, 198, 2610, 525, 264, 10950, 17847, 13, 151645, 198, 151644, 872, 198, 9707, 151645, 198, 151644, 77091, 198]
+prompt_decoded: '<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>user\nHello<|im_end|>\n<|im_start|>assistant\n'
+
+=== GENERATION ===
+step    1  token=  39814  tok/s=  0.39
+step    2  token=     11  tok/s=  0.43
+step    3  token=    358  tok/s=  0.42
+step    4  token=    646  tok/s=  0.42
+step    5  token=   1492  tok/s=  0.41
+step    6  token=    498  tok/s=  0.41
+step    7  token=    448  tok/s=  0.41
+step    8  token=    429  tok/s=  0.41
+step    9  token=     13  tok/s=  0.41
+step   10  token=   3555  tok/s=  0.41
+step   11  token=   1035  tok/s=  0.41
+step   12  token=    498  tok/s=  0.41
+step   13  token=   1075  tok/s=  0.41
+step   14  token=    311  tok/s=  0.41
+step   15  token=   1414  tok/s=  0.41
+step   16  token=     30  tok/s=  0.41
+step   17  token= 151643  tok/s=  0.41
+
+=== RESULT ===
+generated_ids (17): [39814, 11, 358, 646, 1492, 498, 448, 429, 13, 3555, 1035, 498, 1075, 311, 1414, 30, 151643]
+
+PROMPT:
+<|im_start|>system
+You are a helpful assistant.<|im_end|>
+<|im_start|>user
+Hello<|im_end|>
+<|im_start|>assistant
+
+
+GENERATED:
+Sure, I can help you with that. What would you like to know?<|endoftext|>
+
+FULL:
+<|im_start|>system
+You are a helpful assistant.<|im_end|>
+<|im_start|>user
+Hello<|im_end|>
+<|im_start|>assistant
+Sure, I can help you with that. What would you like to know?<|endoftext|>
+
+elapsed: 41.68s  tok/s: 0.41  total_tokens: 37

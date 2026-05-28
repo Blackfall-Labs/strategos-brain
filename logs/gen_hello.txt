@@ -1,0 +1,52 @@
+prompt: 'Hello'
+chat_mode: False
+max_tokens: 30
+
+prompt_ids (1): [9707]
+prompt_decoded: 'Hello'
+
+=== GENERATION ===
+step    1  token=     11  tok/s=  0.25
+step    2  token=    358  tok/s=  0.31
+step    3  token=   2776  tok/s=  0.34
+step    4  token=   4460  tok/s=  0.36
+step    5  token=    311  tok/s=  0.36
+step    6  token=   1855  tok/s=  0.37
+step    7  token=    264  tok/s=  0.37
+step    8  token=    729  tok/s=  0.37
+step    9  token=    429  tok/s=  0.37
+step   10  token=   4990  tok/s=  0.37
+step   11  token=    264  tok/s=  0.37
+step   12  token=   1140  tok/s=  0.38
+step   13  token=    315  tok/s=  0.38
+step   14  token=   5109  tok/s=  0.38
+step   15  token=    323  tok/s=  0.38
+step   16  token=   4675  tok/s=  0.38
+step   17  token=    279  tok/s=  0.37
+step   18  token=   2629  tok/s=  0.37
+step   19  token=    315  tok/s=  0.37
+step   20  token=    678  tok/s=  0.37
+step   21  token=    279  tok/s=  0.37
+step   22  token=   5109  tok/s=  0.37
+step   23  token=    304  tok/s=  0.37
+step   24  token=    279  tok/s=  0.36
+step   25  token=   1140  tok/s=  0.36
+step   26  token=     13  tok/s=  0.36
+step   27  token=   2980  tok/s=  0.36
+step   28  token=   4325  tok/s=  0.36
+step   29  token=   1492  tok/s=  0.36
+step   30  token=    752  tok/s=  0.36
+
+=== RESULT ===
+generated_ids (30): [11, 358, 2776, 4460, 311, 1855, 264, 729, 429, 4990, 264, 1140, 315, 5109, 323, 4675, 279, 2629, 315, 678, 279, 5109, 304, 279, 1140, 13, 2980, 4325, 1492, 752]
+
+PROMPT:
+Hello
+
+GENERATED:
+, I'm trying to create a function that takes a list of numbers and returns the sum of all the numbers in the list. Can someone help me
+
+FULL:
+Hello, I'm trying to create a function that takes a list of numbers and returns the sum of all the numbers in the list. Can someone help me
+
+elapsed: 84.50s  tok/s: 0.36  total_tokens: 31
