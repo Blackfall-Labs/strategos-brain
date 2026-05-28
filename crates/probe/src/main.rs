@@ -10,6 +10,7 @@ mod gpt2_probe;
 mod grokking_probe;
 mod smollm2_probe;
 mod qwen3_probe;
+mod qwen25_probe;
 
 #[derive(Parser)]
 #[command(name = "probe", about = "Activation prober for neuronal distillation")]
@@ -45,9 +46,10 @@ fn main() {
         "gpt2" => run_gpt2(&args),
         "grokking" => run_grokking(&args),
         "smollm2" => run_smollm2(&args),
-        "qwen3" => run_qwen3(&args),
+        "qwen3"  => run_qwen3(&args),
+        "qwen25" => run_qwen25(&args),
         other => {
-            eprintln!("[probe] unknown model: {other}. Supported: gpt2, grokking, smollm2, qwen3");
+            eprintln!("[probe] unknown model: {other}. Supported: gpt2, grokking, smollm2, qwen3, qwen25");
             std::process::exit(1);
         }
     }
@@ -138,6 +140,29 @@ fn run_qwen3(args: &Args) {
     model.run_corpus(&tokens, &mut captures);
 
     let profile = captures.finalize("qwen3-1.7b", &args.corpus);
+    let json = serde_json::to_string_pretty(&profile)
+        .unwrap_or_else(|e| { eprintln!("[probe] serialize failed: {e}"); std::process::exit(1); });
+    std::fs::write(&args.output, &json)
+        .unwrap_or_else(|e| { eprintln!("[probe] write failed: {e}"); std::process::exit(1); });
+
+    eprintln!("[probe] profile written to {}", args.output);
+    eprintln!("[probe] {} tokens, {} layers captured", profile.n_tokens, profile.layers.len());
+}
+
+fn run_qwen25(args: &Args) {
+    let model = qwen25_probe::Qwen25Probe::load(Path::new(&args.weights))
+        .unwrap_or_else(|e| { eprintln!("[probe] load failed: {e}"); std::process::exit(1); });
+
+    let tokens = corpus::load_tokens(&args.corpus, &args.tokenizer, args.n_tokens)
+        .unwrap_or_else(|e| { eprintln!("[probe] corpus failed: {e}"); std::process::exit(1); });
+
+    let thresholds = load_thresholds(&args.weights, model.n_layer);
+    let mut captures = capture::CaptureStore::for_qwen3(model.n_layer, model.n_head, model.ffn_dim, &thresholds);
+
+    eprintln!("[probe] running {} tokens through Qwen2.5-0.5B ({} layers)...", tokens.len(), model.n_layer);
+    model.run_corpus(&tokens, &mut captures);
+
+    let profile = captures.finalize("qwen25-0.5b", &args.corpus);
     let json = serde_json::to_string_pretty(&profile)
         .unwrap_or_else(|e| { eprintln!("[probe] serialize failed: {e}"); std::process::exit(1); });
     std::fs::write(&args.output, &json)

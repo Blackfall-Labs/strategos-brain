@@ -1,13 +1,13 @@
 """Cross-model probe aggregator.
 
-Normalizes activation profiles from GPT-2, SmolLM2, and Qwen3 to relative
-depth [0.0, 1.0] and averages the structural metrics at each depth point.
+Normalizes activation profiles from GPT-2, SmolLM2, Qwen3, and Qwen2.5-0.5B
+to relative depth [0.0, 1.0] and averages the structural metrics at each
+depth point.
 
 The output is a depth-indexed spectral profile: the architecture-invariant
-laws of language computation that all three models converge on. This profile
-seeds the sigcortex brain regions — not copying any model's weights, but
-encoding the structural attractor that training finds regardless of
-architecture.
+laws of language computation that all models converge on. This profile seeds
+the sigcortex brain regions — not copying any model's weights, but encoding
+the structural attractor that training finds regardless of architecture.
 
 Structural laws extracted:
   - mean_head_entropy(depth): how diffuse attention is (broad=early, narrow=mid)
@@ -20,10 +20,11 @@ Output: cross_model_spectral_profile.json
 
 Usage:
     python tools/aggregate_probes.py \\
-        --gpt2   gpt2_profile.json \\
+        --gpt2    gpt2_profile.json \\
         --smollm2 smollm2_profile_calibrated.json \\
-        --qwen3  qwen3_profile_calibrated.json \\
-        --output cross_model_spectral_profile.json \\
+        --qwen3   qwen3_profile_calibrated.json \\
+        --qwen25  qwen25_profile.json \\
+        --output  cross_model_spectral_profile.json \\
         --depth-bins 20
 """
 
@@ -102,6 +103,8 @@ def main():
     parser.add_argument("--gpt2",    required=True)
     parser.add_argument("--smollm2", required=True)
     parser.add_argument("--qwen3",   required=True)
+    parser.add_argument("--qwen25",  required=False, default=None,
+                        help="Path to Qwen2.5-0.5B profile JSON (optional, adds 4th model)")
     parser.add_argument("--output",  required=True)
     parser.add_argument("--depth-bins", type=int, default=20,
                         help="Number of depth bins to aggregate into (default: 20)")
@@ -112,6 +115,8 @@ def main():
         ("smollm2", load_profile(args.smollm2)),
         ("qwen3",   load_profile(args.qwen3)),
     ]
+    if args.qwen25:
+        profiles.append(("qwen25", load_profile(args.qwen25)))
 
     # Detect uncalibrated neuron_freq: if the global mean fire rate is > 0.5,
     # the threshold was not properly calibrated (GPT-2 GELU fires on ~97% of neurons
@@ -264,7 +269,7 @@ def main():
         }
 
     out = {
-        "models":       ["gpt2", "smollm2", "qwen3"],
+        "models":       [name for name, _ in profiles],
         "n_depth_bins": N,
         "depth_profile": depth_profile,
     }

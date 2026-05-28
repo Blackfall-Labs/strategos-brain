@@ -1,0 +1,1368 @@
+[
+  {
+    "file": "weight_00000.bin",
+    "name": "h.3.attn.c_proj.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00001.bin",
+    "name": "h.2.mlp.c_fc.bias",
+    "numel": 3072,
+    "shape": [
+      3072
+    ]
+  },
+  {
+    "file": "weight_00002.bin",
+    "name": "h.3.mlp.c_proj.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00003.bin",
+    "name": "h.0.attn.c_proj.weight",
+    "numel": 589824,
+    "shape": [
+      768,
+      768
+    ]
+  },
+  {
+    "file": "weight_00004.bin",
+    "name": "h.5.ln_1.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00005.bin",
+    "name": "h.1.attn.c_attn.weight",
+    "numel": 1769472,
+    "shape": [
+      768,
+      2304
+    ]
+  },
+  {
+    "file": "weight_00006.bin",
+    "name": "ln_f.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00007.bin",
+    "name": "h.9.attn.c_attn.bias",
+    "numel": 2304,
+    "shape": [
+      2304
+    ]
+  },
+  {
+    "file": "weight_00008.bin",
+    "name": "h.0.attn.c_proj.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00009.bin",
+    "name": "h.8.mlp.c_proj.weight",
+    "numel": 2359296,
+    "shape": [
+      3072,
+      768
+    ]
+  },
+  {
+    "file": "weight_00010.bin",
+    "name": "h.3.attn.c_attn.bias",
+    "numel": 2304,
+    "shape": [
+      2304
+    ]
+  },
+  {
+    "file": "weight_00011.bin",
+    "name": "h.3.mlp.c_fc.bias",
+    "numel": 3072,
+    "shape": [
+      3072
+    ]
+  },
+  {
+    "file": "weight_00012.bin",
+    "name": "h.5.attn.c_attn.bias",
+    "numel": 2304,
+    "shape": [
+      2304
+    ]
+  },
+  {
+    "file": "weight_00013.bin",
+    "name": "h.0.mlp.c_fc.bias",
+    "numel": 3072,
+    "shape": [
+      3072
+    ]
+  },
+  {
+    "file": "weight_00014.bin",
+    "name": "h.4.attn.c_proj.weight",
+    "numel": 589824,
+    "shape": [
+      768,
+      768
+    ]
+  },
+  {
+    "file": "weight_00015.bin",
+    "name": "h.5.mlp.c_proj.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00016.bin",
+    "name": "h.11.attn.c_proj.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00017.bin",
+    "name": "h.9.attn.c_attn.weight",
+    "numel": 1769472,
+    "shape": [
+      768,
+      2304
+    ]
+  },
+  {
+    "file": "weight_00018.bin",
+    "name": "h.2.attn.c_attn.bias",
+    "numel": 2304,
+    "shape": [
+      2304
+    ]
+  },
+  {
+    "file": "weight_00019.bin",
+    "name": "h.6.mlp.c_fc.weight",
+    "numel": 2359296,
+    "shape": [
+      768,
+      3072
+    ]
+  },
+  {
+    "file": "weight_00020.bin",
+    "name": "h.7.attn.c_proj.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00021.bin",
+    "name": "h.9.mlp.c_fc.bias",
+    "numel": 3072,
+    "shape": [
+      3072
+    ]
+  },
+  {
+    "file": "weight_00022.bin",
+    "name": "h.8.attn.c_proj.weight",
+    "numel": 589824,
+    "shape": [
+      768,
+      768
+    ]
+  },
+  {
+    "file": "weight_00023.bin",
+    "name": "h.5.ln_2.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00024.bin",
+    "name": "h.5.ln_1.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00025.bin",
+    "name": "h.11.ln_2.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00026.bin",
+    "name": "h.11.mlp.c_fc.weight",
+    "numel": 2359296,
+    "shape": [
+      768,
+      3072
+    ]
+  },
+  {
+    "file": "weight_00027.bin",
+    "name": "h.11.attn.bias",
+    "numel": 1048576,
+    "shape": [
+      1,
+      1,
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "weight_00028.bin",
+    "name": "h.9.ln_2.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00029.bin",
+    "name": "h.4.ln_2.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00030.bin",
+    "name": "h.7.mlp.c_proj.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00031.bin",
+    "name": "h.11.ln_1.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00032.bin",
+    "name": "h.1.ln_2.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00033.bin",
+    "name": "h.4.mlp.c_fc.bias",
+    "numel": 3072,
+    "shape": [
+      3072
+    ]
+  },
+  {
+    "file": "weight_00034.bin",
+    "name": "h.8.attn.c_attn.weight",
+    "numel": 1769472,
+    "shape": [
+      768,
+      2304
+    ]
+  },
+  {
+    "file": "weight_00035.bin",
+    "name": "h.5.attn.bias",
+    "numel": 1048576,
+    "shape": [
+      1,
+      1,
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "weight_00036.bin",
+    "name": "h.2.attn.c_proj.weight",
+    "numel": 589824,
+    "shape": [
+      768,
+      768
+    ]
+  },
+  {
+    "file": "weight_00037.bin",
+    "name": "h.0.ln_2.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00038.bin",
+    "name": "h.4.attn.bias",
+    "numel": 1048576,
+    "shape": [
+      1,
+      1,
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "weight_00039.bin",
+    "name": "h.10.mlp.c_proj.weight",
+    "numel": 2359296,
+    "shape": [
+      3072,
+      768
+    ]
+  },
+  {
+    "file": "weight_00040.bin",
+    "name": "h.9.attn.bias",
+    "numel": 1048576,
+    "shape": [
+      1,
+      1,
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "weight_00041.bin",
+    "name": "h.2.attn.c_proj.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00042.bin",
+    "name": "h.2.ln_1.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00043.bin",
+    "name": "h.11.attn.c_attn.bias",
+    "numel": 2304,
+    "shape": [
+      2304
+    ]
+  },
+  {
+    "file": "weight_00044.bin",
+    "name": "ln_f.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00045.bin",
+    "name": "h.0.attn.c_attn.bias",
+    "numel": 2304,
+    "shape": [
+      2304
+    ]
+  },
+  {
+    "file": "weight_00046.bin",
+    "name": "h.5.mlp.c_fc.bias",
+    "numel": 3072,
+    "shape": [
+      3072
+    ]
+  },
+  {
+    "file": "weight_00047.bin",
+    "name": "h.7.ln_2.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00048.bin",
+    "name": "h.6.mlp.c_proj.weight",
+    "numel": 2359296,
+    "shape": [
+      3072,
+      768
+    ]
+  },
+  {
+    "file": "weight_00049.bin",
+    "name": "h.1.mlp.c_proj.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00050.bin",
+    "name": "h.1.ln_2.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00051.bin",
+    "name": "h.0.attn.bias",
+    "numel": 1048576,
+    "shape": [
+      1,
+      1,
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "weight_00052.bin",
+    "name": "h.4.mlp.c_proj.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00053.bin",
+    "name": "h.10.mlp.c_fc.weight",
+    "numel": 2359296,
+    "shape": [
+      768,
+      3072
+    ]
+  },
+  {
+    "file": "weight_00054.bin",
+    "name": "h.11.attn.c_attn.weight",
+    "numel": 1769472,
+    "shape": [
+      768,
+      2304
+    ]
+  },
+  {
+    "file": "weight_00055.bin",
+    "name": "h.0.mlp.c_fc.weight",
+    "numel": 2359296,
+    "shape": [
+      768,
+      3072
+    ]
+  },
+  {
+    "file": "weight_00056.bin",
+    "name": "h.10.attn.c_attn.weight",
+    "numel": 1769472,
+    "shape": [
+      768,
+      2304
+    ]
+  },
+  {
+    "file": "weight_00057.bin",
+    "name": "h.8.ln_2.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00058.bin",
+    "name": "h.11.mlp.c_fc.bias",
+    "numel": 3072,
+    "shape": [
+      3072
+    ]
+  },
+  {
+    "file": "weight_00059.bin",
+    "name": "h.7.attn.c_attn.weight",
+    "numel": 1769472,
+    "shape": [
+      768,
+      2304
+    ]
+  },
+  {
+    "file": "weight_00060.bin",
+    "name": "h.7.mlp.c_fc.bias",
+    "numel": 3072,
+    "shape": [
+      3072
+    ]
+  },
+  {
+    "file": "weight_00061.bin",
+    "name": "h.11.attn.c_proj.weight",
+    "numel": 589824,
+    "shape": [
+      768,
+      768
+    ]
+  },
+  {
+    "file": "weight_00062.bin",
+    "name": "h.1.mlp.c_proj.weight",
+    "numel": 2359296,
+    "shape": [
+      3072,
+      768
+    ]
+  },
+  {
+    "file": "weight_00063.bin",
+    "name": "h.6.mlp.c_proj.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00064.bin",
+    "name": "h.8.attn.c_proj.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00065.bin",
+    "name": "h.10.mlp.c_proj.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00066.bin",
+    "name": "h.4.ln_1.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00067.bin",
+    "name": "h.4.attn.c_attn.bias",
+    "numel": 2304,
+    "shape": [
+      2304
+    ]
+  },
+  {
+    "file": "weight_00068.bin",
+    "name": "h.9.mlp.c_proj.weight",
+    "numel": 2359296,
+    "shape": [
+      3072,
+      768
+    ]
+  },
+  {
+    "file": "weight_00069.bin",
+    "name": "h.1.attn.c_proj.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00070.bin",
+    "name": "h.11.mlp.c_proj.weight",
+    "numel": 2359296,
+    "shape": [
+      3072,
+      768
+    ]
+  },
+  {
+    "file": "weight_00071.bin",
+    "name": "h.6.ln_2.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00072.bin",
+    "name": "h.9.ln_2.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00073.bin",
+    "name": "h.6.ln_2.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00074.bin",
+    "name": "h.5.attn.c_proj.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00075.bin",
+    "name": "h.7.ln_1.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00076.bin",
+    "name": "h.6.attn.c_proj.weight",
+    "numel": 589824,
+    "shape": [
+      768,
+      768
+    ]
+  },
+  {
+    "file": "weight_00077.bin",
+    "name": "h.1.ln_1.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00078.bin",
+    "name": "h.7.ln_2.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00079.bin",
+    "name": "h.6.attn.bias",
+    "numel": 1048576,
+    "shape": [
+      1,
+      1,
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "weight_00080.bin",
+    "name": "h.2.ln_2.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00081.bin",
+    "name": "h.10.attn.c_attn.bias",
+    "numel": 2304,
+    "shape": [
+      2304
+    ]
+  },
+  {
+    "file": "weight_00082.bin",
+    "name": "h.3.attn.c_proj.weight",
+    "numel": 589824,
+    "shape": [
+      768,
+      768
+    ]
+  },
+  {
+    "file": "weight_00083.bin",
+    "name": "h.10.attn.c_proj.weight",
+    "numel": 589824,
+    "shape": [
+      768,
+      768
+    ]
+  },
+  {
+    "file": "weight_00084.bin",
+    "name": "h.10.attn.c_proj.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00085.bin",
+    "name": "h.8.mlp.c_fc.bias",
+    "numel": 3072,
+    "shape": [
+      3072
+    ]
+  },
+  {
+    "file": "weight_00086.bin",
+    "name": "h.9.attn.c_proj.weight",
+    "numel": 589824,
+    "shape": [
+      768,
+      768
+    ]
+  },
+  {
+    "file": "weight_00087.bin",
+    "name": "h.5.attn.c_proj.weight",
+    "numel": 589824,
+    "shape": [
+      768,
+      768
+    ]
+  },
+  {
+    "file": "weight_00088.bin",
+    "name": "h.9.ln_1.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00089.bin",
+    "name": "h.4.mlp.c_fc.weight",
+    "numel": 2359296,
+    "shape": [
+      768,
+      3072
+    ]
+  },
+  {
+    "file": "weight_00090.bin",
+    "name": "h.4.attn.c_attn.weight",
+    "numel": 1769472,
+    "shape": [
+      768,
+      2304
+    ]
+  },
+  {
+    "file": "weight_00091.bin",
+    "name": "h.3.ln_2.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00092.bin",
+    "name": "h.5.ln_2.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00093.bin",
+    "name": "h.3.attn.bias",
+    "numel": 1048576,
+    "shape": [
+      1,
+      1,
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "weight_00094.bin",
+    "name": "h.8.mlp.c_proj.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00095.bin",
+    "name": "h.4.ln_1.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00096.bin",
+    "name": "h.0.ln_2.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00097.bin",
+    "name": "h.6.attn.c_attn.weight",
+    "numel": 1769472,
+    "shape": [
+      768,
+      2304
+    ]
+  },
+  {
+    "file": "weight_00098.bin",
+    "name": "h.10.ln_2.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00099.bin",
+    "name": "h.1.ln_1.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00100.bin",
+    "name": "h.7.mlp.c_proj.weight",
+    "numel": 2359296,
+    "shape": [
+      3072,
+      768
+    ]
+  },
+  {
+    "file": "weight_00101.bin",
+    "name": "h.2.ln_2.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00102.bin",
+    "name": "h.10.ln_1.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00103.bin",
+    "name": "h.3.mlp.c_proj.weight",
+    "numel": 2359296,
+    "shape": [
+      3072,
+      768
+    ]
+  },
+  {
+    "file": "weight_00104.bin",
+    "name": "h.6.mlp.c_fc.bias",
+    "numel": 3072,
+    "shape": [
+      3072
+    ]
+  },
+  {
+    "file": "weight_00105.bin",
+    "name": "h.1.mlp.c_fc.weight",
+    "numel": 2359296,
+    "shape": [
+      768,
+      3072
+    ]
+  },
+  {
+    "file": "weight_00106.bin",
+    "name": "h.7.attn.c_attn.bias",
+    "numel": 2304,
+    "shape": [
+      2304
+    ]
+  },
+  {
+    "file": "weight_00107.bin",
+    "name": "h.8.ln_1.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00108.bin",
+    "name": "h.1.attn.c_attn.bias",
+    "numel": 2304,
+    "shape": [
+      2304
+    ]
+  },
+  {
+    "file": "weight_00109.bin",
+    "name": "h.6.attn.c_attn.bias",
+    "numel": 2304,
+    "shape": [
+      2304
+    ]
+  },
+  {
+    "file": "weight_00110.bin",
+    "name": "h.3.ln_1.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00111.bin",
+    "name": "h.0.ln_1.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00112.bin",
+    "name": "h.4.ln_2.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00113.bin",
+    "name": "h.5.mlp.c_proj.weight",
+    "numel": 2359296,
+    "shape": [
+      3072,
+      768
+    ]
+  },
+  {
+    "file": "weight_00114.bin",
+    "name": "h.8.attn.c_attn.bias",
+    "numel": 2304,
+    "shape": [
+      2304
+    ]
+  },
+  {
+    "file": "weight_00115.bin",
+    "name": "h.8.ln_1.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00116.bin",
+    "name": "h.7.attn.c_proj.weight",
+    "numel": 589824,
+    "shape": [
+      768,
+      768
+    ]
+  },
+  {
+    "file": "weight_00117.bin",
+    "name": "h.3.mlp.c_fc.weight",
+    "numel": 2359296,
+    "shape": [
+      768,
+      3072
+    ]
+  },
+  {
+    "file": "weight_00118.bin",
+    "name": "h.8.ln_2.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00119.bin",
+    "name": "h.0.mlp.c_proj.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00120.bin",
+    "name": "h.6.attn.c_proj.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00121.bin",
+    "name": "h.7.attn.bias",
+    "numel": 1048576,
+    "shape": [
+      1,
+      1,
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "weight_00122.bin",
+    "name": "wpe.weight",
+    "numel": 786432,
+    "shape": [
+      1024,
+      768
+    ]
+  },
+  {
+    "file": "weight_00123.bin",
+    "name": "h.11.ln_2.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00124.bin",
+    "name": "h.0.attn.c_attn.weight",
+    "numel": 1769472,
+    "shape": [
+      768,
+      2304
+    ]
+  },
+  {
+    "file": "weight_00125.bin",
+    "name": "h.1.mlp.c_fc.bias",
+    "numel": 3072,
+    "shape": [
+      3072
+    ]
+  },
+  {
+    "file": "weight_00126.bin",
+    "name": "h.9.mlp.c_fc.weight",
+    "numel": 2359296,
+    "shape": [
+      768,
+      3072
+    ]
+  },
+  {
+    "file": "weight_00127.bin",
+    "name": "wte.weight",
+    "numel": 38597376,
+    "shape": [
+      50257,
+      768
+    ]
+  },
+  {
+    "file": "weight_00128.bin",
+    "name": "h.9.ln_1.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00129.bin",
+    "name": "h.11.ln_1.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00130.bin",
+    "name": "h.7.mlp.c_fc.weight",
+    "numel": 2359296,
+    "shape": [
+      768,
+      3072
+    ]
+  },
+  {
+    "file": "weight_00131.bin",
+    "name": "h.0.ln_1.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00132.bin",
+    "name": "h.6.ln_1.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00133.bin",
+    "name": "h.3.ln_1.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00134.bin",
+    "name": "h.9.mlp.c_proj.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00135.bin",
+    "name": "h.2.ln_1.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00136.bin",
+    "name": "h.2.mlp.c_proj.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00137.bin",
+    "name": "h.2.mlp.c_fc.weight",
+    "numel": 2359296,
+    "shape": [
+      768,
+      3072
+    ]
+  },
+  {
+    "file": "weight_00138.bin",
+    "name": "h.6.ln_1.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00139.bin",
+    "name": "h.4.mlp.c_proj.weight",
+    "numel": 2359296,
+    "shape": [
+      3072,
+      768
+    ]
+  },
+  {
+    "file": "weight_00140.bin",
+    "name": "h.5.mlp.c_fc.weight",
+    "numel": 2359296,
+    "shape": [
+      768,
+      3072
+    ]
+  },
+  {
+    "file": "weight_00141.bin",
+    "name": "h.3.attn.c_attn.weight",
+    "numel": 1769472,
+    "shape": [
+      768,
+      2304
+    ]
+  },
+  {
+    "file": "weight_00142.bin",
+    "name": "h.1.attn.bias",
+    "numel": 1048576,
+    "shape": [
+      1,
+      1,
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "weight_00143.bin",
+    "name": "h.8.mlp.c_fc.weight",
+    "numel": 2359296,
+    "shape": [
+      768,
+      3072
+    ]
+  },
+  {
+    "file": "weight_00144.bin",
+    "name": "h.2.mlp.c_proj.weight",
+    "numel": 2359296,
+    "shape": [
+      3072,
+      768
+    ]
+  },
+  {
+    "file": "weight_00145.bin",
+    "name": "h.8.attn.bias",
+    "numel": 1048576,
+    "shape": [
+      1,
+      1,
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "weight_00146.bin",
+    "name": "h.1.attn.c_proj.weight",
+    "numel": 589824,
+    "shape": [
+      768,
+      768
+    ]
+  },
+  {
+    "file": "weight_00147.bin",
+    "name": "h.7.ln_1.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00148.bin",
+    "name": "h.10.ln_2.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00149.bin",
+    "name": "h.2.attn.bias",
+    "numel": 1048576,
+    "shape": [
+      1,
+      1,
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "weight_00150.bin",
+    "name": "h.10.mlp.c_fc.bias",
+    "numel": 3072,
+    "shape": [
+      3072
+    ]
+  },
+  {
+    "file": "weight_00151.bin",
+    "name": "h.10.ln_1.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00152.bin",
+    "name": "h.4.attn.c_proj.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00153.bin",
+    "name": "h.11.mlp.c_proj.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00154.bin",
+    "name": "h.10.attn.bias",
+    "numel": 1048576,
+    "shape": [
+      1,
+      1,
+      1024,
+      1024
+    ]
+  },
+  {
+    "file": "weight_00155.bin",
+    "name": "h.3.ln_2.weight",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00156.bin",
+    "name": "h.5.attn.c_attn.weight",
+    "numel": 1769472,
+    "shape": [
+      768,
+      2304
+    ]
+  },
+  {
+    "file": "weight_00157.bin",
+    "name": "h.9.attn.c_proj.bias",
+    "numel": 768,
+    "shape": [
+      768
+    ]
+  },
+  {
+    "file": "weight_00158.bin",
+    "name": "h.0.mlp.c_proj.weight",
+    "numel": 2359296,
+    "shape": [
+      3072,
+      768
+    ]
+  },
+  {
+    "file": "weight_00159.bin",
+    "name": "h.2.attn.c_attn.weight",
+    "numel": 1769472,
+    "shape": [
+      768,
+      2304
+    ]
+  }
+]

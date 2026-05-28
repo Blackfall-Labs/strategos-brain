@@ -99,6 +99,21 @@ def main():
     tok_str_to_id = build_token_id_map(triggers)
     tok_rank      = build_token_rank_map(triggers)
 
+    # ── All L0 trigger tokens (3443 unique) ───────────────────────────────────
+    # For every token that is a top_token for any L0 neuron with high TR,
+    # record its best trigger_rate. Used later for extended injection coverage.
+    l0_token_best_tr = {}   # token_id → best trigger_rate at L0
+    for layer in triggers["layers"]:
+        if layer["layer"] != 0:
+            continue
+        for n in layer["neurons"]:
+            for t in n["top_tokens"]:
+                tid = t["token_id"]
+                tr  = t["trigger_rate"]
+                if tr > l0_token_best_tr.get(tid, 0.0):
+                    l0_token_best_tr[tid] = tr
+    print("[export] L0 trigger tokens: %d" % len(l0_token_best_tr))
+
     # ── Band neuron counts per depth bin from smollm2 calibrated profile ─────
     # Compute approximate neuron counts per band at each depth bin by looking at
     # where Band 1/2/3/4 neurons actually sit (by layer), normalised to depth.
@@ -235,6 +250,88 @@ def main():
 
     print("[export] tier2: %d sheets" % len(tier2_sheets))
 
+    # ── Band 2/3 token injection entries ────────────────────────────────────
+    # For tokens that appear in Band 2 or 3 clusters but NOT in Band 1,
+    # we still inject them into the bus at the appropriate T1 band range.
+    # magnitude is scaled down (Band 2: 0.4-0.9 TR → ~15000; Band 3: 0.1-0.4 → ~6000).
+    # band_id is set to the midpoint of the T1 slice for the token's depth bin.
+    band1_token_ids = {c["token_id"] for c in tier0_clusters}
+    band23_tokens = []
+    seen_tids = set(band1_token_ids)
+
+    # ── Extended L0 coverage: all tokens with strong L0 trigger_rate ─────────
+    # Tokens that didn't make Band 1 clusters still carry L0 signal.
+    # Inject them at band_id=tok_rank (same scheme as Band 1) but lower magnitude.
+    for tid, tr in l0_token_best_tr.items():
+        if tid in seen_tids or tr < 0.5:
+            continue
+        seen_tids.add(tid)
+        band_id   = tok_rank.get(tid, 9999)
+        magnitude = int(tr * 30000 * 0.7)   # 70% of Band 1 magnitude
+        if magnitude < 500:
+            continue
+        band23_tokens.append({
+            "token_id":  tid,
+            "band":      1,      # treated as Band 1 signal, lower magnitude
+            "band_id":   band_id,
+            "magnitude": magnitude,
+        })
+    print("[export] extended L0 tokens added: %d" % len(band23_tokens))
+
+    t1_slice_mids = []
+    for rank, (i, _) in enumerate(tier1_bins):
+        slice_lo = int(rank * MAX_BAND / n_t1_bins)
+        slice_hi = int((rank + 1) * MAX_BAND / n_t1_bins)
+        t1_slice_mids.append((i, (slice_lo + slice_hi) // 2))
+
+    # Build depth_bin → T1 band_id midpoint lookup
+    depth_bin_to_band = {i: mid for i, mid in t1_slice_mids}
+
+    for band_obj in bands["bands"]:
+        b = band_obj["band"]
+        if b not in (2, 3):
+            continue
+        for cluster in band_obj.get("clusters", []):
+            tstr = cluster["trigger_token"]
+            tid  = tok_str_to_id.get(tstr) or tok_str_to_id.get(" " + tstr)
+            if tid is None:
+                for s, i in tok_str_to_id.items():
+                    if s.strip() == tstr.strip():
+                        tid = i; break
+            if tid is None or tid in seen_tids:
+                continue
+            seen_tids.add(tid)
+
+            # Pick the dominant depth bin for this cluster's neurons
+            depth_counts = defaultdict(int)
+            total_tr = 0.0
+            for n in cluster.get("neurons", []):
+                li = n["layer"]
+                dbin = min(int(li / n_layers * len(depth_profile)), len(depth_profile) - 1)
+                depth_counts[dbin] += 1
+                total_tr += n.get("trigger_rate", 0.5)
+            if not depth_counts:
+                continue
+            dominant_bin = max(depth_counts, key=depth_counts.get)
+            band_id = depth_bin_to_band.get(dominant_bin, MAX_BAND // 2)
+
+            n_neurons = len(cluster.get("neurons", []))
+            mean_tr = total_tr / n_neurons if n_neurons else 0.5
+            # Scale magnitude lower than Band 1 (Band 1 uses 30000 * TR)
+            mag_scale = 0.5 if b == 2 else 0.25
+            magnitude = int(mean_tr * 30000 * mag_scale)
+            if magnitude < 500:
+                continue
+
+            band23_tokens.append({
+                "token_id":  tid,
+                "band":      b,
+                "band_id":   band_id,
+                "magnitude": magnitude,
+            })
+
+    print("[export] band23 tokens: %d" % len(band23_tokens))
+
     total_cols = (sum(len(c["members"]) for c in tier0_clusters)
                 + sum(s["n_cols"] for s in tier1_sheets)
                 + sum(s["n_cols"] for s in tier2_sheets))
@@ -245,6 +342,7 @@ def main():
         "tier0_clusters": tier0_clusters,
         "tier1_sheets":   tier1_sheets,
         "tier2_sheets":   tier2_sheets,
+        "band23_tokens":  band23_tokens,
     }
 
     with open(args.output, "w", encoding="utf-8") as f:

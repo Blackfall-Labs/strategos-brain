@@ -24540,148 +24540,5152 @@
   ],
   "band23_tokens": [
     {
-      "token_id": 30,
-      "band": 2,
-      "band_id": 108,
-      "magnitude": 8258
-    },
-    {
-      "token_id": 533,
-      "band": 2,
-      "band_id": 198,
-      "magnitude": 11538
-    },
-    {
-      "token_id": 715,
-      "band": 2,
-      "band_id": 108,
-      "magnitude": 8333
-    },
-    {
-      "token_id": 4175,
-      "band": 2,
-      "band_id": 108,
-      "magnitude": 13500
-    },
-    {
-      "token_id": 827,
-      "band": 2,
-      "band_id": 108,
-      "magnitude": 13125
-    },
-    {
-      "token_id": 624,
-      "band": 2,
-      "band_id": 108,
-      "magnitude": 10285
-    },
-    {
-      "token_id": 451,
-      "band": 2,
-      "band_id": 198,
-      "magnitude": 11110
-    },
-    {
-      "token_id": 357,
-      "band": 2,
-      "band_id": 198,
-      "magnitude": 7317
-    },
-    {
-      "token_id": 5096,
-      "band": 2,
-      "band_id": 108,
-      "magnitude": 10000
-    },
-    {
-      "token_id": 582,
-      "band": 2,
-      "band_id": 108,
-      "magnitude": 9130
-    },
-    {
-      "token_id": 1215,
-      "band": 2,
-      "band_id": 108,
-      "magnitude": 12000
-    },
-    {
-      "token_id": 1421,
-      "band": 2,
-      "band_id": 108,
-      "magnitude": 10714
-    },
-    {
-      "token_id": 10181,
-      "band": 2,
-      "band_id": 108,
-      "magnitude": 12499
-    },
-    {
-      "token_id": 42716,
-      "band": 2,
-      "band_id": 108,
-      "magnitude": 13333
+      "token_id": 33849,
+      "band": 1,
+      "band_id": 109,
+      "magnitude": 21000
     },
     {
       "token_id": 3735,
-      "band": 2,
-      "band_id": 108,
-      "magnitude": 10312
+      "band": 1,
+      "band_id": 119,
+      "magnitude": 21000
     },
     {
-      "token_id": 1135,
-      "band": 2,
-      "band_id": 108,
-      "magnitude": 13125
+      "token_id": 3086,
+      "band": 1,
+      "band_id": 141,
+      "magnitude": 21000
     },
     {
-      "token_id": 8052,
-      "band": 2,
+      "token_id": 3713,
+      "band": 1,
+      "band_id": 159,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 28315,
+      "band": 1,
+      "band_id": 123,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 339,
+      "band": 1,
+      "band_id": 251,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4726,
+      "band": 1,
+      "band_id": 142,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 7374,
+      "band": 1,
+      "band_id": 166,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1916,
+      "band": 1,
+      "band_id": 198,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 10181,
+      "band": 1,
+      "band_id": 176,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6548,
+      "band": 1,
+      "band_id": 181,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 34083,
+      "band": 1,
+      "band_id": 193,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8533,
+      "band": 1,
+      "band_id": 138,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4175,
+      "band": 1,
+      "band_id": 154,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 804,
+      "band": 1,
+      "band_id": 312,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 44717,
+      "band": 1,
+      "band_id": 188,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5118,
+      "band": 1,
+      "band_id": 204,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1130,
+      "band": 1,
+      "band_id": 342,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 11280,
+      "band": 1,
+      "band_id": 298,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 29368,
+      "band": 1,
+      "band_id": 210,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2362,
+      "band": 1,
+      "band_id": 283,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6290,
+      "band": 1,
+      "band_id": 343,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 39727,
+      "band": 1,
+      "band_id": 237,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 42472,
+      "band": 1,
+      "band_id": 202,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3949,
+      "band": 1,
+      "band_id": 293,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 9117,
+      "band": 1,
+      "band_id": 186,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1913,
+      "band": 1,
+      "band_id": 377,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2587,
+      "band": 1,
+      "band_id": 305,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 12053,
+      "band": 1,
+      "band_id": 299,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 44165,
+      "band": 1,
+      "band_id": 295,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2723,
+      "band": 1,
+      "band_id": 392,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2724,
+      "band": 1,
+      "band_id": 396,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 971,
+      "band": 1,
+      "band_id": 345,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4504,
+      "band": 1,
+      "band_id": 308,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4784,
+      "band": 1,
+      "band_id": 472,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 14722,
+      "band": 1,
+      "band_id": 281,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1157,
+      "band": 1,
+      "band_id": 413,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 10148,
+      "band": 1,
+      "band_id": 288,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3588,
+      "band": 1,
+      "band_id": 429,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1501,
+      "band": 1,
+      "band_id": 330,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2287,
+      "band": 1,
+      "band_id": 461,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1680,
+      "band": 1,
+      "band_id": 465,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 719,
+      "band": 1,
+      "band_id": 81,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 618,
+      "band": 1,
       "band_id": 108,
-      "magnitude": 7143
+      "magnitude": 21000
+    },
+    {
+      "token_id": 373,
+      "band": 1,
+      "band_id": 89,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 713,
+      "band": 1,
+      "band_id": 124,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 614,
+      "band": 1,
+      "band_id": 157,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 690,
+      "band": 1,
+      "band_id": 175,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2585,
+      "band": 1,
+      "band_id": 178,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 578,
+      "band": 1,
+      "band_id": 191,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1876,
+      "band": 1,
+      "band_id": 187,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1483,
+      "band": 1,
+      "band_id": 234,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 738,
+      "band": 1,
+      "band_id": 261,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1806,
+      "band": 1,
+      "band_id": 297,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3385,
+      "band": 1,
+      "band_id": 232,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 10049,
+      "band": 1,
+      "band_id": 143,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1683,
+      "band": 1,
+      "band_id": 179,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1584,
+      "band": 1,
+      "band_id": 206,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 10023,
+      "band": 1,
+      "band_id": 120,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1478,
+      "band": 1,
+      "band_id": 302,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 42716,
+      "band": 1,
+      "band_id": 104,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 19568,
+      "band": 1,
+      "band_id": 270,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3554,
+      "band": 1,
+      "band_id": 253,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1122,
+      "band": 1,
+      "band_id": 350,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 767,
+      "band": 1,
+      "band_id": 292,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 7921,
+      "band": 1,
+      "band_id": 322,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 9191,
+      "band": 1,
+      "band_id": 247,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 37136,
+      "band": 1,
+      "band_id": 249,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 44340,
+      "band": 1,
+      "band_id": 271,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3531,
+      "band": 1,
+      "band_id": 329,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1596,
+      "band": 1,
+      "band_id": 303,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 866,
+      "band": 1,
+      "band_id": 307,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2540,
+      "band": 1,
+      "band_id": 180,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 7419,
+      "band": 1,
+      "band_id": 278,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1223,
+      "band": 1,
+      "band_id": 235,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 272,
+      "band": 1,
+      "band_id": 73,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 18669,
+      "band": 1,
+      "band_id": 155,
+      "magnitude": 21000
     },
     {
       "token_id": 13159,
-      "band": 2,
-      "band_id": 108,
-      "magnitude": 8571
+      "band": 1,
+      "band_id": 139,
+      "magnitude": 21000
     },
     {
-      "token_id": 4252,
-      "band": 2,
-      "band_id": 108,
-      "magnitude": 7200
+      "token_id": 10667,
+      "band": 1,
+      "band_id": 140,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4157,
+      "band": 1,
+      "band_id": 127,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 41175,
+      "band": 1,
+      "band_id": 131,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3656,
+      "band": 1,
+      "band_id": 256,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 14550,
+      "band": 1,
+      "band_id": 170,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 16782,
+      "band": 1,
+      "band_id": 225,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 145,
+      "band": 1,
+      "band_id": 137,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 33957,
+      "band": 1,
+      "band_id": 257,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1463,
+      "band": 1,
+      "band_id": 264,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8878,
+      "band": 1,
+      "band_id": 224,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1056,
+      "band": 1,
+      "band_id": 315,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 13005,
+      "band": 1,
+      "band_id": 269,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2893,
+      "band": 1,
+      "band_id": 311,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 937,
+      "band": 1,
+      "band_id": 360,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4795,
+      "band": 1,
+      "band_id": 354,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2184,
+      "band": 1,
+      "band_id": 365,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4931,
+      "band": 1,
+      "band_id": 394,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 11408,
+      "band": 1,
+      "band_id": 440,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 19652,
+      "band": 1,
+      "band_id": 373,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1837,
+      "band": 1,
+      "band_id": 580,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4869,
+      "band": 1,
+      "band_id": 385,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 34288,
+      "band": 1,
+      "band_id": 566,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 38980,
+      "band": 1,
+      "band_id": 284,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1507,
+      "band": 1,
+      "band_id": 497,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1386,
+      "band": 1,
+      "band_id": 659,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3760,
+      "band": 1,
+      "band_id": 516,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 36104,
+      "band": 1,
+      "band_id": 592,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 702,
+      "band": 1,
+      "band_id": 383,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 979,
+      "band": 1,
+      "band_id": 214,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 14908,
+      "band": 1,
+      "band_id": 328,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4405,
+      "band": 1,
+      "band_id": 462,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2194,
+      "band": 1,
+      "band_id": 156,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 7081,
+      "band": 1,
+      "band_id": 196,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1977,
+      "band": 1,
+      "band_id": 203,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1165,
+      "band": 1,
+      "band_id": 164,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1568,
+      "band": 1,
+      "band_id": 144,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4944,
+      "band": 1,
+      "band_id": 209,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2876,
+      "band": 1,
+      "band_id": 133,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5389,
+      "band": 1,
+      "band_id": 217,
+      "magnitude": 21000
     },
     {
       "token_id": 8512,
-      "band": 2,
-      "band_id": 108,
-      "magnitude": 13500
+      "band": 1,
+      "band_id": 208,
+      "magnitude": 21000
     },
     {
-      "token_id": 527,
-      "band": 2,
-      "band_id": 108,
-      "magnitude": 9231
+      "token_id": 1421,
+      "band": 1,
+      "band_id": 190,
+      "magnitude": 21000
     },
     {
-      "token_id": 736,
-      "band": 2,
-      "band_id": 108,
-      "magnitude": 10555
+      "token_id": 6393,
+      "band": 1,
+      "band_id": 327,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 20619,
+      "band": 1,
+      "band_id": 205,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1797,
+      "band": 1,
+      "band_id": 177,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2260,
+      "band": 1,
+      "band_id": 255,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 41611,
+      "band": 1,
+      "band_id": 227,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5099,
+      "band": 1,
+      "band_id": 341,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 25738,
+      "band": 1,
+      "band_id": 291,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1285,
+      "band": 1,
+      "band_id": 325,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2322,
+      "band": 1,
+      "band_id": 254,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4435,
+      "band": 1,
+      "band_id": 300,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8343,
+      "band": 1,
+      "band_id": 168,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 18323,
+      "band": 1,
+      "band_id": 367,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4617,
+      "band": 1,
+      "band_id": 450,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2350,
+      "band": 1,
+      "band_id": 442,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 14236,
+      "band": 1,
+      "band_id": 265,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1805,
+      "band": 1,
+      "band_id": 418,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 9420,
+      "band": 1,
+      "band_id": 400,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 788,
+      "band": 1,
+      "band_id": 165,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8140,
+      "band": 1,
+      "band_id": 125,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1772,
+      "band": 1,
+      "band_id": 128,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6226,
+      "band": 1,
+      "band_id": 218,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2728,
+      "band": 1,
+      "band_id": 363,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4491,
+      "band": 1,
+      "band_id": 231,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1564,
+      "band": 1,
+      "band_id": 381,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3992,
+      "band": 1,
+      "band_id": 296,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5194,
+      "band": 1,
+      "band_id": 371,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 915,
+      "band": 1,
+      "band_id": 268,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 30168,
+      "band": 1,
+      "band_id": 197,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2249,
+      "band": 1,
+      "band_id": 484,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 23278,
+      "band": 1,
+      "band_id": 414,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2754,
+      "band": 1,
+      "band_id": 444,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2905,
+      "band": 1,
+      "band_id": 529,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 37700,
+      "band": 1,
+      "band_id": 386,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 10795,
+      "band": 1,
+      "band_id": 267,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1428,
+      "band": 1,
+      "band_id": 340,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 22884,
+      "band": 1,
+      "band_id": 423,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5784,
+      "band": 1,
+      "band_id": 279,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 599,
+      "band": 1,
+      "band_id": 602,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 41603,
+      "band": 1,
+      "band_id": 511,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 564,
+      "band": 1,
+      "band_id": 118,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3464,
+      "band": 1,
+      "band_id": 115,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1325,
+      "band": 1,
+      "band_id": 103,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 9079,
+      "band": 1,
+      "band_id": 199,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 645,
+      "band": 1,
+      "band_id": 260,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1796,
+      "band": 1,
+      "band_id": 242,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 634,
+      "band": 1,
+      "band_id": 317,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 9250,
+      "band": 1,
+      "band_id": 320,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 21939,
+      "band": 1,
+      "band_id": 405,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8139,
+      "band": 1,
+      "band_id": 455,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1181,
+      "band": 1,
+      "band_id": 398,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 28505,
+      "band": 1,
+      "band_id": 408,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2445,
+      "band": 1,
+      "band_id": 306,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1791,
+      "band": 1,
+      "band_id": 473,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3487,
+      "band": 1,
+      "band_id": 483,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 40419,
+      "band": 1,
+      "band_id": 433,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 623,
+      "band": 1,
+      "band_id": 508,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5917,
+      "band": 1,
+      "band_id": 557,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1971,
+      "band": 1,
+      "band_id": 667,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3551,
+      "band": 1,
+      "band_id": 498,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 21053,
+      "band": 1,
+      "band_id": 318,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 515,
+      "band": 1,
+      "band_id": 870,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 45943,
+      "band": 1,
+      "band_id": 505,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 41409,
+      "band": 1,
+      "band_id": 332,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 715,
+      "band": 1,
+      "band_id": 117,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 7207,
+      "band": 1,
+      "band_id": 201,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2672,
+      "band": 1,
+      "band_id": 150,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 983,
+      "band": 1,
+      "band_id": 233,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 10243,
+      "band": 1,
+      "band_id": 130,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2798,
+      "band": 1,
+      "band_id": 226,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 553,
+      "band": 1,
+      "band_id": 113,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3281,
+      "band": 1,
+      "band_id": 384,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6333,
+      "band": 1,
+      "band_id": 382,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 725,
+      "band": 1,
+      "band_id": 273,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4781,
+      "band": 1,
+      "band_id": 331,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4019,
+      "band": 1,
+      "band_id": 347,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1867,
+      "band": 1,
+      "band_id": 435,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1361,
+      "band": 1,
+      "band_id": 356,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 12707,
+      "band": 1,
+      "band_id": 370,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 26671,
+      "band": 1,
+      "band_id": 221,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2126,
+      "band": 1,
+      "band_id": 391,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2378,
+      "band": 1,
+      "band_id": 438,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1770,
+      "band": 1,
+      "band_id": 617,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4252,
+      "band": 1,
+      "band_id": 91,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1523,
+      "band": 1,
+      "band_id": 132,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1238,
+      "band": 1,
+      "band_id": 145,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1843,
+      "band": 1,
+      "band_id": 161,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 20735,
+      "band": 1,
+      "band_id": 280,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1793,
+      "band": 1,
+      "band_id": 238,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1230,
+      "band": 1,
+      "band_id": 355,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4124,
+      "band": 1,
+      "band_id": 426,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 981,
+      "band": 1,
+      "band_id": 93,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 655,
+      "band": 1,
+      "band_id": 88,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8052,
+      "band": 1,
+      "band_id": 102,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 805,
+      "band": 1,
+      "band_id": 107,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 12006,
+      "band": 1,
+      "band_id": 162,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1092,
+      "band": 1,
+      "band_id": 239,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2034,
+      "band": 1,
+      "band_id": 195,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3897,
+      "band": 1,
+      "band_id": 266,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2405,
+      "band": 1,
+      "band_id": 243,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1695,
+      "band": 1,
+      "band_id": 276,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 984,
+      "band": 1,
+      "band_id": 275,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 826,
+      "band": 1,
+      "band_id": 241,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4702,
+      "band": 1,
+      "band_id": 301,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1112,
+      "band": 1,
+      "band_id": 314,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1686,
+      "band": 1,
+      "band_id": 228,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1450,
+      "band": 1,
+      "band_id": 244,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 340,
+      "band": 1,
+      "band_id": 250,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 550,
+      "band": 1,
+      "band_id": 151,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 601,
+      "band": 1,
+      "band_id": 304,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1215,
+      "band": 1,
+      "band_id": 262,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2888,
+      "band": 1,
+      "band_id": 309,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1918,
+      "band": 1,
+      "band_id": 285,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2863,
+      "band": 1,
+      "band_id": 364,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5973,
+      "band": 1,
+      "band_id": 216,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1225,
+      "band": 1,
+      "band_id": 523,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 46617,
+      "band": 1,
+      "band_id": 230,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1657,
+      "band": 1,
+      "band_id": 573,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2240,
+      "band": 1,
+      "band_id": 488,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2548,
+      "band": 1,
+      "band_id": 680,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4538,
+      "band": 1,
+      "band_id": 692,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3644,
+      "band": 1,
+      "band_id": 651,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3075,
+      "band": 1,
+      "band_id": 679,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 12400,
+      "band": 1,
+      "band_id": 650,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1424,
+      "band": 1,
+      "band_id": 321,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4433,
+      "band": 1,
+      "band_id": 475,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 12482,
+      "band": 1,
+      "band_id": 730,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3575,
+      "band": 1,
+      "band_id": 828,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 19614,
+      "band": 1,
+      "band_id": 780,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1989,
+      "band": 1,
+      "band_id": 223,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6941,
+      "band": 1,
+      "band_id": 591,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2466,
+      "band": 1,
+      "band_id": 998,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 635,
+      "band": 1,
+      "band_id": 348,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1135,
+      "band": 1,
+      "band_id": 167,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 357,
+      "band": 1,
+      "band_id": 61,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 813,
+      "band": 1,
+      "band_id": 78,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3675,
+      "band": 1,
+      "band_id": 240,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 617,
+      "band": 1,
+      "band_id": 111,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 101,
+      "band": 1,
+      "band_id": 252,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 274,
+      "band": 1,
+      "band_id": 514,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1073,
+      "band": 1,
+      "band_id": 282,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 731,
+      "band": 1,
+      "band_id": 407,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 919,
+      "band": 1,
+      "band_id": 425,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4706,
+      "band": 1,
+      "band_id": 447,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3043,
+      "band": 1,
+      "band_id": 420,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 585,
+      "band": 1,
+      "band_id": 519,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2612,
+      "band": 1,
+      "band_id": 525,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2843,
+      "band": 1,
+      "band_id": 904,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3249,
+      "band": 1,
+      "band_id": 630,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3795,
+      "band": 1,
+      "band_id": 632,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 37087,
+      "band": 1,
+      "band_id": 335,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5400,
+      "band": 1,
+      "band_id": 521,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8391,
+      "band": 1,
+      "band_id": 110,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4653,
+      "band": 1,
+      "band_id": 147,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1588,
+      "band": 1,
+      "band_id": 182,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1085,
+      "band": 1,
+      "band_id": 192,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 45429,
+      "band": 1,
+      "band_id": 222,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2837,
+      "band": 1,
+      "band_id": 344,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4053,
+      "band": 1,
+      "band_id": 310,
+      "magnitude": 21000
     },
     {
       "token_id": 85,
-      "band": 2,
-      "band_id": 108,
-      "magnitude": 7825
+      "band": 1,
+      "band_id": 82,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 89,
+      "band": 1,
+      "band_id": 246,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 697,
+      "band": 1,
+      "band_id": 169,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1484,
+      "band": 1,
+      "band_id": 126,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4745,
+      "band": 1,
+      "band_id": 220,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1800,
+      "band": 1,
+      "band_id": 537,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2346,
+      "band": 1,
+      "band_id": 369,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 624,
+      "band": 1,
+      "band_id": 59,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2306,
+      "band": 1,
+      "band_id": 121,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5096,
+      "band": 1,
+      "band_id": 135,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1041,
+      "band": 1,
+      "band_id": 258,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4450,
+      "band": 1,
+      "band_id": 229,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1069,
+      "band": 1,
+      "band_id": 517,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3903,
+      "band": 1,
+      "band_id": 564,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5199,
+      "band": 1,
+      "band_id": 553,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 41945,
+      "band": 1,
+      "band_id": 470,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6912,
+      "band": 1,
+      "band_id": 487,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3379,
+      "band": 1,
+      "band_id": 596,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1699,
+      "band": 1,
+      "band_id": 485,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 787,
+      "band": 1,
+      "band_id": 105,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2004,
+      "band": 1,
+      "band_id": 114,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 990,
+      "band": 1,
+      "band_id": 213,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 656,
+      "band": 1,
+      "band_id": 92,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3870,
+      "band": 1,
+      "band_id": 277,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 318,
+      "band": 1,
+      "band_id": 358,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 665,
+      "band": 1,
+      "band_id": 286,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 105,
+      "band": 1,
+      "band_id": 603,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 670,
+      "band": 1,
+      "band_id": 122,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 563,
+      "band": 1,
+      "band_id": 212,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2550,
+      "band": 1,
+      "band_id": 287,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 39113,
+      "band": 1,
+      "band_id": 326,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 416,
+      "band": 1,
+      "band_id": 219,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 768,
+      "band": 1,
+      "band_id": 245,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4660,
+      "band": 1,
+      "band_id": 236,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2632,
+      "band": 1,
+      "band_id": 323,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 359,
+      "band": 1,
+      "band_id": 69,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4468,
+      "band": 1,
+      "band_id": 388,
+      "magnitude": 21000
     },
     {
       "token_id": 37,
-      "band": 3,
-      "band_id": 108,
-      "magnitude": 2464
+      "band": 1,
+      "band_id": 25,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 39,
+      "band": 1,
+      "band_id": 30,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 277,
+      "band": 1,
+      "band_id": 70,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 533,
+      "band": 1,
+      "band_id": 112,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 542,
+      "band": 1,
+      "band_id": 77,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 736,
+      "band": 1,
+      "band_id": 83,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1032,
+      "band": 1,
+      "band_id": 338,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 43967,
+      "band": 1,
+      "band_id": 419,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 9112,
+      "band": 1,
+      "band_id": 540,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6021,
+      "band": 1,
+      "band_id": 471,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8845,
+      "band": 1,
+      "band_id": 416,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1376,
+      "band": 1,
+      "band_id": 645,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 7233,
+      "band": 1,
+      "band_id": 509,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 22748,
+      "band": 1,
+      "band_id": 903,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 11861,
+      "band": 1,
+      "band_id": 1052,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 11637,
+      "band": 1,
+      "band_id": 895,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 9901,
+      "band": 1,
+      "band_id": 531,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 48966,
+      "band": 1,
+      "band_id": 518,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 827,
+      "band": 1,
+      "band_id": 84,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1296,
+      "band": 1,
+      "band_id": 172,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6549,
+      "band": 1,
+      "band_id": 183,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1036,
+      "band": 1,
+      "band_id": 152,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 856,
+      "band": 1,
+      "band_id": 215,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 965,
+      "band": 1,
+      "band_id": 389,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1379,
+      "band": 1,
+      "band_id": 513,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 15578,
+      "band": 1,
+      "band_id": 290,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 447,
+      "band": 1,
+      "band_id": 352,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2107,
+      "band": 1,
+      "band_id": 374,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 451,
+      "band": 1,
+      "band_id": 95,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 582,
+      "band": 1,
+      "band_id": 90,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1062,
+      "band": 1,
+      "band_id": 184,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 540,
+      "band": 1,
+      "band_id": 248,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 750,
+      "band": 1,
+      "band_id": 211,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1142,
+      "band": 1,
+      "band_id": 149,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1272,
+      "band": 1,
+      "band_id": 417,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2428,
+      "band": 1,
+      "band_id": 502,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5339,
+      "band": 1,
+      "band_id": 446,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 12490,
+      "band": 1,
+      "band_id": 543,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 11025,
+      "band": 1,
+      "band_id": 479,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5193,
+      "band": 1,
+      "band_id": 379,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 956,
+      "band": 1,
+      "band_id": 658,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 24360,
+      "band": 1,
+      "band_id": 766,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1651,
+      "band": 1,
+      "band_id": 1043,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 44346,
+      "band": 1,
+      "band_id": 740,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1712,
+      "band": 1,
+      "band_id": 449,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 13666,
+      "band": 1,
+      "band_id": 526,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 40772,
+      "band": 1,
+      "band_id": 467,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 42728,
+      "band": 1,
+      "band_id": 346,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8161,
+      "band": 1,
+      "band_id": 672,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 299,
+      "band": 1,
+      "band_id": 876,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 92,
+      "band": 1,
+      "band_id": 806,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6640,
+      "band": 1,
+      "band_id": 499,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3990,
+      "band": 1,
+      "band_id": 684,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 10136,
+      "band": 1,
+      "band_id": 681,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 36953,
+      "band": 1,
+      "band_id": 837,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4001,
+      "band": 1,
+      "band_id": 546,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 28508,
+      "band": 1,
+      "band_id": 512,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1247,
+      "band": 1,
+      "band_id": 1235,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 41585,
+      "band": 1,
+      "band_id": 1053,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 7731,
+      "band": 1,
+      "band_id": 1088,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 36921,
+      "band": 1,
+      "band_id": 703,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3605,
+      "band": 1,
+      "band_id": 589,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 48288,
+      "band": 1,
+      "band_id": 1236,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5075,
+      "band": 1,
+      "band_id": 333,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4251,
+      "band": 1,
+      "band_id": 349,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1083,
+      "band": 1,
+      "band_id": 424,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5182,
+      "band": 1,
+      "band_id": 677,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 23621,
+      "band": 1,
+      "band_id": 613,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6897,
+      "band": 1,
+      "band_id": 468,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3236,
+      "band": 1,
+      "band_id": 412,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5598,
+      "band": 1,
+      "band_id": 362,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1642,
+      "band": 1,
+      "band_id": 477,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2268,
+      "band": 1,
+      "band_id": 399,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2531,
+      "band": 1,
+      "band_id": 415,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1485,
+      "band": 1,
+      "band_id": 409,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 527,
+      "band": 1,
+      "band_id": 101,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 259,
+      "band": 1,
+      "band_id": 134,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 366,
+      "band": 1,
+      "band_id": 375,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 268,
+      "band": 1,
+      "band_id": 372,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2976,
+      "band": 1,
+      "band_id": 490,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 258,
+      "band": 1,
+      "band_id": 71,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2855,
+      "band": 1,
+      "band_id": 259,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 909,
+      "band": 1,
+      "band_id": 200,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 13756,
+      "band": 1,
+      "band_id": 272,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2071,
+      "band": 1,
+      "band_id": 395,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5629,
+      "band": 1,
+      "band_id": 361,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 49,
+      "band": 1,
+      "band_id": 274,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 10109,
+      "band": 1,
+      "band_id": 567,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1055,
+      "band": 1,
+      "band_id": 1030,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3917,
+      "band": 1,
+      "band_id": 694,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 25473,
+      "band": 1,
+      "band_id": 638,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5797,
+      "band": 1,
+      "band_id": 999,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3408,
+      "band": 1,
+      "band_id": 434,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 30,
+      "band": 1,
+      "band_id": 17,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 657,
+      "band": 1,
+      "band_id": 136,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 511,
+      "band": 1,
+      "band_id": 163,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 384,
+      "band": 1,
+      "band_id": 116,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 929,
+      "band": 1,
+      "band_id": 189,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 22440,
+      "band": 1,
+      "band_id": 357,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1675,
+      "band": 1,
+      "band_id": 359,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1545,
+      "band": 1,
+      "band_id": 427,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2163,
+      "band": 1,
+      "band_id": 430,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2841,
+      "band": 1,
+      "band_id": 527,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5535,
+      "band": 1,
+      "band_id": 678,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1798,
+      "band": 1,
+      "band_id": 662,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2291,
+      "band": 1,
+      "band_id": 695,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 13828,
+      "band": 1,
+      "band_id": 368,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 10263,
+      "band": 1,
+      "band_id": 756,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 37815,
+      "band": 1,
+      "band_id": 660,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2422,
+      "band": 1,
+      "band_id": 324,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2018,
+      "band": 1,
+      "band_id": 173,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 270,
+      "band": 1,
+      "band_id": 289,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 27661,
+      "band": 1,
+      "band_id": 547,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 7005,
+      "band": 1,
+      "band_id": 545,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 9672,
+      "band": 1,
+      "band_id": 568,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 24977,
+      "band": 1,
+      "band_id": 339,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 22158,
+      "band": 1,
+      "band_id": 719,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 7416,
+      "band": 1,
+      "band_id": 689,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2116,
+      "band": 1,
+      "band_id": 654,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 45772,
+      "band": 1,
+      "band_id": 744,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5949,
+      "band": 1,
+      "band_id": 569,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1461,
+      "band": 1,
+      "band_id": 558,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 27375,
+      "band": 1,
+      "band_id": 668,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 94,
+      "band": 1,
+      "band_id": 194,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 67,
+      "band": 1,
+      "band_id": 387,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1372,
+      "band": 1,
+      "band_id": 480,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1217,
+      "band": 1,
+      "band_id": 601,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3756,
+      "band": 1,
+      "band_id": 393,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4910,
+      "band": 1,
+      "band_id": 404,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3276,
+      "band": 1,
+      "band_id": 562,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1360,
+      "band": 1,
+      "band_id": 376,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 84,
+      "band": 1,
+      "band_id": 319,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 88,
+      "band": 1,
+      "band_id": 495,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 837,
+      "band": 1,
+      "band_id": 431,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3365,
+      "band": 1,
+      "band_id": 582,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4147,
+      "band": 1,
+      "band_id": 432,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 11652,
+      "band": 1,
+      "band_id": 460,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5700,
+      "band": 1,
+      "band_id": 634,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 27081,
+      "band": 1,
+      "band_id": 457,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 876,
+      "band": 1,
+      "band_id": 428,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2588,
+      "band": 1,
+      "band_id": 544,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5037,
+      "band": 1,
+      "band_id": 510,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1332,
+      "band": 1,
+      "band_id": 745,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6749,
+      "band": 1,
+      "band_id": 663,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 40443,
+      "band": 1,
+      "band_id": 421,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1239,
+      "band": 1,
+      "band_id": 570,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1456,
+      "band": 1,
+      "band_id": 406,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2258,
+      "band": 1,
+      "band_id": 712,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 33730,
+      "band": 1,
+      "band_id": 784,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 722,
+      "band": 1,
+      "band_id": 707,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4592,
+      "band": 1,
+      "band_id": 411,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8622,
+      "band": 1,
+      "band_id": 448,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5758,
+      "band": 1,
+      "band_id": 550,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 20845,
+      "band": 1,
+      "band_id": 482,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 10330,
+      "band": 1,
+      "band_id": 437,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 61,
+      "band": 1,
+      "band_id": 263,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1980,
+      "band": 1,
+      "band_id": 696,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 12444,
+      "band": 1,
+      "band_id": 536,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 7991,
+      "band": 1,
+      "band_id": 575,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1552,
+      "band": 1,
+      "band_id": 664,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4294,
+      "band": 1,
+      "band_id": 715,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 15987,
+      "band": 1,
+      "band_id": 637,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 669,
+      "band": 1,
+      "band_id": 316,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 51,
+      "band": 1,
+      "band_id": 790,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4962,
+      "band": 1,
+      "band_id": 761,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 967,
+      "band": 1,
+      "band_id": 824,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 13932,
+      "band": 1,
+      "band_id": 1219,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 34232,
+      "band": 1,
+      "band_id": 1287,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5825,
+      "band": 1,
+      "band_id": 648,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 732,
+      "band": 1,
+      "band_id": 728,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1385,
+      "band": 1,
+      "band_id": 366,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3488,
+      "band": 1,
+      "band_id": 410,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6445,
+      "band": 1,
+      "band_id": 708,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5454,
+      "band": 1,
+      "band_id": 503,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6219,
+      "band": 1,
+      "band_id": 542,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2049,
+      "band": 1,
+      "band_id": 848,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3251,
+      "band": 1,
+      "band_id": 888,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 549,
+      "band": 1,
+      "band_id": 702,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 7345,
+      "band": 1,
+      "band_id": 453,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8195,
+      "band": 1,
+      "band_id": 642,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2537,
+      "band": 1,
+      "band_id": 474,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 21301,
+      "band": 1,
+      "band_id": 862,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 11187,
+      "band": 1,
+      "band_id": 796,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8119,
+      "band": 1,
+      "band_id": 486,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1343,
+      "band": 1,
+      "band_id": 422,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 81,
+      "band": 1,
+      "band_id": 148,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 23544,
+      "band": 1,
+      "band_id": 636,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1015,
+      "band": 1,
+      "band_id": 714,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3807,
+      "band": 1,
+      "band_id": 652,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2627,
+      "band": 1,
+      "band_id": 839,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 9778,
+      "band": 1,
+      "band_id": 863,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 40934,
+      "band": 1,
+      "band_id": 403,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3768,
+      "band": 1,
+      "band_id": 635,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1150,
+      "band": 1,
+      "band_id": 401,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1250,
+      "band": 1,
+      "band_id": 380,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 457,
+      "band": 1,
+      "band_id": 207,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6004,
+      "band": 1,
+      "band_id": 685,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 27001,
+      "band": 1,
+      "band_id": 441,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1890,
+      "band": 1,
+      "band_id": 532,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 12043,
+      "band": 1,
+      "band_id": 793,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 11713,
+      "band": 1,
+      "band_id": 877,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3518,
+      "band": 1,
+      "band_id": 878,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2977,
+      "band": 1,
+      "band_id": 493,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 95,
+      "band": 1,
+      "band_id": 1089,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 24145,
+      "band": 1,
+      "band_id": 618,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5124,
+      "band": 1,
+      "band_id": 593,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 36817,
+      "band": 1,
+      "band_id": 1010,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 30022,
+      "band": 1,
+      "band_id": 615,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 970,
+      "band": 1,
+      "band_id": 1180,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 13832,
+      "band": 1,
+      "band_id": 1411,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 48053,
+      "band": 1,
+      "band_id": 1023,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8477,
+      "band": 1,
+      "band_id": 439,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4242,
+      "band": 1,
+      "band_id": 481,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 7957,
+      "band": 1,
+      "band_id": 788,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 17795,
+      "band": 1,
+      "band_id": 842,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4506,
+      "band": 1,
+      "band_id": 1663,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2112,
+      "band": 1,
+      "band_id": 737,
+      "magnitude": 15749
+    },
+    {
+      "token_id": 2637,
+      "band": 1,
+      "band_id": 436,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 266,
+      "band": 1,
+      "band_id": 929,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 91,
+      "band": 1,
+      "band_id": 599,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5488,
+      "band": 1,
+      "band_id": 656,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3506,
+      "band": 1,
+      "band_id": 576,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 264,
+      "band": 1,
+      "band_id": 610,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2719,
+      "band": 1,
+      "band_id": 748,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 90,
+      "band": 1,
+      "band_id": 294,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 25055,
+      "band": 1,
+      "band_id": 969,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 487,
+      "band": 1,
+      "band_id": 1356,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 9738,
+      "band": 1,
+      "band_id": 578,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 11013,
+      "band": 1,
+      "band_id": 764,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3969,
+      "band": 1,
+      "band_id": 978,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1391,
+      "band": 1,
+      "band_id": 1126,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2856,
+      "band": 1,
+      "band_id": 885,
+      "magnitude": 15749
+    },
+    {
+      "token_id": 44820,
+      "band": 1,
+      "band_id": 1068,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 9590,
+      "band": 1,
+      "band_id": 1000,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 12436,
+      "band": 1,
+      "band_id": 661,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6038,
+      "band": 1,
+      "band_id": 586,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1711,
+      "band": 1,
+      "band_id": 741,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2867,
+      "band": 1,
+      "band_id": 464,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5296,
+      "band": 1,
+      "band_id": 769,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 32182,
+      "band": 1,
+      "band_id": 549,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 9025,
+      "band": 1,
+      "band_id": 534,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4173,
+      "band": 1,
+      "band_id": 832,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 25589,
+      "band": 1,
+      "band_id": 709,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 20271,
+      "band": 1,
+      "band_id": 390,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 44499,
+      "band": 1,
+      "band_id": 378,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 408,
+      "band": 1,
+      "band_id": 313,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 330,
+      "band": 1,
+      "band_id": 337,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 11442,
+      "band": 1,
+      "band_id": 606,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 25798,
+      "band": 1,
+      "band_id": 458,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3621,
+      "band": 1,
+      "band_id": 476,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 10601,
+      "band": 1,
+      "band_id": 466,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 14811,
+      "band": 1,
+      "band_id": 600,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2601,
+      "band": 1,
+      "band_id": 594,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1022,
+      "band": 1,
+      "band_id": 1376,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 36717,
+      "band": 1,
+      "band_id": 478,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 15260,
+      "band": 1,
+      "band_id": 456,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 14884,
+      "band": 1,
+      "band_id": 492,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4385,
+      "band": 1,
+      "band_id": 639,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3941,
+      "band": 1,
+      "band_id": 803,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4641,
+      "band": 1,
+      "band_id": 713,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 18253,
+      "band": 1,
+      "band_id": 1199,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 10411,
+      "band": 1,
+      "band_id": 1587,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3116,
+      "band": 1,
+      "band_id": 1112,
+      "magnitude": 14000
+    },
+    {
+      "token_id": 16776,
+      "band": 1,
+      "band_id": 1412,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2473,
+      "band": 1,
+      "band_id": 1527,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1137,
+      "band": 1,
+      "band_id": 970,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4788,
+      "band": 1,
+      "band_id": 1163,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2574,
+      "band": 1,
+      "band_id": 1357,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 19003,
+      "band": 1,
+      "band_id": 946,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 9986,
+      "band": 1,
+      "band_id": 1377,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 10587,
+      "band": 1,
+      "band_id": 857,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 39417,
+      "band": 1,
+      "band_id": 1664,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 734,
+      "band": 1,
+      "band_id": 397,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3430,
+      "band": 1,
+      "band_id": 539,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 16416,
+      "band": 1,
+      "band_id": 501,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 17773,
+      "band": 1,
+      "band_id": 1250,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1626,
+      "band": 1,
+      "band_id": 597,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 10734,
+      "band": 1,
+      "band_id": 1069,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4261,
+      "band": 1,
+      "band_id": 1288,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6289,
+      "band": 1,
+      "band_id": 1127,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 57,
+      "band": 1,
+      "band_id": 1149,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 13081,
+      "band": 1,
+      "band_id": 889,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 24349,
+      "band": 1,
+      "band_id": 1413,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 37041,
+      "band": 1,
+      "band_id": 571,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2343,
+      "band": 1,
+      "band_id": 1164,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8629,
+      "band": 1,
+      "band_id": 882,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 9214,
+      "band": 1,
+      "band_id": 1665,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1550,
+      "band": 1,
+      "band_id": 621,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1248,
+      "band": 1,
+      "band_id": 1309,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 25016,
+      "band": 1,
+      "band_id": 1666,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 41340,
+      "band": 1,
+      "band_id": 1310,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 38380,
+      "band": 1,
+      "band_id": 947,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4607,
+      "band": 1,
+      "band_id": 1378,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2889,
+      "band": 1,
+      "band_id": 1855,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4464,
+      "band": 1,
+      "band_id": 616,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1519,
+      "band": 1,
+      "band_id": 560,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1929,
+      "band": 1,
+      "band_id": 402,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2272,
+      "band": 1,
+      "band_id": 584,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 262,
+      "band": 1,
+      "band_id": 334,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3459,
+      "band": 1,
+      "band_id": 686,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2373,
+      "band": 1,
+      "band_id": 1090,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 13720,
+      "band": 1,
+      "band_id": 1054,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 24310,
+      "band": 1,
+      "band_id": 941,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6510,
+      "band": 1,
+      "band_id": 1667,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1345,
+      "band": 1,
+      "band_id": 622,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3085,
+      "band": 1,
+      "band_id": 762,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 465,
+      "band": 1,
+      "band_id": 1497,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 24776,
+      "band": 1,
+      "band_id": 687,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 16241,
+      "band": 1,
+      "band_id": 959,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 10116,
+      "band": 1,
+      "band_id": 809,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6773,
+      "band": 1,
+      "band_id": 705,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 7022,
+      "band": 1,
+      "band_id": 767,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 17147,
+      "band": 1,
+      "band_id": 934,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5533,
+      "band": 1,
+      "band_id": 1588,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 16514,
+      "band": 1,
+      "band_id": 1439,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 7510,
+      "band": 1,
+      "band_id": 1289,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 41727,
+      "band": 1,
+      "band_id": 1251,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 41382,
+      "band": 1,
+      "band_id": 1856,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 908,
+      "band": 1,
+      "band_id": 1035,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3763,
+      "band": 1,
+      "band_id": 500,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 28,
+      "band": 1,
+      "band_id": 153,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4527,
+      "band": 1,
+      "band_id": 905,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2253,
+      "band": 1,
+      "band_id": 1113,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 7210,
+      "band": 1,
+      "band_id": 507,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 383,
+      "band": 1,
+      "band_id": 1335,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3930,
+      "band": 1,
+      "band_id": 1220,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 17689,
+      "band": 1,
+      "band_id": 598,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 800,
+      "band": 1,
+      "band_id": 746,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8091,
+      "band": 1,
+      "band_id": 840,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1268,
+      "band": 1,
+      "band_id": 554,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1038,
+      "band": 1,
+      "band_id": 794,
+      "magnitude": 15749
+    },
+    {
+      "token_id": 1315,
+      "band": 1,
+      "band_id": 522,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 25720,
+      "band": 1,
+      "band_id": 555,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 16677,
+      "band": 1,
+      "band_id": 548,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 34843,
+      "band": 1,
+      "band_id": 574,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 22500,
+      "band": 1,
+      "band_id": 1267,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 7030,
+      "band": 1,
+      "band_id": 609,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 35779,
+      "band": 1,
+      "band_id": 563,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 7122,
+      "band": 1,
+      "band_id": 733,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 43599,
+      "band": 1,
+      "band_id": 699,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1188,
+      "band": 1,
+      "band_id": 353,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1029,
+      "band": 1,
+      "band_id": 774,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 514,
+      "band": 1,
+      "band_id": 351,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1706,
+      "band": 1,
+      "band_id": 1091,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2701,
+      "band": 1,
+      "band_id": 688,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2678,
+      "band": 1,
+      "band_id": 1414,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 17676,
+      "band": 1,
+      "band_id": 1092,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 7288,
+      "band": 1,
+      "band_id": 690,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 48664,
+      "band": 1,
+      "band_id": 890,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8168,
+      "band": 1,
+      "band_id": 915,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5473,
+      "band": 1,
+      "band_id": 716,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8239,
+      "band": 1,
+      "band_id": 1093,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6455,
+      "band": 1,
+      "band_id": 1094,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 25571,
+      "band": 1,
+      "band_id": 750,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 35628,
+      "band": 1,
+      "band_id": 810,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2376,
+      "band": 1,
+      "band_id": 1996,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 18427,
+      "band": 1,
+      "band_id": 706,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1926,
+      "band": 1,
+      "band_id": 1044,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4376,
+      "band": 1,
+      "band_id": 1744,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3910,
+      "band": 1,
+      "band_id": 1290,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4835,
+      "band": 1,
+      "band_id": 1358,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6791,
+      "band": 1,
+      "band_id": 916,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 28018,
+      "band": 1,
+      "band_id": 624,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6871,
+      "band": 1,
+      "band_id": 1336,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 20973,
+      "band": 1,
+      "band_id": 535,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 25039,
+      "band": 1,
+      "band_id": 1165,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 896,
+      "band": 1,
+      "band_id": 816,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2664,
+      "band": 1,
+      "band_id": 619,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 10073,
+      "band": 1,
+      "band_id": 552,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 372,
+      "band": 1,
+      "band_id": 336,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3320,
+      "band": 1,
+      "band_id": 611,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1462,
+      "band": 1,
+      "band_id": 731,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5763,
+      "band": 1,
+      "band_id": 757,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 904,
+      "band": 1,
+      "band_id": 565,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2471,
+      "band": 1,
+      "band_id": 697,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2009,
+      "band": 1,
+      "band_id": 469,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 9843,
+      "band": 1,
+      "band_id": 960,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4222,
+      "band": 1,
+      "band_id": 742,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8027,
+      "band": 1,
+      "band_id": 1001,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3341,
+      "band": 1,
+      "band_id": 583,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 17814,
+      "band": 1,
+      "band_id": 738,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 20319,
+      "band": 1,
+      "band_id": 452,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 17905,
+      "band": 1,
+      "band_id": 843,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 29888,
+      "band": 1,
+      "band_id": 1139,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2161,
+      "band": 1,
+      "band_id": 588,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2244,
+      "band": 1,
+      "band_id": 813,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 12718,
+      "band": 1,
+      "band_id": 898,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 7943,
+      "band": 1,
+      "band_id": 1181,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1235,
+      "band": 1,
+      "band_id": 1128,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3058,
+      "band": 1,
+      "band_id": 1379,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6308,
+      "band": 1,
+      "band_id": 844,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1149,
+      "band": 1,
+      "band_id": 759,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5183,
+      "band": 1,
+      "band_id": 673,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 16271,
+      "band": 1,
+      "band_id": 770,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 46201,
+      "band": 1,
+      "band_id": 899,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1369,
+      "band": 1,
+      "band_id": 1291,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8114,
+      "band": 1,
+      "band_id": 640,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5019,
+      "band": 1,
+      "band_id": 506,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 7609,
+      "band": 1,
+      "band_id": 671,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2731,
+      "band": 1,
+      "band_id": 585,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6014,
+      "band": 1,
+      "band_id": 451,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5094,
+      "band": 1,
+      "band_id": 590,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8068,
+      "band": 1,
+      "band_id": 1468,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1194,
+      "band": 1,
+      "band_id": 817,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 7821,
+      "band": 1,
+      "band_id": 1055,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5332,
+      "band": 1,
+      "band_id": 556,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 9485,
+      "band": 1,
+      "band_id": 454,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 9568,
+      "band": 1,
+      "band_id": 649,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6370,
+      "band": 1,
+      "band_id": 825,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 11120,
+      "band": 1,
+      "band_id": 930,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6624,
+      "band": 1,
+      "band_id": 1082,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3403,
+      "band": 1,
+      "band_id": 891,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6989,
+      "band": 1,
+      "band_id": 1380,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4240,
+      "band": 1,
+      "band_id": 833,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5502,
+      "band": 1,
+      "band_id": 631,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3250,
+      "band": 1,
+      "band_id": 579,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1885,
+      "band": 1,
+      "band_id": 669,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8002,
+      "band": 1,
+      "band_id": 1045,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 11958,
+      "band": 1,
+      "band_id": 623,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2500,
+      "band": 1,
+      "band_id": 910,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1491,
+      "band": 1,
+      "band_id": 1857,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 11057,
+      "band": 1,
+      "band_id": 763,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5573,
+      "band": 1,
+      "band_id": 1095,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 621,
+      "band": 1,
+      "band_id": 459,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1003,
+      "band": 1,
+      "band_id": 620,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2073,
+      "band": 1,
+      "band_id": 614,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4448,
+      "band": 1,
+      "band_id": 771,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 20769,
+      "band": 1,
+      "band_id": 561,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5317,
+      "band": 1,
+      "band_id": 743,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3712,
+      "band": 1,
+      "band_id": 1046,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1887,
+      "band": 1,
+      "band_id": 736,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 28394,
+      "band": 1,
+      "band_id": 646,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1845,
+      "band": 1,
+      "band_id": 923,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 11272,
+      "band": 1,
+      "band_id": 979,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1127,
+      "band": 1,
+      "band_id": 727,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 38447,
+      "band": 1,
+      "band_id": 721,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 44200,
+      "band": 1,
+      "band_id": 871,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2489,
+      "band": 1,
+      "band_id": 875,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8638,
+      "band": 1,
+      "band_id": 1166,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3000,
+      "band": 1,
+      "band_id": 538,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5786,
+      "band": 1,
+      "band_id": 777,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1199,
+      "band": 1,
+      "band_id": 911,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8323,
+      "band": 1,
+      "band_id": 931,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 523,
+      "band": 1,
+      "band_id": 867,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 27482,
+      "band": 1,
+      "band_id": 1096,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 932,
+      "band": 1,
+      "band_id": 720,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2138,
+      "band": 1,
+      "band_id": 1129,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 13793,
+      "band": 1,
+      "band_id": 892,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 62,
+      "band": 1,
+      "band_id": 1140,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1888,
+      "band": 1,
+      "band_id": 868,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5219,
+      "band": 1,
+      "band_id": 1858,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 16687,
+      "band": 1,
+      "band_id": 1668,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 7721,
+      "band": 1,
+      "band_id": 612,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1128,
+      "band": 1,
+      "band_id": 1083,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 18171,
+      "band": 1,
+      "band_id": 572,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5214,
+      "band": 1,
+      "band_id": 838,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3920,
+      "band": 1,
+      "band_id": 704,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 17159,
+      "band": 1,
+      "band_id": 906,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 19996,
+      "band": 1,
+      "band_id": 795,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6909,
+      "band": 1,
+      "band_id": 896,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1117,
+      "band": 1,
+      "band_id": 710,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8209,
+      "band": 1,
+      "band_id": 693,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3056,
+      "band": 1,
+      "band_id": 961,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8041,
+      "band": 1,
+      "band_id": 858,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3616,
+      "band": 1,
+      "band_id": 834,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6329,
+      "band": 1,
+      "band_id": 962,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8827,
+      "band": 1,
+      "band_id": 653,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5371,
+      "band": 1,
+      "band_id": 886,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 12433,
+      "band": 1,
+      "band_id": 1130,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 6873,
+      "band": 1,
+      "band_id": 644,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 31831,
+      "band": 1,
+      "band_id": 533,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 11900,
+      "band": 1,
+      "band_id": 581,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4353,
+      "band": 1,
+      "band_id": 778,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 530,
+      "band": 1,
+      "band_id": 463,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5178,
+      "band": 1,
+      "band_id": 723,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2452,
+      "band": 1,
+      "band_id": 724,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1363,
+      "band": 1,
+      "band_id": 924,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1464,
+      "band": 1,
+      "band_id": 942,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 23777,
+      "band": 1,
+      "band_id": 751,
+      "magnitude": 14000
+    },
+    {
+      "token_id": 1132,
+      "band": 1,
+      "band_id": 1528,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 33626,
+      "band": 1,
+      "band_id": 864,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3374,
+      "band": 1,
+      "band_id": 1997,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 33333,
+      "band": 1,
+      "band_id": 1745,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1423,
+      "band": 1,
+      "band_id": 991,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 28187,
+      "band": 1,
+      "band_id": 849,
+      "magnitude": 14000
+    },
+    {
+      "token_id": 31870,
+      "band": 1,
+      "band_id": 1200,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2530,
+      "band": 1,
+      "band_id": 1337,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 863,
+      "band": 1,
+      "band_id": 985,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1848,
+      "band": 1,
+      "band_id": 604,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 24759,
+      "band": 1,
+      "band_id": 785,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2353,
+      "band": 1,
+      "band_id": 1024,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 28481,
+      "band": 1,
+      "band_id": 577,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2330,
+      "band": 1,
+      "band_id": 865,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 11765,
+      "band": 1,
+      "band_id": 1746,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 10453,
+      "band": 1,
+      "band_id": 504,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 29487,
+      "band": 1,
+      "band_id": 845,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 16023,
+      "band": 1,
+      "band_id": 887,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1273,
+      "band": 1,
+      "band_id": 1011,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3497,
+      "band": 1,
+      "band_id": 866,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1749,
+      "band": 1,
+      "band_id": 494,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 10808,
+      "band": 1,
+      "band_id": 1002,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4547,
+      "band": 1,
+      "band_id": 1589,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 933,
+      "band": 1,
+      "band_id": 607,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1814,
+      "band": 1,
+      "band_id": 520,
+      "magnitude": 15749
+    },
+    {
+      "token_id": 551,
+      "band": 1,
+      "band_id": 541,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2123,
+      "band": 1,
+      "band_id": 1529,
+      "magnitude": 14000
+    },
+    {
+      "token_id": 588,
+      "band": 1,
+      "band_id": 791,
+      "magnitude": 14000
+    },
+    {
+      "token_id": 1249,
+      "band": 1,
+      "band_id": 1141,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3508,
+      "band": 1,
+      "band_id": 1150,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 11387,
+      "band": 1,
+      "band_id": 1097,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 942,
+      "band": 1,
+      "band_id": 739,
+      "magnitude": 10500
+    },
+    {
+      "token_id": 1216,
+      "band": 1,
+      "band_id": 1669,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1863,
+      "band": 1,
+      "band_id": 1859,
+      "magnitude": 10500
+    },
+    {
+      "token_id": 1068,
+      "band": 1,
+      "band_id": 1670,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 452,
+      "band": 1,
+      "band_id": 1469,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2025,
+      "band": 1,
+      "band_id": 1012,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2296,
+      "band": 1,
+      "band_id": 1098,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2838,
+      "band": 1,
+      "band_id": 665,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 32936,
+      "band": 1,
+      "band_id": 722,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 47732,
+      "band": 1,
+      "band_id": 551,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 36437,
+      "band": 1,
+      "band_id": 1268,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3435,
+      "band": 1,
+      "band_id": 655,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 8180,
+      "band": 1,
+      "band_id": 925,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 22438,
+      "band": 1,
+      "band_id": 647,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4451,
+      "band": 1,
+      "band_id": 1114,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 389,
+      "band": 1,
+      "band_id": 524,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 44464,
+      "band": 1,
+      "band_id": 1013,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 407,
+      "band": 1,
+      "band_id": 559,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 7103,
+      "band": 1,
+      "band_id": 1998,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 11238,
+      "band": 1,
+      "band_id": 1056,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1954,
+      "band": 1,
+      "band_id": 1057,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 4145,
+      "band": 1,
+      "band_id": 808,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2426,
+      "band": 1,
+      "band_id": 1014,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 14880,
+      "band": 1,
+      "band_id": 943,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 2582,
+      "band": 1,
+      "band_id": 643,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 1985,
+      "band": 1,
+      "band_id": 445,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 3113,
+      "band": 1,
+      "band_id": 852,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 29918,
+      "band": 1,
+      "band_id": 1182,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5003,
+      "band": 1,
+      "band_id": 443,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 20020,
+      "band": 1,
+      "band_id": 641,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 17691,
+      "band": 1,
+      "band_id": 872,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 7168,
+      "band": 1,
+      "band_id": 676,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 5651,
+      "band": 1,
+      "band_id": 1025,
+      "magnitude": 21000
+    },
+    {
+      "token_id": 30510,
+      "band": 1,
+      "band_id": 1381,
+      "magnitude": 21000
     }
   ]
 }

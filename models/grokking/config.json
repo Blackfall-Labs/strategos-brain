@@ -1,0 +1,13 @@
+{
+  "model": "grokking-1l",
+  "P": 113,
+  "d_model": 128,
+  "d_mlp": 512,
+  "n_heads": 4,
+  "head_dim": 32,
+  "vocab_size": 114,
+  "seq_len": 3,
+  "has_ln": false,
+  "final_train_loss": 0.0002970777568407357,
+  "final_test_loss": 0.004254124127328396
+}

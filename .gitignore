@@ -5,3 +5,30 @@ models/**/*.bin
 models/**/*.safetensors
 models/**/*.gguf
 memory/
+
+# Generated checkpoint files
+*.brnc
+*.pth
+
+# Personal Claude config
+.claude/
+
+# Large generated probe data (triggers, profiles, bands, topologies)
+*_triggers.json
+*_profile.json
+*_profile_calibrated.json
+*_profile_init.json
+*_profile_repeated.json
+*_bands.json
+*_topology.json
+*_column_spec.json
+*_lookup.json
+*_lookup_filtered.json
+*_multilayer_lookup.json
+*_phase*.json
+*_spectral_profile*.json
+lexicon_word_stats.json
+grokking_profile.json
+
+# Training data
+data/

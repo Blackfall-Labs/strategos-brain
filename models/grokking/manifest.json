@@ -1,0 +1,111 @@
+[
+  {
+    "name": "embed.W_E",
+    "file": "embed_W_E.bin",
+    "shape": [
+      128,
+      114
+    ],
+    "numel": 14592
+  },
+  {
+    "name": "pos_embed.W_pos",
+    "file": "pos_embed_W_pos.bin",
+    "shape": [
+      3,
+      128
+    ],
+    "numel": 384
+  },
+  {
+    "name": "blocks.0.attn.W_K",
+    "file": "blocks_0_attn_W_K.bin",
+    "shape": [
+      4,
+      32,
+      128
+    ],
+    "numel": 16384
+  },
+  {
+    "name": "blocks.0.attn.W_Q",
+    "file": "blocks_0_attn_W_Q.bin",
+    "shape": [
+      4,
+      32,
+      128
+    ],
+    "numel": 16384
+  },
+  {
+    "name": "blocks.0.attn.W_V",
+    "file": "blocks_0_attn_W_V.bin",
+    "shape": [
+      4,
+      32,
+      128
+    ],
+    "numel": 16384
+  },
+  {
+    "name": "blocks.0.attn.W_O",
+    "file": "blocks_0_attn_W_O.bin",
+    "shape": [
+      128,
+      128
+    ],
+    "numel": 16384
+  },
+  {
+    "name": "blocks.0.attn.mask",
+    "file": "blocks_0_attn_mask.bin",
+    "shape": [
+      3,
+      3
+    ],
+    "numel": 9
+  },
+  {
+    "name": "blocks.0.mlp.W_in",
+    "file": "blocks_0_mlp_W_in.bin",
+    "shape": [
+      512,
+      128
+    ],
+    "numel": 65536
+  },
+  {
+    "name": "blocks.0.mlp.b_in",
+    "file": "blocks_0_mlp_b_in.bin",
+    "shape": [
+      512
+    ],
+    "numel": 512
+  },
+  {
+    "name": "blocks.0.mlp.W_out",
+    "file": "blocks_0_mlp_W_out.bin",
+    "shape": [
+      128,
+      512
+    ],
+    "numel": 65536
+  },
+  {
+    "name": "blocks.0.mlp.b_out",
+    "file": "blocks_0_mlp_b_out.bin",
+    "shape": [
+      128
+    ],
+    "numel": 128
+  },
+  {
+    "name": "unembed.W_U",
+    "file": "unembed_W_U.bin",
+    "shape": [
+      128,
+      114
+    ],
+    "numel": 14592
+  }
+]
