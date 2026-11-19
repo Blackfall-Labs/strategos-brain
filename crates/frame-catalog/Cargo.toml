@@ -2,6 +2,7 @@
 name = "frame-catalog"
 version = "0.2.1"
 edition = "2021"
+license = "MIT"
 
 [dependencies]
 hnsw_rs = "0.3"
